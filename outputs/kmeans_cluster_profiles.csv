@@ -1,0 +1,5 @@
+Cluster,cgpa,backlogs,attendance_percentage,dsa_questions_solved,leetcode_questions_solved,hackerrank_questions_solved,internships_count,projects_count,hackathons_count,certifications_count,aptitude_score,communication_score,coding_skill_score,github_repos,mock_interview_score,placement_prediction
+0,8.06,0.586,82.025,160.516,84.818,49.029,1.272,3.453,1.028,2.013,67.22,6.086,5.218,11.165,8.022,0.503
+1,7.057,0.565,81.678,83.645,44.197,25.438,0.87,2.151,0.975,2.019,53.675,5.639,4.406,7.932,5.98,0.049
+2,8.266,0.533,82.031,328.063,186.292,111.563,1.146,3.102,1.016,2.023,70.168,5.976,6.444,10.109,8.031,0.838
+3,7.403,0.53,81.947,236.585,130.304,77.107,0.776,1.847,0.953,1.979,59.345,5.585,5.464,6.63,6.424,0.268
