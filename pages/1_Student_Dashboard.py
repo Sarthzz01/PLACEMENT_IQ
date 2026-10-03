@@ -29,14 +29,14 @@ profile_completed = is_student_profile_completed(email)
 if not profile_completed:
     # ----------------- EMPTY ONBOARDING STATE FOR NEW USERS -----------------
     st.markdown(f"""
-    <div class="glass-card" style="text-align: center; padding: 48px 32px; margin: 24px 0 28px 0; border: 1.5px dashed rgba(56, 189, 248, 0.45); border-radius: 20px; background: rgba(15, 23, 42, 0.75);">
-        <div style="font-size: 3.8rem; margin-bottom: 14px;">📋</div>
-        <h2 style="color: #f8fafc; font-size: 1.75rem; font-weight: 800; margin-bottom: 10px;">
-            Candidate Placement Profile Not Filled Yet
+    <div class="glass-card" style="text-align: center; padding: 36px 24px; margin: 18px 0 24px 0; border: 1.5px dashed rgba(56, 189, 248, 0.4); border-radius: 18px; background: rgba(15, 23, 42, 0.75);">
+        <div style="font-size: 2.8rem; margin-bottom: 10px;">📋</div>
+        <h2 style="color: #f8fafc; font-size: 1.48rem; font-weight: 800; margin: 0 0 8px 0;">
+            Candidate Placement Profile Not Completed Yet
         </h2>
-        <p style="color: #94a3b8; font-size: 1.05rem; max-width: 640px; margin: 0 auto 26px auto; line-height: 1.6;">
-            Welcome to <b>Placement IQ</b>! To generate your real-time <b>AI Placement Prediction</b>, 
-            <b>Competency Radar Chart</b>, and <b>Data-Driven Improvement Plan</b>, please enter your academic records, coding activities, and skills.
+        <p style="color: #94a3b8; font-size: 0.94rem; max-width: 620px; margin: 0 auto 22px auto; line-height: 1.6;">
+            Welcome to <b>Placement IQ</b>! To unlock your real-time <b>AI Placement Prediction</b>, 
+            <b>Competency Radar Benchmark</b>, and <b>Personalized Improvement Plan</b>, please enter your academic records and coding metrics.
         </p>
     </div>
     """, unsafe_allow_html=True)

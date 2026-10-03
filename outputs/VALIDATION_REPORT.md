@@ -1,6 +1,6 @@
 # PLACEMENT IQ System Validation & Audit Report
 
-**Date of Execution:** 2026-10-03 23:03:33  
+**Date of Execution:** 2026-10-04 00:36:44  
 **Application:** Student Placement Analytics & Intelligence Platform  
 **System Architecture:** Streamlit + Scikit-Learn + SQLite Star Schema  
 
@@ -13,12 +13,12 @@
 | **Test 1** | Primary Dataset Loading | `placement_prediction_cleaned.csv` (15,000 rows, 26 raw columns) | **PASS** |
 | **Test 2** | Database Architecture | Normalized tables: `users`, `student_profiles`, `student_predictions`, `admin_feedback` | **PASS** |
 | **Test 3** | Authentication & Roles | PBKDF2 HMAC SHA-256 password hashing, public student signup, role auto-detect | **PASS** |
-| **Test 4** | Unified Dataset Engine | Original (15,000) + SQLite new candidates (11) = 15,012 records | **PASS** |
+| **Test 4** | Unified Dataset Engine | Original (15,000) + SQLite new candidates (16) = 15,017 records | **PASS** |
 | **Test 5** | Supervised Classification | Decision Tree, Random Forest, Gaussian Naive Bayes; safe numeric styling | **PASS** |
 | **Test 6** | Numerical Regression | SLR & MLR on continuous targets (`aptitude_score`, `coding_skill_score`, etc.) | **PASS** |
-| **Test 7** | Clustering Analysis | K-Means (Elbow, K=4, Silhouette: 0.076) & Agglomerative Hierarchical (0.073) | **PASS** |
+| **Test 7** | Clustering Analysis | K-Means (Elbow, K=4, Silhouette: 0.079) & Agglomerative Hierarchical (0.038) | **PASS** |
 | **Test 8** | Data Mining Suite | Pearson correlations, Mutual Information, Gini feature importance, Apriori rules | **PASS** |
-| **Test 9** | Star-Schema Warehouse | SQLite `FactPlacement` (15,012 rows) + 5 dimension tables | **PASS** |
+| **Test 9** | Star-Schema Warehouse | SQLite `FactPlacement` (15,017 rows) + 5 dimension tables | **PASS** |
 | **Test 10** | Dynamic OLAP Engine | Universal builder, Slice, Dice, 2D simultaneous Roll-Up & Drill-Down, Pivot, Drill-Across | **PASS** |
 | **Test 11** | Recommendation Engine | Statistical gap analysis vs. placed candidate medians & percentiles | **PASS** |
 | **Test 12** | Batch CSV Prediction | High-throughput bulk scoring with CSV download | **PASS** |
@@ -29,24 +29,24 @@
 ## 2. Classification Benchmark Metrics
 
         Model  Accuracy  Precision   Recall       F1  ROC-AUC  Training Time (s)
-Decision Tree  0.775225   0.699614 0.760067 0.728589 0.854697              0.137
-Random Forest  0.815185   0.745567 0.811242 0.777019 0.893593              2.939
-  Naive Bayes  0.809524   0.755776 0.768456 0.762063 0.887532              0.059
+Decision Tree  0.769640   0.675809 0.806208 0.735272 0.851514              0.179
+Random Forest  0.816578   0.746728 0.813758 0.778804 0.895050              2.826
+  Naive Bayes  0.813915   0.761354 0.773490 0.767374 0.889286              0.060
 
 ---
 
 ## 3. Continuous Regression Metrics (Target: `aptitude_score`)
 
                      Model       R²        MSE      RMSE      MAE                                                                   Equation
-  Simple Linear Regression 0.215813 102.517677 10.125101 8.046994                                            y = (6.2035 × cgpa) + (14.6948)
-Multiple Linear Regression 0.405214  77.757127  8.818000 7.056613 y = (-0.049 × age) + (4.214 × cgpa) + (-0.004 × backlogs) + ... + (12.249)
+  Simple Linear Regression 0.238153 103.299377 10.163630 8.082051                                            y = (6.1531 × cgpa) + (15.1221)
+Multiple Linear Regression 0.432630  76.930080  8.770979 7.013319 y = (-0.030 × age) + (4.223 × cgpa) + (-0.018 × backlogs) + ... + (12.117)
 
 ---
 
 ## 4. Unsupervised Clustering Metrics (K=4)
 
-- **K-Means Silhouette Score:** 0.0762 (Fit Time: 0.417s)
-- **Agglomerative Silhouette Score:** 0.0732 (Fit Time: 0.081s, n=1,000 sample)
+- **K-Means Silhouette Score:** 0.0795 (Fit Time: 1.054s)
+- **Agglomerative Silhouette Score:** 0.0382 (Fit Time: 0.164s, n=1,000 sample)
 - **Selected Features:** 15 numeric competency dimensions
 
 ---

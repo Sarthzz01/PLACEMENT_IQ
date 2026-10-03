@@ -30,6 +30,55 @@ def css():
         font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif !important;
     }
 
+    /* Specifically hide ONLY the Streamlit Deploy Button */
+    [data-testid="stDeployButton"],
+    .stDeployButton,
+    .stAppDeployButton,
+    [data-testid="stToolbar"] .stDeployButton,
+    button:has([data-testid="stDeployButtonIcon"]) {
+        display: none !important;
+        visibility: hidden !important;
+        height: 0 !important;
+        width: 0 !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+        position: absolute !important;
+    }
+
+    /* Ensure Sidebar Minimize and Maximize Arrow Controls are ALWAYS visible */
+    [data-testid="collapsedControl"],
+    [data-testid="stSidebarCollapseButton"],
+    [data-testid="stSidebarHeader"] button,
+    button[aria-label="Close sidebar"],
+    button[aria-label="Open sidebar"],
+    button[data-testid="baseButton-headerNoPadding"],
+    header [data-testid="collapsedControl"],
+    header [data-testid="stSidebarCollapsedControl"] {
+        display: flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        pointer-events: auto !important;
+        cursor: pointer !important;
+        z-index: 100000 !important;
+    }
+
+    /* Style the sidebar toggle buttons with clean glassmorphic accents */
+    [data-testid="collapsedControl"] button,
+    [data-testid="stSidebarCollapseButton"] button {
+        background: rgba(30, 41, 59, 0.75) !important;
+        color: #38bdf8 !important;
+        border: 1px solid rgba(56, 189, 248, 0.3) !important;
+        border-radius: 8px !important;
+        transition: all 0.2s ease !important;
+    }
+
+    [data-testid="collapsedControl"] button:hover,
+    [data-testid="stSidebarCollapseButton"] button:hover {
+        background: rgba(56, 189, 248, 0.2) !important;
+        border-color: #38bdf8 !important;
+        transform: scale(1.05) !important;
+    }
+
     .stApp {
         background: radial-gradient(circle at 10% 0%, #111a36 0%, #070d17 50%, #0c081e 100%) !important;
         color: var(--text-primary);

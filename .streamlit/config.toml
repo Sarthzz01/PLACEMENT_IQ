@@ -1,0 +1,10 @@
+[client]
+showDeployButton = false
+
+[theme]
+base = "dark"
+primaryColor = "#6366f1"
+backgroundColor = "#070d17"
+secondaryBackgroundColor = "#0f172a"
+textColor = "#f8fafc"
+font = "sans serif"
