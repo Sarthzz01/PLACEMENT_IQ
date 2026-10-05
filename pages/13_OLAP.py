@@ -8,7 +8,8 @@ from src.olap import (
     drilldown_2d, pivot_op, drill_across
 )
 from src.database import log_olap_query, get_olap_history
-from src.ui import css, hero, render_top_navbar, label
+from src.visualizations import base
+from src.ui import css, hero, render_top_navbar, label, render_academic_justification
 
 css()
 require_admin()
@@ -78,6 +79,7 @@ with tab_builder:
     st.markdown("### 🛠️ Universal OLAP Query Builder")
     st.caption("Freely compose row dimensions, column dimensions, numeric measures, and aggregation functions:")
 
+    st.markdown("""<div class="campus-card" style="margin-bottom: 16px;">""", unsafe_allow_html=True)
     b_c1, b_c2, b_c3, b_c4 = st.columns(4)
     with b_c1:
         qb_rows = st.multiselect("Row Dimension(s)", DIMENSIONS, default=["branch"], format_func=label)
@@ -110,6 +112,8 @@ with tab_builder:
             st.session_state.qb_result = qb_res
             log_olap_query(email, "Universal Query Builder", qb_rows, qb_cols, qb_measure, qb_agg, filters, len(qb_res))
 
+    st.markdown("</div>", unsafe_allow_html=True)
+
     if "qb_result" in st.session_state:
         res = st.session_state.qb_result
         st.markdown("#### Aggregated Cube Result")
@@ -122,7 +126,7 @@ with tab_builder:
                     res, x=qb_rows[0], y=val_cols, barmode="group",
                     title=f"{qb_agg} of {label(qb_measure)} by {label(qb_rows[0])}"
                 )
-                fig_qb.update_layout(template="plotly_dark", paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)")
+                fig_qb = base(fig_qb, f"{qb_agg} of {label(qb_measure)} by {label(qb_rows[0])}")
                 st.plotly_chart(fig_qb, use_container_width=True)
 
         csv_qb = res.to_csv(index=False).encode('utf-8')
@@ -133,6 +137,7 @@ with tab_slice:
     st.markdown("### 🔪 OLAP Slice Operation")
     st.caption("Slice the cube across a specific dimensional plane by fixing one attribute value:")
 
+    st.markdown("""<div class="campus-card" style="margin-bottom: 16px;">""", unsafe_allow_html=True)
     sl_c1, sl_c2, sl_c3, sl_c4 = st.columns(4)
     with sl_c1:
         slice_dim = st.selectbox("Select Slice Dimension", DIMENSIONS, index=0, format_func=label, key="sl_dim")
@@ -143,6 +148,7 @@ with tab_slice:
         slice_measure = st.selectbox("Measure Column", MEASURES, index=MEASURES.index("cgpa"), format_func=label, key="sl_meas")
     with sl_c4:
         slice_agg = st.selectbox("Aggregation", AGG_FUNCS, index=0, key="sl_agg")
+    st.markdown("</div>", unsafe_allow_html=True)
 
     slice_df = df[df[slice_dim].astype(str) == str(slice_val)]
 
@@ -166,9 +172,9 @@ with tab_slice:
         fig_slice = px.histogram(
             slice_df, x="cgpa", color="placement_status",
             title=f"CGPA Distribution for {label(slice_dim)} = '{slice_val}'",
-            color_discrete_map={"Placed": "#10b981", "Not Placed": "#f43f5e"}
+            color_discrete_map={"Placed": "#16A34A", "Not Placed": "#64748B"}
         )
-        fig_slice.update_layout(template="plotly_dark", paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)")
+        fig_slice = base(fig_slice, f"CGPA Distribution for {label(slice_dim)} = '{slice_val}'")
         st.plotly_chart(fig_slice, use_container_width=True)
 
     csv_sl = slice_df.to_csv(index=False).encode('utf-8')
@@ -179,6 +185,7 @@ with tab_dice:
     st.markdown("### 🎲 OLAP Dice Operation")
     st.caption("Dice defines a sub-cube by specifying multi-condition filters simultaneously:")
 
+    st.markdown("""<div class="campus-card" style="margin-bottom: 16px;">""", unsafe_allow_html=True)
     d_c1, d_c2, d_c3, d_c4 = st.columns(4)
     with d_c1:
         dice_branches = st.multiselect("Branch Condition", sorted(df["branch"].dropna().unique().tolist()), default=["CSE", "IT"])
@@ -188,6 +195,7 @@ with tab_dice:
         dice_att_min = st.slider("Minimum Attendance %", 0.0, 100.0, 75.0, 1.0)
     with d_c4:
         dice_intern = st.selectbox("Internship Experience", ["All", "With Internships (≥1)", "Without Internships (0)"])
+    st.markdown("</div>", unsafe_allow_html=True)
 
     dice_data = df.copy()
     if dice_branches:
@@ -214,9 +222,9 @@ with tab_dice:
             x="cgpa", y="aptitude_score", color="placement_status",
             size="dsa_questions_solved",
             title="Diced Sub-Cube: CGPA vs Aptitude Score (Size: DSA Solved)",
-            color_discrete_map={"Placed": "#10b981", "Not Placed": "#f43f5e"}
+            color_discrete_map={"Placed": "#16A34A", "Not Placed": "#64748B"}
         )
-        fig_dice.update_layout(template="plotly_dark", paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)")
+        fig_dice = base(fig_dice, "Diced Sub-Cube: CGPA vs Aptitude Score (Size: DSA Solved)")
         st.plotly_chart(fig_dice, use_container_width=True)
 
         st.dataframe(dice_data.head(20), use_container_width=True)
@@ -230,9 +238,9 @@ with tab_rollup:
     st.caption("Select which row dimensions and which column dimensions to drill up at once:")
 
     st.markdown("""
-    <div class="glass-card" style="margin-bottom: 16px;">
-        <p style="color:#cbd5e1; font-size:0.9rem; margin:0;">
-            <b>Simultaneous 2D Roll-Up:</b> You can choose the current detailed levels on both axes, then specify the target summarized levels.
+    <div class="campus-card" style="margin-bottom: 16px;">
+        <p style="color:#475569; font-size:0.88rem; margin:0;">
+            <b>Simultaneous 2D Roll-Up:</b> Choose the current detailed levels on both axes, then specify the target summarized levels.
             The engine executes roll-up along both axes simultaneously and displays the side-by-side transition.
         </p>
     </div>
@@ -304,6 +312,7 @@ with tab_pivot:
     st.markdown("### 🔄 OLAP Pivot Table & Matrix View")
     st.caption("Rotate axes to view data from different analytical perspectives:")
 
+    st.markdown("""<div class="campus-card" style="margin-bottom: 16px;">""", unsafe_allow_html=True)
     pv_c1, pv_c2, pv_c3, pv_c4 = st.columns(4)
     with pv_c1:
         pv_row = st.selectbox("Row Dimension", DIMENSIONS, index=DIMENSIONS.index("branch"), format_func=label, key="pv_row")
@@ -313,6 +322,7 @@ with tab_pivot:
         pv_measure = st.selectbox("Value Measure", MEASURES, index=MEASURES.index("cgpa"), format_func=label, key="pv_meas")
     with pv_c4:
         pv_agg = st.selectbox("Aggregation", AGG_FUNCS, index=0, key="pv_agg")
+    st.markdown("</div>", unsafe_allow_html=True)
 
     pv_result = pivot_op(df, [pv_row], [pv_col], pv_measure, pv_agg)
     st.markdown(f"#### Pivot Matrix: {label(pv_row)} × {label(pv_col)} ({pv_agg} of {label(pv_measure)})")
@@ -326,9 +336,9 @@ with tab_pivot:
             y=pv_result[pv_row].astype(str).tolist(),
             text_auto=True,
             title=f"Cross-Tabulation Matrix: {label(pv_row)} vs {label(pv_col)}",
-            color_continuous_scale="Purples"
+            color_continuous_scale=[[0, "#EFF6FF"], [0.5, "#93C5FD"], [1, "#1D4ED8"]]
         )
-        fig_pv.update_layout(template="plotly_dark", paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)")
+        fig_pv = base(fig_pv, f"Cross-Tabulation Matrix: {label(pv_row)} vs {label(pv_col)}")
         st.plotly_chart(fig_pv, use_container_width=True)
 
     csv_pv = pv_result.to_csv(index=False).encode('utf-8')
@@ -339,6 +349,7 @@ with tab_across:
     st.markdown("### 🌐 OLAP Drill-Across Operation")
     st.caption("Combine multiple measures across different warehouse dimension areas in a single query:")
 
+    st.markdown("""<div class="campus-card" style="margin-bottom: 16px;">""", unsafe_allow_html=True)
     ac_c1, ac_c2 = st.columns(2)
     with ac_c1:
         ac_row = st.selectbox("Row Dimension", DIMENSIONS, index=0, format_func=label, key="ac_row")
@@ -352,6 +363,7 @@ with tab_across:
         format_func=label
     )
     ac_agg = st.selectbox("Aggregation", AGG_FUNCS, index=0, key="ac_agg")
+    st.markdown("</div>", unsafe_allow_html=True)
 
     if ac_measures:
         st.info("Lineage: Combining `FactPlacement` measures with `DimStudent` and `DimAcademic` dimensions.")
@@ -371,3 +383,16 @@ with tab_hist:
         st.dataframe(hist_olap, use_container_width=True)
     else:
         st.info("No OLAP queries logged yet in this session.")
+
+# ----------------- ACADEMIC & INSTITUTIONAL JUSTIFICATION -----------------
+render_academic_justification(
+    title="Multi-Dimensional OLAP Cube Operations & Strategic Navigation",
+    algorithm_name="OLAP Operations: Slice • Dice • 2D Roll-Up • 2D Drill-Down • Pivot • Drill-Across",
+    why_used=[
+        ("Interactive Dimensional Slicing & Dicing", "Standard static tables only show flat, predefined views of student cohorts. The Slice operation isolates a specific sub-plane along a single dimension (e.g. Branch = Computer Science), while Dice extracts a localized sub-cube bounded by multiple simultaneous criteria (e.g. CGPA >= 8.0 and Internships >= 2). This allows placement officers to isolate niche talent pools instantly for incoming specialized recruiters."),
+        ("Bidirectional Hierarchical Navigation (Roll-Up & Drill-Down)", "Academic leadership requires insights at different levels of abstraction. Simultaneous 2D Roll-Up summarizes granular data upward along conceptual hierarchies (Student → Branch → Campus Institution), revealing macro placement trends. Conversely, Drill-Down navigates downward from high-level statistics into granular candidate records, enabling immediate targeted academic counseling for high-risk students."),
+        ("Axis Rotation (Pivot) & Multi-Fact Synthesis (Drill-Across)", "The Pivot operation reorients cube axes to present cross-tabulated contingency matrices (e.g. Academic Performance vs Placement Rate), surfacing hidden dimensional dependencies. Drill-Across spans multiple fact domains, consolidating student co-curricular milestones with final hiring conversion into a unified analytical matrix.")
+    ],
+    institutional_impact="Transforms placement intelligence from reactive post-semester reviews into proactive, real-time decision-making—allowing placement deans to continuously evaluate departmental conversion rates, optimize faculty training allocations, and track cohort progress.",
+    dwm_concept="Multi-Dimensional Data Cube (MOLAP / ROLAP), Slice & Dice Projections, Concept Hierarchies & Dimension Generalization, Granular Decomposition, Cross-Tabular Rotation, Multi-Fact Federation."
+)

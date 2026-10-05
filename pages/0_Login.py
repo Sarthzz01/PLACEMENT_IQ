@@ -15,11 +15,11 @@ if st.session_state.authenticated:
 
 hero(
     "Authentication & Registration Portal",
-    "Single common access point for students and institutional administrators. Role and privileges are automatically resolved by the database.",
+    "Single institutional access point for students and administrators. Roles and privileges are automatically resolved by the database.",
     tag="Secure Access"
 )
 
-col_center = st.columns([1, 2.4, 1])[1]
+col_center = st.columns([1, 2.2, 1])[1]
 
 with col_center:
     # Determine default tab if directed from CTA button
@@ -33,13 +33,13 @@ with col_center:
     # ----------------- TAB 1: SIGN IN -----------------
     with tab_login:
         st.markdown("""
-        <div class="glass-card" style="border-top: 3px solid #6366f1; margin-bottom: 18px;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px;">
-                <h4 style="margin:0; color:#f8fafc; font-size:1.15rem;">🔐 Unified Account Login</h4>
+        <div class="campus-card" style="border-top: 3px solid #2563EB; margin-bottom: 16px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 6px;">
+                <h4 style="margin:0; color:#0F172A; font-size:1.1rem;">🔐 Unified Account Login</h4>
                 <span class="badge-pill badge-info">Role Auto-Detection</span>
             </div>
-            <p style="color:#94a3b8; font-size:0.86rem; margin:0;">
-                Enter your registered credentials. The system automatically loads your personalized <b>Student Workspace</b> or <b>Administrator Center</b> based on your database account.
+            <p style="color:#64748B; font-size:0.85rem; margin:0;">
+                Enter your credentials to load your <b>Student Workspace</b> or <b>Administrator Center</b>.
             </p>
         </div>
         """, unsafe_allow_html=True)
@@ -65,13 +65,13 @@ with col_center:
     # ----------------- TAB 2: SIGN UP / REGISTRATION -----------------
     with tab_signup:
         st.markdown("""
-        <div class="glass-card" style="border-top: 3px solid #38bdf8; margin-bottom: 18px;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px;">
-                <h4 style="margin:0; color:#f8fafc; font-size:1.15rem;">🎓 New Student Registration</h4>
-                <span class="badge-pill badge-success">Student Role</span>
+        <div class="campus-card" style="border-top: 3px solid #16A34A; margin-bottom: 16px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 6px;">
+                <h4 style="margin:0; color:#0F172A; font-size:1.1rem;">🎓 New Student Registration</h4>
+                <span class="badge-pill badge-success">Student Account</span>
             </div>
-            <p style="color:#94a3b8; font-size:0.86rem; margin:0;">
-                Create a student candidate profile to save your academic parameters, evaluate placement readiness, and receive personalized recommendations.
+            <p style="color:#64748B; font-size:0.85rem; margin:0;">
+                Create a candidate profile to evaluate placement readiness and receive personalized recommendations.
             </p>
         </div>
         """, unsafe_allow_html=True)
@@ -119,5 +119,3 @@ with col_center:
                         st.rerun()
                     else:
                         st.error(msg)
-
-

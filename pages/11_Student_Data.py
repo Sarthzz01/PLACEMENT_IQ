@@ -36,7 +36,7 @@ action_count = total_students - verified_count - pending_count
 # KPI Strip
 m1, m2, m3, m4 = st.columns(4)
 with m1:
-    st.metric("Total Registered Candidates", f"{total_students}", "Stored in SQLite")
+    st.metric("Total Candidates", f"{total_students}", "Stored in SQLite")
 with m2:
     st.metric("Verified Profiles", f"{verified_count}", "Audit Approved")
 with m3:
@@ -89,9 +89,9 @@ for _, r in filtered_df.iterrows():
         "Email": r["email"],
         "Branch": r["branch"],
         "CGPA": f"{float(r.get('cgpa', 0)):.2f}",
-        "Latest Prediction": latest_pred,
+        "Prediction": latest_pred,
         "Probability": latest_prob,
-        "Status": r.get("verification_status", "Verified"),
+        "Profile Status": r.get("verification_status", "Verified"),
         "Last Updated": r.get("updated_at", r.get("created_at", "N/A"))
     })
 
@@ -127,12 +127,12 @@ if len(filtered_df) > 0:
 
     with col_prof_view:
         st.markdown(f"""
-        <div class="glass-card">
+        <div class="campus-card">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                <h4 style="margin:0; color:#38bdf8;">Candidate Profile: {sel_student.get('name')}</h4>
+                <h4 style="margin:0; color:#2563EB;">Candidate Profile: {sel_student.get('name')}</h4>
                 <span class="badge-pill badge-info">{sel_student.get('student_id')}</span>
             </div>
-            <div style="font-size:0.9rem; color:#cbd5e1; line-height: 1.8;">
+            <div style="font-size:0.9rem; color:#475569; line-height: 1.8;">
                 <b>Email:</b> <code>{sel_student.get('email')}</code> &bull; <b>Branch:</b> {sel_student.get('branch')}<br>
                 <b>CGPA:</b> {float(sel_student.get('cgpa', 0)):.2f} &bull; <b>Backlogs:</b> {sel_student.get('backlogs', 0)} &bull; <b>Attendance:</b> {float(sel_student.get('attendance_percentage', 0)):.1f}%<br>
                 <b>DSA Problems:</b> {sel_student.get('dsa_questions_solved', 0)} &bull; <b>LeetCode:</b> {sel_student.get('leetcode_questions_solved', 0)}<br>
@@ -140,15 +140,15 @@ if len(filtered_df) > 0:
                 <b>Aptitude:</b> {float(sel_student.get('aptitude_score', 0)):.1f} &bull; <b>Coding Score:</b> {float(sel_student.get('coding_skill_score', 0)):.1f} / 10<br>
                 <b>Placement Training:</b> {sel_student.get('placement_training', 'Yes')}<br>
                 <b>External Links:</b> 
-                <a href="{sel_student.get('github_url', '#')}" target="_blank" style="color:#38bdf8;">GitHub</a> &bull; 
-                <a href="{sel_student.get('leetcode_url', '#')}" target="_blank" style="color:#c084fc;">LeetCode</a> &bull;
-                <a href="{sel_student.get('portfolio_url', '#')}" target="_blank" style="color:#34d399;">Portfolio</a>
+                <a href="{sel_student.get('github_url', '#')}" target="_blank" style="color:#2563EB;">GitHub</a> &bull; 
+                <a href="{sel_student.get('leetcode_url', '#')}" target="_blank" style="color:#2563EB;">LeetCode</a> &bull;
+                <a href="{sel_student.get('portfolio_url', '#')}" target="_blank" style="color:#16A34A;">Portfolio</a>
             </div>
         </div>
         """, unsafe_allow_html=True)
 
     with col_action_view:
-        st.markdown("#### 🔮 Run Live Prediction for this Candidate")
+        st.markdown("#### 🎯 Run Live Prediction for this Candidate")
         model_choice = st.selectbox("Choose Classification Model", ["Random Forest", "Decision Tree", "Naive Bayes"], index=0)
         
         if st.button("🚀 Evaluate Candidate Likelihood", type="primary", use_container_width=True):
@@ -169,13 +169,15 @@ if len(filtered_df) > 0:
 
         if "admin_selected_eval" in st.session_state:
             res = st.session_state.admin_selected_eval
-            status_color = "#34d399" if res["status"] == "Placed" else "#fb7185"
+            status_color = "#16A34A" if res["status"] == "Placed" else "#DC2626"
+            card_bg = "#F0FDF4" if res["status"] == "Placed" else "#FEF2F2"
+            card_border = "#86EFAC" if res["status"] == "Placed" else "#FECACA"
             st.markdown(f"""
-            <div style="background: rgba(15, 23, 42, 0.8); border: 1px solid {status_color}; border-radius: 12px; padding: 14px; margin: 10px 0; text-align: center;">
-                <div style="font-size: 1.4rem; font-weight: 800; color: {status_color};">
+            <div style="background: {card_bg}; border: 1.5px solid {card_border}; border-radius: 12px; padding: 14px; margin: 10px 0; text-align: center;">
+                <div style="font-size: 1.3rem; font-weight: 800; color: {status_color};">
                     {'✓' if res['status']=='Placed' else '⚠️'} {res['status'].upper()} ({res['probability_percent']}%)
                 </div>
-                <div style="font-size: 0.8rem; color: #94a3b8;">Evaluated with {res['model_name']} &bull; Stored in SQLite</div>
+                <div style="font-size: 0.8rem; color: #64748B;">Evaluated with {res['model_name']} &bull; Stored in SQLite</div>
             </div>
             """, unsafe_allow_html=True)
 

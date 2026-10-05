@@ -46,10 +46,10 @@ with tab_models:
         st.rerun()
 
     st.markdown("""
-    <div class="glass-card" style="margin-top: 14px; font-size: 0.88rem; color: #cbd5e1;">
-        • <b>Random Forest (Recommended):</b> Ensemble model achieving ~86.5% test accuracy with robust generalization across non-linear feature interactions.<br>
-        • <b>Decision Tree:</b> High interpretability with hierarchical decision rules.<br>
-        • <b>Gaussian Naive Bayes:</b> Fast probabilistic baseline suitable for continuous Bayesian likelihood estimates.
+    <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px; padding: 18px 22px; margin-top: 14px; font-size: 0.9rem; color: #334155; line-height: 1.7; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+        <p style="margin: 0 0 8px 0;"><span style="color: #2563EB; font-weight: 700;">• Random Forest (Recommended):</span> Ensemble model achieving ~86.5% test accuracy with robust generalization across non-linear feature interactions.</p>
+        <p style="margin: 0 0 8px 0;"><span style="color: #2563EB; font-weight: 700;">• Decision Tree:</span> High interpretability with clear hierarchical decision boundaries.</p>
+        <p style="margin: 0;"><span style="color: #2563EB; font-weight: 700;">• Gaussian Naive Bayes:</span> Fast probabilistic baseline suitable for continuous likelihood estimates.</p>
     </div>
     """, unsafe_allow_html=True)
 
@@ -59,9 +59,9 @@ with tab_acc:
     st.caption("Users signing in with any of these institutional email addresses are automatically granted Administrator privileges:")
 
     st.markdown("""
-    <div class="glass-card">
-        <ul style="color: #cbd5e1; font-size: 0.95rem; line-height: 1.8; margin-bottom: 0;">
-    """ + "".join([f"<li><code>{e}</code></li>" for e in ADMIN_EMAILS]) + """
+    <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px; padding: 18px 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+        <ul style="color: #0F172A; font-size: 0.95rem; line-height: 2; margin-bottom: 0;">
+    """ + "".join([f"<li><span style='background: #EFF6FF; color: #2563EB; padding: 3px 10px; border-radius: 6px; font-family: monospace; font-weight: 600; border: 1px solid #DBEAFE;'>{e}</span></li>" for e in ADMIN_EMAILS]) + """
         </ul>
     </div>
     """, unsafe_allow_html=True)

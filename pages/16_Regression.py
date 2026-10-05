@@ -5,7 +5,8 @@ from src.auth import require_admin
 from src.preprocessing import load_data
 from src.regression import train_regression
 from src.config import BASE_NUMERIC, REGRESSION_TARGETS
-from src.ui import css, hero, render_top_navbar, label
+from src.visualizations import base
+from src.ui import css, hero, render_top_navbar, label, render_academic_justification
 
 css()
 require_admin()
@@ -25,9 +26,9 @@ hero(
 df = load_data()
 
 st.markdown("""
-<div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 16px 20px; margin-bottom: 20px;">
-    <b style="color: #38bdf8;">📌 Dataset Target Integrity Notice:</b>
-    <span style="color: #cbd5e1; font-size: 0.88rem;">
+<div class="campus-card" style="padding: 16px 20px; margin-bottom: 20px;">
+    <b style="color: #2563EB;">📌 Dataset Target Integrity Notice:</b>
+    <span style="color: #475569; font-size: 0.88rem;">
         The primary campus placement status in our verified dataset is binary (<code>placement_prediction</code>: 0 = Not Placed, 1 = Placed). 
         To avoid fabricating synthetic placement salary numbers, regression is rigorously evaluated on true continuous competency scores (<code>aptitude_score</code>, <code>coding_skill_score</code>, <code>cgpa</code>, <code>mock_interview_score</code>).
     </span>
@@ -72,9 +73,10 @@ with col_bar:
     fig_cmp = px.bar(
         metrics_df, x="Model", y=["R²", "RMSE", "MAE"],
         barmode="group",
-        title="Goodness-of-Fit (R²) & Error Comparison"
+        title="Goodness-of-Fit (R²) & Error Comparison",
+        color_discrete_sequence=["#2563EB", "#60A5FA", "#16A34A"]
     )
-    fig_cmp.update_layout(template="plotly_dark", paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)")
+    fig_cmp = base(fig_cmp, "Goodness-of-Fit (R²) & Error Comparison")
     st.plotly_chart(fig_cmp, use_container_width=True)
 
 with col_diag:
@@ -84,7 +86,7 @@ with col_diag:
         st.code(r["Equation"])
 
     st.markdown(f"""
-    <div class="glass-card" style="margin-top: 10px; font-size: 0.88rem; color: #cbd5e1;">
+    <div class="campus-card" style="margin-top: 10px; font-size: 0.86rem; color: #475569;">
         <b>Technical Comparison:</b><br>
         Multiple Linear Regression captures variance across {len(mlr_features)} simultaneous signals, whereas Simple Linear Regression is constrained to the bivariate linear relationship with <code>{slr_feature}</code>.
     </div>
@@ -105,20 +107,34 @@ for tab, m_name in zip([tab_slr, tab_mlr], ["Simple Linear Regression", "Multipl
                 x=art["actual"], y=art["pred"],
                 labels={"x": f"Actual {label(target_col)}", "y": f"Predicted {label(target_col)}"},
                 title=f"Actual vs. Predicted — {m_name}",
-                opacity=0.65
+                opacity=0.65,
+                color_discrete_sequence=["#2563EB"]
             )
             min_v = min(min(art["actual"]), min(art["pred"]))
             max_v = max(max(art["actual"]), max(art["pred"]))
-            fig_act.add_shape(type="line", x0=min_v, y0=min_v, x1=max_v, y1=max_v, line=dict(color="#f43f5e", dash="dash"))
-            fig_act.update_layout(template="plotly_dark", paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)")
+            fig_act.add_shape(type="line", x0=min_v, y0=min_v, x1=max_v, y1=max_v, line=dict(color="#DC2626", dash="dash"))
+            fig_act = base(fig_act, f"Actual vs. Predicted — {m_name}")
             st.plotly_chart(fig_act, use_container_width=True)
 
         with c2:
             fig_res = px.histogram(
                 x=art["residuals"], nbins=30,
                 title=f"Residual Error Distribution (Actual - Predicted) — {m_name}",
-                color_discrete_sequence=["#818cf8"]
+                color_discrete_sequence=["#60A5FA"]
             )
-            fig_res.add_vline(x=0, line_dash="dash", line_color="#34d399")
-            fig_res.update_layout(template="plotly_dark", paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)")
+            fig_res.add_vline(x=0, line_dash="dash", line_color="#16A34A")
+            fig_res = base(fig_res, f"Residual Error Distribution — {m_name}")
             st.plotly_chart(fig_res, use_container_width=True)
+
+# ----------------- ACADEMIC & INSTITUTIONAL JUSTIFICATION -----------------
+render_academic_justification(
+    title="Continuous Placement Competency & Skill Estimation",
+    algorithm_name="Simple Linear Regression (SLR) & Multiple Linear Regression (MLR)",
+    why_used=[
+        ("Univariate Baseline with SLR", "Simple Linear Regression isolates the direct, single-variable predictive power of foundational academic metrics (like CGPA) against quantitative skill targets (like Aptitude Score). By computing the slope and R², it demonstrates the empirical ceiling of relying solely on classroom marks for hiring competency."),
+        ("Multivariate Weight Decomposition with MLR", "Multiple Linear Regression models the composite interaction of academic, coding, and experiential attributes simultaneously. The learned regression coefficients (β) quantify the exact marginal return for each unit increase in a feature (e.g., how much each additional project or 10 DSA questions lifts expected aptitude/coding competency), holding all other variables constant."),
+        ("Residual Analysis & Error Diagnostics", "Visualizing residual error distributions verifies the fundamental Gauss-Markov assumptions (homoscedasticity, normality of error terms, zero mean). Centered, bell-shaped residual distributions validate that our linear formulations capture the true continuous trend without systematic bias.")
+    ],
+    institutional_impact="Equips placement advisors with quantifiable, parametric equations to set realistic semester-by-semester skill improvement milestones for students, moving beyond qualitative advice to precise numerical guidance.",
+    dwm_concept="Continuous Numerical Prediction, Ordinary Least Squares (OLS) Optimization, Multivariate Coefficient Interpretation, Residual Diagnostics."
+)

@@ -2,9 +2,9 @@
 showDeployButton = false
 
 [theme]
-base = "dark"
-primaryColor = "#6366f1"
-backgroundColor = "#070d17"
-secondaryBackgroundColor = "#0f172a"
-textColor = "#f8fafc"
+base = "light"
+primaryColor = "#2563EB"
+backgroundColor = "#F8FAFC"
+secondaryBackgroundColor = "#FFFFFF"
+textColor = "#0F172A"
 font = "sans serif"

@@ -36,18 +36,26 @@ with tab_export:
     c1, c2 = st.columns(2)
     
     with c1:
-        st.markdown("#### 📊 Core Dataset & Summary")
+        st.markdown("""
+        <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px; padding: 18px 20px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+            <div style="font-weight: 700; color: #0F172A; margin-bottom: 4px; font-size: 1rem;">📊 Core Dataset & Summary</div>
+            <div style="font-size: 0.85rem; color: #64748B; margin-bottom: 12px;">Statistical distributions and descriptive metrics across all 20 dimensions.</div>
+        """, unsafe_allow_html=True)
         ds_summary = df.describe().T.reset_index().rename(columns={"index": "Feature"})
         st.download_button(
-            "📥 Download Dataset Statistical Summary (CSV)",
+            "📥 Download Statistical Summary (CSV)",
             data=ds_summary.to_csv(index=False).encode('utf-8'),
             file_name="dataset_statistical_summary.csv",
             mime="text/csv",
             use_container_width=True
         )
+        st.markdown("</div>", unsafe_allow_html=True)
 
-        st.markdown("<div style='height: 8px;'></div>", unsafe_allow_html=True)
-        st.markdown("#### 🎯 Classification Performance Metrics")
+        st.markdown("""
+        <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px; padding: 18px 20px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+            <div style="font-weight: 700; color: #0F172A; margin-bottom: 4px; font-size: 1rem;">🎯 Classification Performance Metrics</div>
+            <div style="font-size: 0.85rem; color: #64748B; margin-bottom: 12px;">Accuracy, precision, recall, F1, and AUC for DT, RF, and Naive Bayes.</div>
+        """, unsafe_allow_html=True)
         cls_csv = OUTPUT_DIR / "classification_metrics.csv"
         if cls_csv.exists():
             st.download_button(
@@ -59,9 +67,13 @@ with tab_export:
             )
         else:
             st.info("Train classification models first to export metrics.")
+        st.markdown("</div>", unsafe_allow_html=True)
 
-        st.markdown("<div style='height: 8px;'></div>", unsafe_allow_html=True)
-        st.markdown("#### 📈 Continuous Regression Metrics")
+        st.markdown("""
+        <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px; padding: 18px 20px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+            <div style="font-weight: 700; color: #0F172A; margin-bottom: 4px; font-size: 1rem;">📈 Continuous Regression Metrics</div>
+            <div style="font-size: 0.85rem; color: #64748B; margin-bottom: 12px;">SLR and MLR coefficients, equations, R², MSE, and MAE.</div>
+        """, unsafe_allow_html=True)
         reg_csv = OUTPUT_DIR / "regression_metrics.csv"
         if reg_csv.exists():
             st.download_button(
@@ -71,30 +83,40 @@ with tab_export:
                 mime="text/csv",
                 use_container_width=True
             )
+        st.markdown("</div>", unsafe_allow_html=True)
 
     with c2:
-        st.markdown("#### 🔮 K-Means & Hierarchical Cluster Profiles")
+        st.markdown("""
+        <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px; padding: 18px 20px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+            <div style="font-weight: 700; color: #0F172A; margin-bottom: 4px; font-size: 1rem;">🔮 K-Means & Cluster Profiles</div>
+            <div style="font-size: 0.85rem; color: #64748B; margin-bottom: 12px;">Centroids, student distributions, and cluster behavioral personas.</div>
+        """, unsafe_allow_html=True)
         km_prof = OUTPUT_DIR / "kmeans_cluster_profiles.csv"
         if km_prof.exists():
             st.download_button(
-                "📥 Download K-Means Cluster Profiles (CSV)",
+                "📥 Download K-Means Profiles (CSV)",
                 data=km_prof.read_bytes(),
                 file_name="kmeans_cluster_profiles.csv",
                 mime="text/csv",
                 use_container_width=True
             )
+        st.markdown("</div>", unsafe_allow_html=True)
 
-        st.markdown("<div style='height: 8px;'></div>", unsafe_allow_html=True)
-        st.markdown("#### 👥 Student Profiles Roster")
+        st.markdown("""
+        <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px; padding: 18px 20px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+            <div style="font-weight: 700; color: #0F172A; margin-bottom: 4px; font-size: 1rem;">👥 Student Profiles Roster</div>
+            <div style="font-size: 0.85rem; color: #64748B; margin-bottom: 12px;">Export registered student submissions and historical predictions.</div>
+        """, unsafe_allow_html=True)
         sub_csv = OUTPUT_DIR / "student_submissions.csv"
         if sub_csv.exists():
             st.download_button(
-                "📥 Download Student Submissions & Audits (CSV)",
+                "📥 Download Student Submissions (CSV)",
                 data=sub_csv.read_bytes(),
                 file_name="student_submissions_roster.csv",
                 mime="text/csv",
                 use_container_width=True
             )
+        st.markdown("</div>", unsafe_allow_html=True)
 
 # ----------------- TAB 2: ACADEMIC PROJECT REPORT -----------------
 with tab_report_view:

@@ -7,7 +7,7 @@ from src.warehouse import (
     query, STAR_SCHEMA_DEF, RELATIONSHIPS
 )
 from src.config import DB_PATH
-from src.ui import css, hero, render_top_navbar
+from src.ui import css, hero, render_top_navbar, render_academic_justification
 
 css()
 require_admin()
@@ -79,35 +79,35 @@ with tab_schema:
     st.caption("Central fact table with surrogate keys linking to 5 dedicated dimension tables:")
 
     st.markdown("""
-    <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 22px; margin-bottom: 20px;">
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px;">
-            <div style="background: rgba(99, 102, 241, 0.15); border: 1px solid rgba(99, 102, 241, 0.4); border-radius: 12px; padding: 14px;">
-                <b style="color: #818cf8;">DimStudent (Dimension)</b><br>
-                <span style="font-size: 0.8rem; color: #cbd5e1;">student_key (PK), age, gender, branch, data_source</span>
+    <div class="campus-card" style="margin-bottom: 20px;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-bottom: 20px;">
+            <div style="background: #EFF6FF; border: 1px solid #BFDBFE; border-radius: 10px; padding: 14px;">
+                <b style="color: #2563EB;">DimStudent (Dimension)</b><br>
+                <span style="font-size: 0.8rem; color: #475569;">student_key (PK), age, gender, branch, data_source</span>
             </div>
-            <div style="background: rgba(6, 182, 212, 0.15); border: 1px solid rgba(6, 182, 212, 0.4); border-radius: 12px; padding: 14px;">
-                <b style="color: #38bdf8;">DimAcademic (Dimension)</b><br>
-                <span style="font-size: 0.8rem; color: #cbd5e1;">student_key (PK), cgpa, backlogs, attendance, cgpa_band</span>
+            <div style="background: #EFF6FF; border: 1px solid #BFDBFE; border-radius: 10px; padding: 14px;">
+                <b style="color: #2563EB;">DimAcademic (Dimension)</b><br>
+                <span style="font-size: 0.8rem; color: #475569;">student_key (PK), cgpa, backlogs, attendance, cgpa_band</span>
             </div>
-            <div style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4); border-radius: 12px; padding: 14px;">
-                <b style="color: #34d399;">DimSkills (Dimension)</b><br>
-                <span style="font-size: 0.8rem; color: #cbd5e1;">student_key (PK), dsa, leetcode, aptitude, coding_score</span>
+            <div style="background: #F0FDF4; border: 1px solid #BBF7D0; border-radius: 10px; padding: 14px;">
+                <b style="color: #16A34A;">DimSkills (Dimension)</b><br>
+                <span style="font-size: 0.8rem; color: #475569;">student_key (PK), dsa, leetcode, aptitude, coding_score</span>
             </div>
-            <div style="background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.4); border-radius: 12px; padding: 14px;">
-                <b style="color: #fbbf24;">DimEngagement (Dimension)</b><br>
-                <span style="font-size: 0.8rem; color: #cbd5e1;">student_key (PK), internships, projects, hackathons, repos</span>
+            <div style="background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 10px; padding: 14px;">
+                <b style="color: #D97706;">DimEngagement (Dimension)</b><br>
+                <span style="font-size: 0.8rem; color: #475569;">student_key (PK), internships, projects, hackathons, repos</span>
             </div>
-            <div style="background: rgba(244, 63, 94, 0.15); border: 1px solid rgba(244, 63, 94, 0.4); border-radius: 12px; padding: 14px;">
-                <b style="color: #fb7185;">DimPlacement (Dimension)</b><br>
-                <span style="font-size: 0.8rem; color: #cbd5e1;">student_key (PK), placement_prediction, placement_status</span>
+            <div style="background: #EFF6FF; border: 1px solid #BFDBFE; border-radius: 10px; padding: 14px;">
+                <b style="color: #2563EB;">DimPlacement (Dimension)</b><br>
+                <span style="font-size: 0.8rem; color: #475569;">student_key (PK), placement_prediction, placement_status</span>
             </div>
         </div>
         
-        <div style="text-align: center; margin: 18px 0 10px 0;">
-            <div style="display: inline-block; background: linear-gradient(135deg, rgba(37, 99, 235, 0.3), rgba(124, 58, 237, 0.3)); border: 2px solid #818cf8; border-radius: 16px; padding: 18px 36px; box-shadow: 0 0 24px rgba(99, 102, 241, 0.25);">
-                <span style="font-size: 0.8rem; text-transform: uppercase; color: #38bdf8; font-weight: 800; letter-spacing: 0.05em;">CENTRAL FACT TABLE</span>
-                <h3 style="margin: 4px 0; color: #f8fafc; font-size: 1.4rem;">FactPlacement</h3>
-                <span style="font-size: 0.85rem; color: #cbd5e1;">
+        <div style="text-align: center; margin: 10px 0;">
+            <div style="display: inline-block; background: #0F172A; border-radius: 12px; padding: 18px 36px; box-shadow: 0 4px 14px rgba(15, 23, 42, 0.12);">
+                <span style="font-size: 0.75rem; text-transform: uppercase; color: #60A5FA; font-weight: 800; letter-spacing: 0.06em;">CENTRAL FACT TABLE</span>
+                <h3 style="margin: 4px 0; color: #FFFFFF; font-size: 1.35rem;">FactPlacement</h3>
+                <span style="font-size: 0.82rem; color: #CBD5E1;">
                     fact_id (PK) &bull; student_key (FK) &bull; cgpa &bull; attendance &bull; aptitude &bull; coding &bull; internships &bull; projects &bull; placement_prediction
                 </span>
             </div>
@@ -162,3 +162,16 @@ ORDER BY d.branch, p.placement_status;"""
             st.dataframe(sql_res, use_container_width=True)
         except Exception as e:
             st.error(f"SQL Error: {str(e)}")
+
+# ----------------- ACADEMIC & INSTITUTIONAL JUSTIFICATION -----------------
+render_academic_justification(
+    title="Star Schema Dimensional Modeling & Analytical Data Federation",
+    algorithm_name="Star Schema Architecture • FactPlacement • Conformed Dimensions",
+    why_used=[
+        ("Analytical Read Optimization over Normalized 3NF", "Operational relational databases (OLTP) employ highly normalized 3rd Normal Form (3NF) to guarantee transactional integrity during student registration. However, running aggregate analytical queries across 3NF tables necessitates extensive, expensive multi-table joins. The Star Schema de-normalizes conformed dimensions around a centralized FactPlacement table, drastically minimizing join depth and accelerating analytical aggregation speed."),
+        ("Conformed Dimensional Integrity Across Campus", "Conformed dimensions (DimStudent, DimAcademic, DimSkills, DimEngagement, DimPlacement) standardize attribute hierarchies across campus departments. This ensures complete semantic consistency—meaning 'Placement Status' or 'CGPA Tier' represents the exact same calculation whether queried by the Career Office, Academic Deans, or Machine Learning pipelines."),
+        ("Decoupling Operational Transactions from Analytical Pipelines", "By persisting processed and validated candidate records in a dedicated analytical warehouse (placement_dw.sqlite), real-time student profile updates are fully isolated from intensive predictive analytics, OLAP cube slicing, and model training jobs, preventing operational database locking.")
+    ],
+    institutional_impact="Provides university administrators with an authoritative single source of truth for institutional placement metrics, enabling instant generation of regulatory compliance reports (e.g. NAAC, NBA, NIRF) without impacting live student registration systems.",
+    dwm_concept="Dimensional Modeling, Star Schema, Fact Table (Grain & Additive Measures), Conformed Dimensions, Surrogate Keys, Data Mart Federation."
+)

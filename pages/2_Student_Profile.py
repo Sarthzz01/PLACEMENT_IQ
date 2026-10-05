@@ -16,8 +16,8 @@ user_id = st.session_state.user_id
 render_top_navbar(role="Student", user_name=name, user_id=f"{user_id} • {email}")
 
 hero(
-    "Student Profile & Competency Entry",
-    "Maintain your official placement candidate profile. These parameters map directly into our institutional Data Warehouse and train the machine learning prediction models.",
+    "My Profile",
+    "Keep your placement profile up to date. These parameters map directly into our institutional Data Warehouse and power the AI placement prediction models.",
     tag="Candidate Profile Center"
 )
 
@@ -62,25 +62,27 @@ with tab_form:
         st.info("👋 **Welcome to Profile Setup!** Please fill in your academic record, coding practice, and project experience below. Once saved, your actual data will power your placement analytics, AI predictions, and peer comparisons.")
     else:
         st.markdown("""
-        <div class="glass-card" style="margin-bottom: 16px;">
-            <h4 style="margin: 0 0 6px 0; color: #38bdf8;">Verified Dataset Features</h4>
-            <p style="color: #94a3b8; font-size: 0.88rem; margin: 0;">
+        <div class="campus-card" style="margin-bottom: 16px; padding: 16px 20px;">
+            <div style="font-weight: 700; color: #2563EB; font-size: 0.95rem; margin-bottom: 4px;">Verified Dataset Features</div>
+            <div style="color: #64748B; font-size: 0.85rem;">
                 All inputs are validated against verified bounds from <code>placement_prediction_cleaned.csv</code>. Your saved record persists automatically in SQLite.
-            </p>
+            </div>
         </div>
         """, unsafe_allow_html=True)
 
     with st.form("student_profile_form"):
-        # Section A: Personal & Demographic
-        st.markdown("#### 👤 Section A: Personal Information & Branch")
+        
+        # 1. Personal Information Card
+        st.markdown("""
+        <div class="campus-card" style="margin-bottom: 16px;">
+            <div style="font-weight: 700; font-size: 1.05rem; color: #2563EB; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                <span>👤</span> Personal Information
+            </div>
+        """, unsafe_allow_html=True)
         c_a1, c_a2, c_a3 = st.columns(3)
         with c_a1:
             gender_idx = GENDER_OPTIONS.index(p_data.get("gender", "Male")) if (is_completed and p_data.get("gender") in GENDER_OPTIONS) else 0
-            gender = st.selectbox(
-                "Gender",
-                GENDER_OPTIONS,
-                index=gender_idx
-            )
+            gender = st.selectbox("Gender", GENDER_OPTIONS, index=gender_idx)
         with c_a2:
             age = st.number_input(
                 "Age (Years)",
@@ -91,15 +93,16 @@ with tab_form:
             )
         with c_a3:
             branch_idx = BRANCH_OPTIONS.index(p_data.get("branch", "CSE")) if (p_data.get("branch") in BRANCH_OPTIONS) else 0
-            branch = st.selectbox(
-                "Engineering Department / Branch",
-                BRANCH_OPTIONS,
-                index=branch_idx
-            )
+            branch = st.selectbox("Engineering Department / Branch", BRANCH_OPTIONS, index=branch_idx)
+        st.markdown("</div>", unsafe_allow_html=True)
 
-        st.markdown("---")
-        # Section B: Academic Standing
-        st.markdown("#### 🎓 Section B: Academic Record")
+        # 2. Academic Information Card
+        st.markdown("""
+        <div class="campus-card" style="margin-bottom: 16px;">
+            <div style="font-weight: 700; font-size: 1.05rem; color: #2563EB; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                <span>🎓</span> Academic Information
+            </div>
+        """, unsafe_allow_html=True)
         c_b1, c_b2, c_b3 = st.columns(3)
         with c_b1:
             cgpa = st.slider(
@@ -127,11 +130,16 @@ with tab_form:
                 step=0.5,
                 help="Minimum 75% required by most campus placement policies"
             )
+        st.markdown("</div>", unsafe_allow_html=True)
 
-        st.markdown("---")
-        # Section C: Coding & Problem Solving
-        st.markdown("#### 💻 Section C: Coding & Algorithmic Problem Solving")
-        c_c1, c_c2, c_c3, c_c4 = st.columns(4)
+        # 3. Coding & Problem Solving Card
+        st.markdown("""
+        <div class="campus-card" style="margin-bottom: 16px;">
+            <div style="font-weight: 700; font-size: 1.05rem; color: #2563EB; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                <span>💻</span> Coding & Problem Solving
+            </div>
+        """, unsafe_allow_html=True)
+        c_c1, c_c2 = st.columns(2)
         with c_c1:
             dsa = st.number_input(
                 "DSA Questions Solved",
@@ -139,6 +147,13 @@ with tab_form:
                 max_value=NUMERIC_RANGES["dsa_questions_solved"][1],
                 value=int(get_field_val("dsa_questions_solved", 0, int)),
                 help="Total algorithmic challenges completed across all platforms"
+            )
+            hackerrank = st.number_input(
+                "HackerRank Solved",
+                min_value=NUMERIC_RANGES["hackerrank_questions_solved"][0],
+                max_value=NUMERIC_RANGES["hackerrank_questions_solved"][1],
+                value=int(get_field_val("hackerrank_questions_solved", 0, int)),
+                help="HackerRank challenges and skill badges"
             )
         with c_c2:
             leetcode = st.number_input(
@@ -148,15 +163,6 @@ with tab_form:
                 value=int(get_field_val("leetcode_questions_solved", 0, int)),
                 help="LeetCode problems completed"
             )
-        with c_c3:
-            hackerrank = st.number_input(
-                "HackerRank Solved",
-                min_value=NUMERIC_RANGES["hackerrank_questions_solved"][0],
-                max_value=NUMERIC_RANGES["hackerrank_questions_solved"][1],
-                value=int(get_field_val("hackerrank_questions_solved", 0, int)),
-                help="HackerRank challenges and skill badges"
-            )
-        with c_c4:
             github_repos = st.number_input(
                 "GitHub Repositories",
                 min_value=NUMERIC_RANGES["github_repos"][0],
@@ -164,11 +170,16 @@ with tab_form:
                 value=int(get_field_val("github_repos", 0, int)),
                 help="Public open-source and course project repositories"
             )
+        st.markdown("</div>", unsafe_allow_html=True)
 
-        st.markdown("---")
-        # Section D: Practical Experience & Projects
-        st.markdown("#### 💼 Section D: Practical Projects & Industry Experience")
-        c_d1, c_d2, c_d3, c_d4 = st.columns(4)
+        # 4. Projects & Experience Card
+        st.markdown("""
+        <div class="campus-card" style="margin-bottom: 16px;">
+            <div style="font-weight: 700; font-size: 1.05rem; color: #2563EB; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                <span>💼</span> Projects & Experience
+            </div>
+        """, unsafe_allow_html=True)
+        c_d1, c_d2 = st.columns(2)
         with c_d1:
             internships = st.number_input(
                 "Completed Internships",
@@ -176,6 +187,13 @@ with tab_form:
                 max_value=NUMERIC_RANGES["internships_count"][1],
                 value=int(get_field_val("internships_count", 0, int)),
                 help="Verified software engineering or research internships"
+            )
+            hackathons = st.number_input(
+                "Hackathons Participated",
+                min_value=NUMERIC_RANGES["hackathons_count"][0],
+                max_value=NUMERIC_RANGES["hackathons_count"][1],
+                value=int(get_field_val("hackathons_count", 0, int)),
+                help="Collegiate or national level 24-48h hackathons"
             )
         with c_d2:
             projects = st.number_input(
@@ -185,15 +203,6 @@ with tab_form:
                 value=int(get_field_val("projects_count", 0, int)),
                 help="Full-stack, ML, or capstone hardware/software projects"
             )
-        with c_d3:
-            hackathons = st.number_input(
-                "Hackathons Participated",
-                min_value=NUMERIC_RANGES["hackathons_count"][0],
-                max_value=NUMERIC_RANGES["hackathons_count"][1],
-                value=int(get_field_val("hackathons_count", 0, int)),
-                help="Collegiate or national level 24-48h hackathons"
-            )
-        with c_d4:
             certs = st.number_input(
                 "Certifications Count",
                 min_value=NUMERIC_RANGES["certifications_count"][0],
@@ -201,11 +210,16 @@ with tab_form:
                 value=int(get_field_val("certifications_count", 0, int)),
                 help="Verified technical certifications (AWS, Coursera, Oracle, etc.)"
             )
+        st.markdown("</div>", unsafe_allow_html=True)
 
-        st.markdown("---")
-        # Section E: Competency Evaluations & Training
-        st.markdown("#### 🎯 Section E: Evaluated Skill Competencies & Training")
-        c_e1, c_e2, c_e3, c_e4, c_e5 = st.columns(5)
+        # 5. Skills & Competencies Card
+        st.markdown("""
+        <div class="campus-card" style="margin-bottom: 16px;">
+            <div style="font-weight: 700; font-size: 1.05rem; color: #2563EB; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                <span>🎯</span> Skills, Aptitude & Communication
+            </div>
+        """, unsafe_allow_html=True)
+        c_e1, c_e2 = st.columns(2)
         with c_e1:
             aptitude = st.slider(
                 "Aptitude Score",
@@ -215,41 +229,48 @@ with tab_form:
                 step=0.5,
                 help="Standardized campus quantitative & logical test score"
             )
-        with c_e2:
             coding_skill = st.slider(
-                "Coding Skill",
+                "Coding Skill (0-10)",
                 min_value=NUMERIC_RANGES["coding_skill_score"][0],
                 max_value=NUMERIC_RANGES["coding_skill_score"][1],
                 value=float(get_field_val("coding_skill_score", 0.0, float)),
                 step=0.1,
                 help="Assessed technical coding fluency (0-10 scale)"
             )
-        with c_e3:
+        with c_e2:
             communication = st.slider(
-                "Communication",
+                "Communication Score (0-10)",
                 min_value=NUMERIC_RANGES["communication_score"][0],
                 max_value=NUMERIC_RANGES["communication_score"][1],
                 value=float(get_field_val("communication_score", 0.0, float)),
                 step=0.1,
                 help="Oral fluency and behavioral articulation (0-10 scale)"
             )
-        with c_e4:
             mock_score = st.slider(
-                "Mock Interview",
+                "Mock Interview Score (0-10)",
                 min_value=NUMERIC_RANGES["mock_interview_score"][0],
                 max_value=NUMERIC_RANGES["mock_interview_score"][1],
                 value=float(get_field_val("mock_interview_score", 0.0, float)),
                 step=0.1,
                 help="Faculty mentor interview score (0-10 scale)"
             )
-        with c_e5:
-            training_idx = TRAINING_OPTIONS.index(p_data.get("placement_training", "No")) if (is_completed and p_data.get("placement_training") in TRAINING_OPTIONS) else 1
-            training = st.selectbox(
-                "Placement Training",
-                TRAINING_OPTIONS,
-                index=training_idx,
-                help="Registered in campus pre-placement preparation training"
-            )
+        st.markdown("</div>", unsafe_allow_html=True)
+
+        # 6. Placement Preparation Card
+        st.markdown("""
+        <div class="campus-card" style="margin-bottom: 16px;">
+            <div style="font-weight: 700; font-size: 1.05rem; color: #2563EB; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                <span>📚</span> Placement Preparation
+            </div>
+        """, unsafe_allow_html=True)
+        training_idx = TRAINING_OPTIONS.index(p_data.get("placement_training", "No")) if (is_completed and p_data.get("placement_training") in TRAINING_OPTIONS) else 1
+        training = st.selectbox(
+            "Enrolled in Campus Placement Training",
+            TRAINING_OPTIONS,
+            index=training_idx,
+            help="Registered in campus pre-placement preparation training"
+        )
+        st.markdown("</div>", unsafe_allow_html=True)
 
         col_save_btn, col_pred_btn = st.columns([1, 1])
         with col_save_btn:
@@ -320,10 +341,10 @@ with tab_form:
 # ----------------- TAB 2: OPTIONAL PORTFOLIO LINKS -----------------
 with tab_links:
     st.markdown("""
-    <div class="glass-card">
-        <h4 style="margin: 0 0 6px 0; color: #818cf8;">🔗 Connect External Coding Profiles & Portfolio</h4>
-        <p style="color: #94a3b8; font-size: 0.88rem; margin: 0;">
-            Provide links to your public platforms. Our intelligent parser can estimate problem solve counts and public repository metrics to auto-fill your parameters.
+    <div class="campus-card">
+        <div style="font-weight: 700; font-size: 1.05rem; color: #2563EB; margin-bottom: 6px;">🔗 Connect External Coding Profiles & Portfolio</div>
+        <p style="color: #64748B; font-size: 0.88rem; margin: 0;">
+            Provide links to your public platforms. Our parser can estimate problem solve counts and public repository metrics to auto-fill your parameters.
         </p>
     </div>
     """, unsafe_allow_html=True)

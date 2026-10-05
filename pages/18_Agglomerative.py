@@ -6,7 +6,8 @@ from scipy.cluster.hierarchy import dendrogram
 from src.auth import require_admin
 from src.preprocessing import load_data
 from src.clustering import CLUSTER_DEFAULTS, agglomerative, dendrogram_data
-from src.ui import css, hero, render_top_navbar, label
+from src.visualizations import base
+from src.ui import css, hero, render_top_navbar, label, render_academic_justification
 
 css()
 require_admin()
@@ -80,12 +81,14 @@ with tab_dendro:
         Z = dendrogram_data(df, features, sample_size=dendro_sample, method=linkage_method, random_state=seed)
         fig, ax = plt.subplots(figsize=(10, 4.5))
         dendrogram(Z, no_labels=True, ax=ax, color_threshold=0.7 * max(Z[:, 2]))
-        ax.set_title(f"Agglomerative Dendrogram ({linkage_method.title()} Linkage)", color="#f8fafc")
-        ax.set_xlabel("Student Index", color="#94a3b8")
-        ax.set_ylabel("Linkage Distance", color="#94a3b8")
-        ax.tick_params(colors="#94a3b8")
-        fig.patch.set_facecolor('#0f172a')
-        ax.set_facecolor('#0f172a')
+        ax.set_title(f"Agglomerative Dendrogram ({linkage_method.title()} Linkage)", color="#0F172A", fontsize=13, fontweight="bold")
+        ax.set_xlabel("Student Index", color="#64748B", fontsize=11)
+        ax.set_ylabel("Linkage Distance", color="#64748B", fontsize=11)
+        ax.tick_params(colors="#64748B")
+        for spine in ax.spines.values():
+            spine.set_color("#E2E8F0")
+        fig.patch.set_facecolor('#FFFFFF')
+        ax.set_facecolor('#FFFFFF')
         st.pyplot(fig)
         plt.close(fig)
 
@@ -94,10 +97,10 @@ with tab_pca:
     fig_pca = px.scatter(
         sample_df, x="PC1", y="PC2", color="Cluster",
         title=f"Agglomerative PCA Projection (K={k})",
-        color_continuous_scale="Turbo",
+        color_continuous_scale=[[0, "#EFF6FF"], [0.5, "#38BDF8"], [1, "#1D4ED8"]],
         opacity=0.8
     )
-    fig_pca.update_layout(template="plotly_dark", paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)")
+    fig_pca = base(fig_pca, f"Agglomerative PCA Projection (K={k})")
     st.plotly_chart(fig_pca, use_container_width=True)
 
 with tab_prof:
@@ -111,16 +114,15 @@ with tab_sizes:
     size_df["Percentage"] = ((size_df["Student Count"] / len(sample_df)) * 100).round(1).astype(str) + "%"
     st.dataframe(size_df, use_container_width=True)
 
-# Technical Justification
-st.markdown("---")
-st.markdown("### ⚖️ Technical Hierarchical Clustering Justification")
-st.markdown(f"""
-<div class="glass-card" style="border-left: 4px solid #a855f7;">
-    <h4 style="margin-top:0; color:#c084fc;">Hierarchical Agglomeration Evaluation</h4>
-    <p style="color:#cbd5e1; font-size:0.92rem; margin-bottom:0;">
-        • <b>Linkage Criteria:</b> <b>{linkage_method.title()}</b> linkage minimizes intra-cluster distance variance at each pairwise merge step.<br>
-        • <b>Silhouette Quality:</b> Measured silhouette score of <b>{sil:.3f}</b> on the representative sample of <b>{sample_size:,} students</b>.<br>
-        • <b>Tree Interpretability:</b> Unlike flat partition models, the hierarchical dendrogram provides a full continuum of groupings, allowing placement cells to trace granular student subgroups up into broader placement tiers.
-    </p>
-</div>
-""", unsafe_allow_html=True)
+# ----------------- ACADEMIC & INSTITUTIONAL JUSTIFICATION -----------------
+render_academic_justification(
+    title="Bottom-Up Hierarchical Taxonomy & Multi-Level Skill Clustering",
+    algorithm_name=f"Agglomerative Hierarchical Clustering ({linkage_method.title()} Linkage, K={k})",
+    why_used=[
+        ("Nested Hierarchical Skill Taxonomy", "Unlike flat partitional algorithms like K-Means which impose rigid sphere boundaries, Agglomerative Hierarchical Clustering begins with each candidate in their own singleton cluster and recursively merges nearest pairs based on Ward's variance minimization criterion. This constructs a complete phylogenetic-style dendrogram of student capabilities."),
+        ("Continuous Multi-Granular Inspection", "Placement drives feature diverse hiring profiles—from specialized R&D roles seeking niche algorithmic depth to mass IT recruitment hiring generalists. By examining the dendrogram at variable horizontal cut thresholds (cophenetic distance), placement directors can inspect fine-grained micro-specializations (e.g. Competitive Coders vs Full-Stack Developers) or broad macro cohorts without re-running the model."),
+        ("Validation of Partitioned Boundaries", "Comparing bottom-up hierarchical agglomerations against top-down K-Means centroids verifies whether identified student clusters are genuine natural structures in the educational data or mathematical artifacts of the K-Means distance function.")
+    ],
+    institutional_impact=f"Achieved a measured silhouette quality score of {sil:.3f} across the representative sample of {sample_size:,} candidates. Provides placement departments with an intuitive visual roadmap of how student skill profiles naturally coalesce, allowing recruiters from different market tiers (mass vs super-dream) to easily target cohorts at appropriate dendrogram cut depths.",
+    dwm_concept="Hierarchical Clustering, Agglomerative Bottom-Up Merge, Ward Linkage Variance Optimization, Cophenetic Distance, Dendrogram Interpretation."
+)

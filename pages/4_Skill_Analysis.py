@@ -5,7 +5,7 @@ import plotly.graph_objects as go
 from src.auth import require_student
 from src.preprocessing import load_data
 from src.database import get_student_profile, is_student_profile_completed
-from src.visualizations import radar_comparison
+from src.visualizations import radar_comparison, base
 from src.ui import css, hero, render_top_navbar, label
 
 css()
@@ -26,12 +26,12 @@ hero(
 # Check if student profile is completed
 if not is_student_profile_completed(email):
     st.markdown("""
-    <div class="glass-card" style="text-align: center; padding: 44px 30px; margin: 24px 0; border: 1.5px dashed rgba(129, 140, 248, 0.45); border-radius: 20px;">
-        <div style="font-size: 3.5rem; margin-bottom: 14px;">🕸️</div>
-        <h2 style="color: #f8fafc; font-size: 1.6rem; font-weight: 800; margin-bottom: 10px;">
+    <div class="campus-card" style="text-align: center; padding: 40px 24px; margin: 20px 0; border: 1.5px dashed #93C5FD;">
+        <div style="font-size: 3rem; margin-bottom: 12px;">🕸️</div>
+        <h2 style="color: #0F172A; font-size: 1.5rem; font-weight: 800; margin-bottom: 8px;">
             Competency Radar Locked
         </h2>
-        <p style="color: #94a3b8; font-size: 1.02rem; max-width: 600px; margin: 0 auto 24px auto; line-height: 1.6;">
+        <p style="color: #64748B; font-size: 0.96rem; max-width: 580px; margin: 0 auto 24px auto; line-height: 1.6;">
             Your competency radar compares your CGPA, attendance, DSA problem count, and coding skills against 15,000 university records. Please enter your profile details first.
         </p>
     </div>
@@ -95,23 +95,23 @@ with c_summary:
     
     for f_name, s_v, p_v, u in comparisons:
         diff = s_v - p_v
-        d_color = "#34d399" if diff >= 0 else "#fb7185"
+        d_color = "#16A34A" if diff >= 0 else "#DC2626"
         d_sign = "+" if diff >= 0 else ""
         
         st.markdown(f"""
-        <div style="display:flex; justify-content:space-between; align-items:center; padding: 10px 14px; background: rgba(15, 23, 42, 0.6); border-radius: 10px; margin-bottom: 8px; border: 1px solid rgba(255,255,255,0.06);">
+        <div style="display:flex; justify-content:space-between; align-items:center; padding: 10px 14px; background: #FFFFFF; border-radius: 10px; margin-bottom: 8px; border: 1px solid #E2E8F0; box-shadow: 0 1px 2px rgba(15,23,42,0.03);">
             <div>
-                <b style="color:#f8fafc; font-size:0.9rem;">{f_name}</b><br>
-                <span style="font-size:0.75rem; color:#94a3b8;">Placed Median: {p_v:.1f} {u}</span>
+                <b style="color:#0F172A; font-size:0.88rem;">{f_name}</b><br>
+                <span style="font-size:0.75rem; color:#64748B;">Placed Median: {p_v:.1f} {u}</span>
             </div>
             <div style="text-align:right;">
-                <b style="color:#f8fafc; font-size:0.95rem;">{s_v:.1f} {u}</b><br>
+                <b style="color:#0F172A; font-size:0.92rem;">{s_v:.1f} {u}</b><br>
                 <span style="font-size:0.75rem; color:{d_color}; font-weight:700;">{d_sign}{diff:.1f}</span>
             </div>
         </div>
         """, unsafe_allow_html=True)
 
-st.markdown("<div style='height: 24px;'></div>", unsafe_allow_html=True)
+st.markdown("<div style='height: 20px;'></div>", unsafe_allow_html=True)
 
 # ----------------- SECTION 2: CATEGORY DEEP DIVES -----------------
 st.markdown("### 🔬 Category-by-Category Feature Distribution")
@@ -130,10 +130,10 @@ with tab_acad:
         fig_cgpa = px.histogram(
             df, x="cgpa", color="placement_status", nbins=30,
             title="CGPA Frequency Distribution",
-            color_discrete_map={"Placed": "#10b981", "Not Placed": "#64748b"}
+            color_discrete_map={"Placed": "#16A34A", "Not Placed": "#64748B"}
         )
-        fig_cgpa.add_vline(x=cgpa_val, line_dash="dash", line_color="#38bdf8", annotation_text=f"You: {cgpa_val:.2f}")
-        fig_cgpa.update_layout(template="plotly_dark", paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)")
+        fig_cgpa.add_vline(x=cgpa_val, line_dash="dash", line_color="#2563EB", annotation_text=f"You: {cgpa_val:.2f}")
+        fig_cgpa = base(fig_cgpa, "CGPA Frequency Distribution")
         st.plotly_chart(fig_cgpa, use_container_width=True)
     with col_a2:
         st.markdown("#### Attendance % vs Placement Status")
@@ -141,10 +141,10 @@ with tab_acad:
             df, x="placement_status", y="attendance_percentage",
             title="Attendance Spread by Placement Outcome",
             color="placement_status",
-            color_discrete_map={"Placed": "#10b981", "Not Placed": "#f43f5e"}
+            color_discrete_map={"Placed": "#16A34A", "Not Placed": "#DC2626"}
         )
-        fig_att.add_hline(y=att_val, line_dash="dash", line_color="#38bdf8", annotation_text=f"Your Attendance: {att_val:.1f}%")
-        fig_att.update_layout(template="plotly_dark", paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)")
+        fig_att.add_hline(y=att_val, line_dash="dash", line_color="#2563EB", annotation_text=f"Your Attendance: {att_val:.1f}%")
+        fig_att = base(fig_att, "Attendance Spread by Placement Outcome")
         st.plotly_chart(fig_att, use_container_width=True)
 
 with tab_code:
@@ -154,10 +154,10 @@ with tab_code:
         fig_dsa = px.histogram(
             df, x="dsa_questions_solved", color="placement_status", nbins=25,
             title="DSA Practice Distribution",
-            color_discrete_map={"Placed": "#10b981", "Not Placed": "#64748b"}
+            color_discrete_map={"Placed": "#16A34A", "Not Placed": "#64748B"}
         )
-        fig_dsa.add_vline(x=dsa_val, line_dash="dash", line_color="#c084fc", annotation_text=f"You: {int(dsa_val)}")
-        fig_dsa.update_layout(template="plotly_dark", paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)")
+        fig_dsa.add_vline(x=dsa_val, line_dash="dash", line_color="#2563EB", annotation_text=f"You: {int(dsa_val)}")
+        fig_dsa = base(fig_dsa, "DSA Practice Distribution")
         st.plotly_chart(fig_dsa, use_container_width=True)
     with col_c2:
         st.markdown("#### Coding Skill Score vs CGPA Scatter")
@@ -165,15 +165,15 @@ with tab_code:
         fig_scat = px.scatter(
             sample_df, x="cgpa", y="coding_skill_score", color="placement_status",
             title="CGPA vs. Technical Coding Skill",
-            color_discrete_map={"Placed": "#10b981", "Not Placed": "#f43f5e"},
-            opacity=0.6
+            color_discrete_map={"Placed": "#16A34A", "Not Placed": "#64748B"},
+            opacity=0.65
         )
         fig_scat.add_trace(go.Scatter(
             x=[cgpa_val], y=[code_val], mode="markers",
-            marker=dict(size=14, color="#38bdf8", symbol="star", line=dict(color="#ffffff", width=2)),
+            marker=dict(size=14, color="#2563EB", symbol="star", line=dict(color="#FFFFFF", width=2)),
             name="Your Position"
         ))
-        fig_scat.update_layout(template="plotly_dark", paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)")
+        fig_scat = base(fig_scat, "CGPA vs. Technical Coding Skill")
         st.plotly_chart(fig_scat, use_container_width=True)
 
 with tab_apt:
@@ -183,10 +183,10 @@ with tab_apt:
         fig_apt = px.histogram(
             df, x="aptitude_score", color="placement_status", nbins=25,
             title="Campus Aptitude Scores",
-            color_discrete_map={"Placed": "#10b981", "Not Placed": "#64748b"}
+            color_discrete_map={"Placed": "#16A34A", "Not Placed": "#64748B"}
         )
-        fig_apt.add_vline(x=apt_val, line_dash="dash", line_color="#fbbf24", annotation_text=f"You: {apt_val:.1f}")
-        fig_apt.update_layout(template="plotly_dark", paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)")
+        fig_apt.add_vline(x=apt_val, line_dash="dash", line_color="#F59E0B", annotation_text=f"You: {apt_val:.1f}")
+        fig_apt = base(fig_apt, "Campus Aptitude Scores")
         st.plotly_chart(fig_apt, use_container_width=True)
     with col_ap2:
         st.markdown("#### Communication vs Mock Interview Score")
@@ -196,10 +196,10 @@ with tab_apt:
             df, x="placement_status", y="communication_score",
             title="Communication Scores by Outcome",
             color="placement_status",
-            color_discrete_map={"Placed": "#10b981", "Not Placed": "#f43f5e"}
+            color_discrete_map={"Placed": "#16A34A", "Not Placed": "#DC2626"}
         )
-        fig_comm.add_hline(y=comm_val, line_dash="dash", line_color="#38bdf8", annotation_text=f"You: {comm_val:.1f}")
-        fig_comm.update_layout(template="plotly_dark", paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)")
+        fig_comm.add_hline(y=comm_val, line_dash="dash", line_color="#2563EB", annotation_text=f"You: {comm_val:.1f}")
+        fig_comm = base(fig_comm, "Communication Scores by Outcome")
         st.plotly_chart(fig_comm, use_container_width=True)
 
 with tab_proj:
@@ -210,9 +210,9 @@ with tab_proj:
         fig_int = px.bar(
             intern_dist, x="internships_count", y="Count", color="placement_status", barmode="group",
             title="Internships vs Placement Outcomes",
-            color_discrete_map={"Placed": "#10b981", "Not Placed": "#64748b"}
+            color_discrete_map={"Placed": "#16A34A", "Not Placed": "#64748B"}
         )
-        fig_int.update_layout(template="plotly_dark", paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)")
+        fig_int = base(fig_int, "Internships vs Placement Outcomes")
         st.plotly_chart(fig_int, use_container_width=True)
     with col_p2:
         st.markdown("#### Completed Projects Spread")
@@ -220,7 +220,7 @@ with tab_proj:
         fig_prj = px.bar(
             proj_dist, x="projects_count", y="Count", color="placement_status", barmode="group",
             title="Completed Projects vs Placement Outcomes",
-            color_discrete_map={"Placed": "#10b981", "Not Placed": "#64748b"}
+            color_discrete_map={"Placed": "#16A34A", "Not Placed": "#64748B"}
         )
-        fig_prj.update_layout(template="plotly_dark", paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)")
+        fig_prj = base(fig_prj, "Completed Projects vs Placement Outcomes")
         st.plotly_chart(fig_prj, use_container_width=True)

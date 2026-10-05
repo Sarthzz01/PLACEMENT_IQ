@@ -50,9 +50,9 @@ with tab_db:
         col_cand_info, col_cand_run = st.columns([1.5, 1.5], gap="large")
         with col_cand_info:
             st.markdown(f"""
-            <div class="glass-card">
-                <h4 style="margin-top:0; color:#38bdf8;">Candidate: {cand.get('name')}</h4>
-                <div style="font-size:0.88rem; color:#cbd5e1; line-height: 1.7;">
+            <div class="campus-card">
+                <h4 style="margin-top:0; color:#2563EB;">Candidate: {cand.get('name')}</h4>
+                <div style="font-size:0.88rem; color:#475569; line-height: 1.7;">
                     <b>Branch:</b> {cand.get('branch')} &bull; <b>CGPA:</b> {float(cand.get('cgpa', 0)):.2f} &bull; <b>Attendance:</b> {float(cand.get('attendance_percentage', 0)):.1f}%<br>
                     <b>DSA Solved:</b> {cand.get('dsa_questions_solved', 0)} &bull; <b>LeetCode:</b> {cand.get('leetcode_questions_solved', 0)}<br>
                     <b>Internships:</b> {cand.get('internships_count', 0)} &bull; <b>Projects:</b> {cand.get('projects_count', 0)} &bull; <b>Backlogs:</b> {cand.get('backlogs', 0)}<br>
@@ -79,13 +79,17 @@ with tab_db:
 
         if "db_eval_res" in st.session_state:
             d_res = st.session_state.db_eval_res
-            st_color = "#34d399" if d_res["status"] == "Placed" else "#fb7185"
+            is_placed = d_res["status"] == "Placed"
+            st_color = "#16A34A" if is_placed else "#DC2626"
+            card_bg = "#F0FDF4" if is_placed else "#FEF2F2"
+            card_border = "#86EFAC" if is_placed else "#FECACA"
+            
             st.markdown(f"""
-            <div style="background: rgba(15, 23, 42, 0.85); border: 1px solid {st_color}; border-radius: 14px; padding: 18px; margin: 16px 0; text-align: center;">
-                <div style="font-size: 1.6rem; font-weight: 900; color: {st_color};">
-                    {'✓' if d_res['status']=='Placed' else '⚠️'} {d_res['status'].upper()} ({d_res['probability_percent']}%)
+            <div style="background: {card_bg}; border: 1.5px solid {card_border}; border-radius: 12px; padding: 18px; margin: 16px 0; text-align: center;">
+                <div style="font-size: 1.5rem; font-weight: 900; color: {st_color};">
+                    {'✓' if is_placed else '⚠️'} {d_res['status'].upper()} ({d_res['probability_percent']}%)
                 </div>
-                <div style="font-size: 0.85rem; color: #cbd5e1; margin-top: 4px;">
+                <div style="font-size: 0.85rem; color: #475569; margin-top: 4px;">
                     Evaluated via <b>{d_res['model_name']}</b> &bull; Readiness: <b>{d_res['readiness_level']}</b>
                 </div>
             </div>
@@ -161,18 +165,19 @@ with tab_single:
 
         res = predict_placement(row_dict, reference_df=df_ref, model_name=ah_model)
         is_placed = res["status"] == "Placed"
-        card_class = "prediction-placed" if is_placed else "prediction-unplaced"
-        status_color = "#34d399" if is_placed else "#fb7185"
+        status_color = "#16A34A" if is_placed else "#DC2626"
+        card_bg = "#F0FDF4" if is_placed else "#FEF2F2"
+        card_border = "#86EFAC" if is_placed else "#FECACA"
 
         st.markdown(f"""
-        <div class="prediction-card {card_class}">
-            <div style="font-size: 1.1rem; font-weight: 700; color: #94a3b8; text-transform: uppercase;">
+        <div style="background: {card_bg}; border: 1.5px solid {card_border}; border-radius: 14px; padding: 24px; text-align: center; margin: 16px 0;">
+            <div style="font-size: 0.85rem; font-weight: 700; color: #64748B; text-transform: uppercase;">
                 EVALUATION RESULT
             </div>
-            <div style="font-size: 3rem; font-weight: 900; color: {status_color}; margin: 6px 0;">
+            <div style="font-size: 2.6rem; font-weight: 900; color: {status_color}; margin: 6px 0;">
                 {'✓' if is_placed else '⚠️'} {res['status'].upper()}
             </div>
-            <div style="font-size: 1.25rem; font-weight: 700; color: #f8fafc;">
+            <div style="font-size: 1.15rem; font-weight: 700; color: #0F172A;">
                 Placement Confidence: <span style="color: {status_color};">{res['probability_percent']}%</span> ({res['model_name']})
             </div>
         </div>

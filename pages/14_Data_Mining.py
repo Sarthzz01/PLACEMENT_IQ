@@ -3,7 +3,8 @@ import plotly.express as px
 from src.auth import require_admin
 from src.preprocessing import load_data
 from src.data_mining import correlation, mutual_information, feature_importance, association_insights
-from src.ui import css, hero, render_top_navbar, label
+from src.visualizations import base
+from src.ui import css, hero, render_top_navbar, label, render_academic_justification
 
 css()
 require_admin()
@@ -44,9 +45,10 @@ with tab_corr:
             corr_df.head(10), x="Correlation", y="Feature", orientation="h",
             title="Top 10 Linear Correlates with Placement",
             color="Correlation",
-            color_continuous_scale="Blues"
+            color_continuous_scale=[[0, "#EFF6FF"], [0.5, "#93C5FD"], [1, "#1D4ED8"]]
         )
-        fig_corr.update_layout(template="plotly_dark", paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", yaxis=dict(autorange="reversed"))
+        fig_corr = base(fig_corr, "Top 10 Linear Correlates with Placement")
+        fig_corr.update_layout(yaxis=dict(autorange="reversed"))
         st.plotly_chart(fig_corr, use_container_width=True)
 
     st.markdown("""
@@ -71,9 +73,10 @@ with tab_mi:
             mi_df.head(10), x="Mutual Information", y="Feature", orientation="h",
             title="Top 10 Information Gain Contributors",
             color="Mutual Information",
-            color_continuous_scale="Purples"
+            color_continuous_scale=[[0, "#EFF6FF"], [0.5, "#93C5FD"], [1, "#1D4ED8"]]
         )
-        fig_mi.update_layout(template="plotly_dark", paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", yaxis=dict(autorange="reversed"))
+        fig_mi = base(fig_mi, "Top 10 Information Gain Contributors")
+        fig_mi.update_layout(yaxis=dict(autorange="reversed"))
         st.plotly_chart(fig_mi, use_container_width=True)
 
 # ----------------- TAB 3: FEATURE IMPORTANCE -----------------
@@ -94,9 +97,10 @@ with tab_imp:
             imp_df.head(10), x="Importance", y="Feature", orientation="h",
             title="Top 10 Feature Importances",
             color="Importance",
-            color_continuous_scale="Teal"
+            color_continuous_scale=[[0, "#EFF6FF"], [0.5, "#93C5FD"], [1, "#1D4ED8"]]
         )
-        fig_imp.update_layout(template="plotly_dark", paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", yaxis=dict(autorange="reversed"))
+        fig_imp = base(fig_imp, "Top 10 Feature Importances")
+        fig_imp.update_layout(yaxis=dict(autorange="reversed"))
         st.plotly_chart(fig_imp, use_container_width=True)
 
 # ----------------- TAB 4: ASSOCIATION RULES -----------------
@@ -108,3 +112,16 @@ with tab_assoc:
     st.dataframe(assoc_df, use_container_width=True)
 
     st.info("ℹ️ Association metrics describe co-occurrence patterns; they do not prove direct causation.")
+
+# ----------------- ACADEMIC & INSTITUTIONAL JUSTIFICATION -----------------
+render_academic_justification(
+    title="Multi-Perspective Feature Relevance & Association Discovery",
+    algorithm_name="Pearson Correlation • Mutual Information • Gini Impurity (MDI) • Association Rules (Apriori)",
+    why_used=[
+        ("Triangulation of Linear and Non-Linear Signals", "Standard statistical methods often rely exclusively on linear Pearson correlation (r), which fails to detect complex non-linear or threshold-driven educational dependencies. By computing non-parametric Mutual Information (quantifying shared entropy I(X;Y)) alongside Pearson coefficients, we uncover subtle non-linear dependencies that standard correlation overlooks."),
+        ("Mean Decrease in Impurity (MDI) Feature Importance", "Using an ensemble of 120 decision trees, Gini Importance measures the exact average reduction in node impurity achieved by splitting on each candidate attribute. This isolates the true predictive drivers of placement readiness, preventing placement cells from over-indexing on superficial markers."),
+        ("Association Rule Mining for Prescriptive Curricular Bundles", "Applying the Apriori principle on binned student credentials computes Support, Confidence, and Lift for co-occurring success criteria (e.g. {DSA >= 70, Projects >= 3} → {Placed} with Lift > 1.4). Unlike point predictions, association rules provide easily intelligible, prescriptive roadmaps that students can directly execute.")
+    ],
+    institutional_impact="Enables university academic committees to audit their engineering syllabus with empirical evidence, identifying which co-curricular activities directly contribute to placement success and which outdated prerequisites should be modernized.",
+    dwm_concept="Feature Selection, Information Theory (Mutual Information / Entropy Gain), Gini Impurity Reduction, Association Rule Mining (Support, Confidence, Lift)."
+)

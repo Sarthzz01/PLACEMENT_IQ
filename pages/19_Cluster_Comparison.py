@@ -4,7 +4,8 @@ import plotly.express as px
 from src.auth import require_admin
 from src.preprocessing import load_data
 from src.clustering import CLUSTER_DEFAULTS, kmeans, agglomerative
-from src.ui import css, hero, render_top_navbar, label
+from src.visualizations import base
+from src.ui import css, hero, render_top_navbar, label, render_academic_justification
 
 css()
 require_admin()
@@ -36,7 +37,6 @@ if len(features) < 2:
 
 if st.button("🚀 Run Side-by-Side Comparison", type="primary") or "cluster_comp" not in st.session_state:
     with st.spinner("Training both K-Means and Agglomerative clustering algorithms..."):
-        # Run K-Means on sample for apples-to-apples comparison
         sample_df = df.sample(min(sample_size, len(df)), random_state=seed).copy()
         km_res, km_prof, km_sil, km_model, km_time = kmeans(sample_df, features, k=k_val, random_state=seed)
         agg_res, agg_prof, agg_sil, agg_model, agg_time = agglomerative(sample_df, features, k=k_val, sample_size=sample_size, random_state=seed)
@@ -79,10 +79,10 @@ with col_km:
     fig_km = px.scatter(
         comp["km_res"], x="PC1", y="PC2", color="Cluster",
         title=f"K-Means (Silhouette: {comp['km_sil']:.3f})",
-        color_continuous_scale="Viridis",
+        color_continuous_scale=[[0, "#EFF6FF"], [0.5, "#38BDF8"], [1, "#1D4ED8"]],
         opacity=0.8
     )
-    fig_km.update_layout(template="plotly_dark", paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)")
+    fig_km = base(fig_km, f"K-Means (Silhouette: {comp['km_sil']:.3f})")
     st.plotly_chart(fig_km, use_container_width=True)
 
 with col_agg:
@@ -90,10 +90,10 @@ with col_agg:
     fig_agg = px.scatter(
         comp["agg_res"], x="PC1", y="PC2", color="Cluster",
         title=f"Agglomerative (Silhouette: {comp['agg_sil']:.3f})",
-        color_continuous_scale="Turbo",
+        color_continuous_scale=[[0, "#EFF6FF"], [0.5, "#34D399"], [1, "#047857"]],
         opacity=0.8
     )
-    fig_agg.update_layout(template="plotly_dark", paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)")
+    fig_agg = base(fig_agg, f"Agglomerative (Silhouette: {comp['agg_sil']:.3f})")
     st.plotly_chart(fig_agg, use_container_width=True)
 
 # Cluster Size Distribution Comparison
@@ -106,14 +106,15 @@ with c_s2:
     st.markdown("**Agglomerative Student Distribution:**")
     st.dataframe(comp["agg_res"]["Cluster"].value_counts().sort_index().rename("Agglomerative Students"), use_container_width=True)
 
-st.markdown("---")
-st.markdown("### ⚖️ Architectural Insights: K-Means vs Agglomerative")
-st.markdown(f"""
-<div class="glass-card">
-    <p style="color:#cbd5e1; font-size:0.92rem; margin-bottom:0;">
-        • <b>Scalability:</b> K-Means scales linearly with dataset size, making it suitable for clustering all 15,000 students in ~0.5s. Agglomerative clustering requires pairwise distance matrix computations (O(n²)), making sub-sampling necessary for large cohorts.<br>
-        • <b>Cluster Geometry:</b> K-Means assumes spherical, centroid-based convex partitions. Agglomerative clustering with Ward linkage creates balanced merges based on variance minimization.<br>
-        • <b>Use Case:</b> Use <b>K-Means</b> for fast campus-wide cohort profiling, and <b>Agglomerative Hierarchical</b> when taxonomy and tree lineage (e.g. tiering students into academic readiness brackets) is required.
-    </p>
-</div>
-""", unsafe_allow_html=True)
+# ----------------- ACADEMIC & INSTITUTIONAL JUSTIFICATION -----------------
+render_academic_justification(
+    title="Comparative Clustering Evaluation & Algorithmic Validation",
+    algorithm_name="Partitional (K-Means) vs. Hierarchical (Agglomerative) Benchmarking",
+    why_used=[
+        ("Cross-Algorithmic Structural Validation", "Data mining best practices dictate that unsupervised clusters should never be accepted based on a single heuristic. Benchmarking centroid-based partitioning (K-Means) against variance-minimizing hierarchical agglomeration (Ward) provides cross-algorithmic validation: if student groupings consistently emerge across both distinct mathematical frameworks, we prove they represent genuine educational phenotypes rather than algorithmic artifacts."),
+        ("Trade-Off Analysis: Linear Scalability vs Hierarchical Depth", "K-Means operates in O(n · K · I) time complexity, enabling real-time clustering across all 15,000+ candidates instantaneously in production. Conversely, Agglomerative clustering exhibits O(n² log n) complexity with quadratic memory requirements, making it computationally heavy for real-time web inference but invaluable for periodic deep academic curriculum reviews where tree hierarchy is essential."),
+        ("Geometric Shape & Cluster Balance Diagnostics", "Comparing PCA cluster projections side-by-side demonstrates how K-Means enforces Voronoi tessellations (convex hulls around centroids), whereas Ward's agglomerative approach flexibly merges local density structures, preventing single-student outlier distortion.")
+    ],
+    institutional_impact="Provides placement deans and academic boards with rigorous evidence of cohort stability before enacting strategic training policies, ensuring interventions target robust candidate groups rather than unstable statistical noise.",
+    dwm_concept="Partitional vs Hierarchical Taxonomy, Time & Space Complexity Trade-Offs, Silhouette Metric Comparison, Voronoi Convexity vs Pairwise Linkage."
+)

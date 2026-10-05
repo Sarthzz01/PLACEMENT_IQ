@@ -16,20 +16,20 @@ user_id = st.session_state.user_id
 render_top_navbar(role="Student", user_name=name, user_id=f"{user_id} • {email}")
 
 hero(
-    "AI Placement Prediction Engine",
-    "Evaluate your real-time likelihood of campus placement using our trained institutional classification model. Results are estimated probabilities based on 15,000 university placement records.",
-    tag="Predictive Inference"
+    "Placement Prediction",
+    "See how your current profile performs against the trained placement model.",
+    tag="Placement Intelligence"
 )
 
 # Check if student profile is completed
 if not is_student_profile_completed(email):
     st.markdown("""
-    <div class="glass-card" style="text-align: center; padding: 44px 30px; margin: 24px 0; border: 1.5px dashed rgba(244, 63, 94, 0.45); border-radius: 20px;">
-        <div style="font-size: 3.5rem; margin-bottom: 14px;">🔮</div>
-        <h2 style="color: #f8fafc; font-size: 1.6rem; font-weight: 800; margin-bottom: 10px;">
+    <div class="campus-card" style="text-align: center; padding: 40px 24px; margin: 20px 0; border: 1.5px dashed #93C5FD;">
+        <div style="font-size: 3rem; margin-bottom: 12px;">🎯</div>
+        <h2 style="color: #0F172A; font-size: 1.5rem; font-weight: 800; margin-bottom: 8px;">
             Candidate Profile Incomplete
         </h2>
-        <p style="color: #94a3b8; font-size: 1.02rem; max-width: 600px; margin: 0 auto 24px auto; line-height: 1.6;">
+        <p style="color: #64748B; font-size: 0.96rem; max-width: 580px; margin: 0 auto 24px auto; line-height: 1.6;">
             The AI Placement Prediction engine evaluates your actual CGPA, attendance, solved coding challenges, and competencies to forecast recruitment readiness. Please submit your profile parameters first.
         </p>
     </div>
@@ -42,7 +42,6 @@ if not is_student_profile_completed(email):
 
 # Fetch current verified student profile from SQLite database
 student_dict = get_student_profile(email)
-
 prod_model_name = get_production_model_name()
 
 # Current Profile Summary Pill Card
@@ -64,7 +63,7 @@ st.markdown("<div style='height: 14px;'></div>", unsafe_allow_html=True)
 # Prediction Button
 col_btn, col_info = st.columns([1.2, 2])
 with col_btn:
-    run_pred = st.button("🔮 Predict My Placement", type="primary", use_container_width=True)
+    run_pred = st.button("🎯 Predict My Placement", type="primary", use_container_width=True)
 with col_info:
     st.caption(f"Active Production Model: **{prod_model_name}** &bull; Trained on certified campus placement dataset.")
 
@@ -90,38 +89,41 @@ if run_pred or "last_student_prediction" in st.session_state:
 
     # Render Prediction Result Card
     is_placed = res["status"] == "Placed"
-    card_class = "prediction-placed" if is_placed else "prediction-unplaced"
-    icon = "✓" if is_placed else "⚠️"
     status_text = "PLACED" if is_placed else "NOT PLACED"
-    status_color = "#34d399" if is_placed else "#fb7185"
+    status_color = "#16A34A" if is_placed else "#DC2626"
+    card_bg = "#F0FDF4" if is_placed else "#FEF2F2"
+    card_border = "#86EFAC" if is_placed else "#FECACA"
+    icon = "✓" if is_placed else "⚠️"
 
     st.markdown(f"""
-    <div class="prediction-card {card_class}">
-        <div style="font-size: 0.95rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px;">
-            MODEL PLACEMENT PREDICTION OUTCOME
+    <div style="background: {card_bg}; border: 1.5px solid {card_border}; border-radius: 14px; padding: 28px 24px; text-align: center; margin: 18px 0; box-shadow: 0 2px 8px rgba(15,23,42,0.04);">
+        <div style="font-size: 0.82rem; font-weight: 700; color: #64748B; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px;">
+            PLACEMENT PREDICTION
         </div>
-        <div style="font-size: 3.2rem; font-weight: 900; color: {status_color}; margin: 8px 0;">
+        <div style="font-size: 2.8rem; font-weight: 900; color: {status_color}; margin: 6px 0;">
             {icon} {status_text}
         </div>
-        <div style="font-size: 1.25rem; font-weight: 700; color: #f8fafc; margin-bottom: 6px;">
-            Estimated Probability: <span style="color: {status_color}; font-size: 1.6rem; font-weight: 800;">{res['probability_percent']}%</span>
+        <div style="font-size: 1.25rem; font-weight: 700; color: #0F172A; margin-bottom: 6px;">
+            Estimated Probability: <span style="color: {status_color}; font-size: 1.5rem; font-weight: 800;">{res['probability_percent']}%</span>
         </div>
-        <div style="font-size: 0.88rem; color: #cbd5e1; max-width: 650px; margin: 0 auto; line-height: 1.6;">
-            <b>Readiness Tier:</b> <span style="color:#38bdf8; font-weight:700;">{res['readiness_level']}</span> &bull; 
+        <div style="font-size: 0.88rem; color: #475569; max-width: 650px; margin: 0 auto; line-height: 1.6;">
+            <b>Readiness Tier:</b> <span style="color:#2563EB; font-weight:700;">{res['readiness_level']}</span> &bull; 
             Inference generated by <b>{res['model_name']}</b> based on your saved profile parameters.<br>
-            <span style="font-size:0.78rem; opacity:0.8;">Note: This prediction is a data-driven estimate based on historical patterns, not an absolute guarantee.</span>
+            <span style="font-size:0.78rem; color:#64748B;">Note: This prediction is a data-driven estimate based on historical placement trends.</span>
         </div>
     </div>
     """, unsafe_allow_html=True)
 
     # Key Drivers & Areas to Improve
-    st.markdown("### 💡 Why this prediction?")
+    st.markdown("### 💡 What can I improve?")
     col_str, col_imp = st.columns(2, gap="medium")
     
     with col_str:
         st.markdown("""
-        <div class="glass-card" style="border-left: 4px solid #10b981; height: 100%;">
-            <h4 style="margin-top:0; color:#34d399;">🌟 Profile Strengths & Competitive Drivers</h4>
+        <div class="campus-card" style="border-left: 4px solid #16A34A; height: 100%;">
+            <div style="font-weight: 700; font-size: 1.05rem; color: #16A34A; margin-bottom: 8px;">
+                🌟 Profile Strengths & Competitive Drivers
+            </div>
         """, unsafe_allow_html=True)
         if res.get("strengths"):
             for s in res["strengths"]:
@@ -132,8 +134,10 @@ if run_pred or "last_student_prediction" in st.session_state:
 
     with col_imp:
         st.markdown("""
-        <div class="glass-card" style="border-left: 4px solid #f43f5e; height: 100%;">
-            <h4 style="margin-top:0; color:#fb7185;">📈 Top Recommended Improvement Areas</h4>
+        <div class="campus-card" style="border-left: 4px solid #F59E0B; height: 100%;">
+            <div style="font-weight: 700; font-size: 1.05rem; color: #D97706; margin-bottom: 8px;">
+                📈 Recommended Improvement Areas
+            </div>
         """, unsafe_allow_html=True)
         if res.get("top_improvements"):
             for imp in res["top_improvements"][:4]:

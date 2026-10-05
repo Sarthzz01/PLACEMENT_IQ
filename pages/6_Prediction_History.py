@@ -3,6 +3,7 @@ import pandas as pd
 import plotly.express as px
 from src.auth import require_student
 from src.database import get_student_prediction_history, get_student_feedback
+from src.visualizations import base
 from src.ui import css, hero, render_top_navbar
 
 css()
@@ -15,7 +16,7 @@ user_id = st.session_state.user_id
 render_top_navbar(role="Student", user_name=name, user_id=f"{user_id} • {email}")
 
 hero(
-    "My Placement Prediction History & Audit Log",
+    "Prediction History & Audit Log",
     "Review your historical assessment runs, probability trajectory across iterations, and official faculty recommendations.",
     tag="Historical Records"
 )
@@ -25,7 +26,7 @@ fb_df = get_student_feedback(email)
 
 if len(hist_df) == 0:
     st.info("No prediction attempts recorded in the database yet. Head to **'Placement Prediction'** to generate your first assessment!")
-    if st.button("🔮 Run Placement Prediction Now", type="primary"):
+    if st.button("🎯 Run Placement Prediction Now", type="primary"):
         st.switch_page("pages/3_Placement_Prediction.py")
 else:
     # Summary Metrics Strip
@@ -58,12 +59,8 @@ else:
             title="Readiness Probability % Over Time",
             labels={"predicted_at": "Evaluation Timestamp", "probability_pct": "Estimated Probability (%)"}
         )
-        fig_trend.update_layout(
-            template="plotly_dark",
-            paper_bgcolor="rgba(0,0,0,0)",
-            plot_bgcolor="rgba(0,0,0,0)",
-            yaxis=dict(range=[0, 100])
-        )
+        fig_trend = base(fig_trend, "Readiness Probability % Over Time")
+        fig_trend.update_layout(yaxis=dict(range=[0, 100]))
         st.plotly_chart(fig_trend, use_container_width=True)
 
     # Detailed Records Table
@@ -94,15 +91,15 @@ if len(fb_df) > 0:
     for _, fb in fb_df.iterrows():
         p_badge = "badge-danger" if fb["priority"] == "High" else "badge-info"
         st.markdown(f"""
-        <div class="glass-card" style="margin-bottom: 12px; padding: 18px;">
+        <div class="campus-card" style="margin-bottom: 12px; padding: 16px 20px;">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 6px;">
-                <b style="color:#f8fafc; font-size:1rem;">Assessment: {fb['prediction']}</b>
+                <b style="color:#0F172A; font-size:0.95rem;">Assessment: {fb['prediction']}</b>
                 <span class="badge-pill {p_badge}">{fb['priority']} Priority</span>
             </div>
-            <p style="color:#cbd5e1; font-size:0.92rem; margin:0 0 8px 0; line-height:1.6;">
+            <p style="color:#475569; font-size:0.9rem; margin:0 0 6px 0; line-height:1.5;">
                 "{fb['recommendation']}"
             </p>
-            <div style="font-size:0.78rem; color:#94a3b8;">
+            <div style="font-size:0.75rem; color:#64748B;">
                 Submitted by <b>{fb['admin_name']}</b> on <code>{fb['created_at']}</code>
             </div>
         </div>
