@@ -3,10 +3,11 @@
 > **An enterprise-grade academic analytics and decision-support ecosystem bridging dimensional Data Warehousing (Kimball Star Schema), 2D dynamic OLAP cube operations, and dual-paradigm Machine Learning for predictive student career readiness and campus recruitment optimization.**
 
 [![Python Version](https://img.shields.io/badge/Python-3.10%20%7C%203.11%20%7C%203.12-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
-[![Streamlit](https://img.shields.io/badge/Streamlit-1.40+-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)](https://streamlit.io)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.110+-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
+[![React](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev)
+[![Vite](https://img.shields.io/badge/Vite-6-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev)
 [![SQLite Star Schema](https://img.shields.io/badge/SQLite-Kimball%20Star--Schema-003B57?style=for-the-badge&logo=sqlite&logoColor=white)](https://sqlite.org)
 [![Scikit-Learn](https://img.shields.io/badge/Scikit--Learn-1.4+-F7931E?style=for-the-badge&logo=scikit-learn&logoColor=white)](https://scikit-learn.org)
-[![Plotly](https://img.shields.io/badge/Plotly-Interactive%20Visualizations-3F4F75?style=for-the-badge&logo=plotly&logoColor=white)](https://plotly.com)
 [![Validation Status](https://img.shields.io/badge/Tests-13%2F13%20Passing-10B981?style=for-the-badge&logo=checkmarx&logoColor=white)](TEST_REPORT.md)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 
@@ -429,23 +430,40 @@ source venv/bin/activate
 
 ### 3. Install Dependencies
 ```bash
+# Install Python backend dependencies
+cd backend
 pip install -r requirements.txt
+cd ..
+
+# Install Frontend dependencies
+cd frontend
+npm install
+cd ..
 ```
 
 ### 4. Run Automated Platform Validation (Optional but Recommended)
 Validate dataset integrity, Star Schema reconstruction, regression, classification, and OLAP suites:
 ```bash
-python validate_project.py
+python backend/validate_project.py
 ```
 > **Expected Output**: `ALL 13 AUTOMATED TEST SUITES PASSED SUCCESSFULLY (13/13)!`
 
-### 5. Launch the Web Application
-```bash
-streamlit run app.py
-```
-*Or on Windows, simply double-click **`run_dashboard.bat`**.*
+### 5. Launch the Full-Stack Application
+To start both backend and frontend together:
+- **Windows 1-Click**: Double-click [`start_all.bat`](start_all.bat)
+- **Manual Launch**:
+  ```bash
+  # Terminal 1: FastAPI Backend
+  cd backend
+  python -m uvicorn api:app --reload --host 127.0.0.1 --port 8000
 
-Access the interactive web portal at: `http://localhost:8501`
+  # Terminal 2: React Frontend
+  cd frontend
+  npm run dev
+  ```
+
+- Access the **React Web Application** at: `http://localhost:5173`
+- Access the **FastAPI Swagger API Documentation** at: `http://127.0.0.1:8000/docs`
 
 ---
 
@@ -475,78 +493,62 @@ The platform includes an automated testing framework ([`validate_project.py`](va
 
 ```
 PLACEMENT_IQ/
-├── app.py                      # Multi-role entry point & st.navigation router
-├── requirements.txt            # Certified Python dependencies
-├── run_dashboard.bat           # 1-Click Windows execution launcher
-├── validate_project.py         # 13-suite automated test engine
-├── README.md                   # Platform documentation & user manual
-├── TEST_REPORT.md              # System validation & benchmark report
+├── backend/                       # Python Backend, API Engine & ML Analytics
+│   ├── api.py                    # FastAPI REST server for React frontend
+│   ├── main.py                   # Alternative entry point for Uvicorn
+│   ├── requirements.txt          # Python dependencies (FastAPI, Scikit-learn, etc.)
+│   ├── validate_project.py       # 13-suite automated test engine
+│   ├── run_api.bat               # 1-Click launcher for FastAPI server (Port 8000)
+│   ├── data/
+│   │   └── placement_prediction_cleaned.csv  # 15,000 records dataset
+│   ├── models/                   # Persisted scikit-learn models (.joblib)
+│   │   ├── random_forest.joblib
+│   │   ├── decision_tree.joblib
+│   │   ├── naive_bayes.joblib
+│   │   ├── kmeans.joblib
+│   │   ├── slr.joblib
+│   │   └── mlr.joblib
+│   ├── outputs/                  # SQLite database & analytical exports
+│   │   ├── placement_dw.sqlite   # Star-Schema SQLite database
+│   │   ├── classification_metrics.csv
+│   │   ├── regression_metrics.csv
+│   │   ├── kmeans_cluster_profiles.csv
+│   │   └── student_submissions.csv
+│   └── src/                      # Core backend Python modules
+│       ├── auth.py               # Authentication & PBKDF2 hashing
+│       ├── classification.py     # Supervised classification suite
+│       ├── clustering.py         # K-Means & Agglomerative clustering
+│       ├── config.py             # Feature definitions & paths
+│       ├── database.py           # SQLite persistence layer
+│       ├── data_mining.py        # Correlations, MI, Apriori rules
+│       ├── olap.py               # Multi-dimensional OLAP cubes
+│       ├── prediction.py         # Real-time placement inference
+│       ├── preprocessing.py      # Data cleaning & validation
+│       ├── recommendations.py    # Student improvement roadmap
+│       ├── regression.py         # Linear & polynomial regression
+│       ├── submissions.py        # Student submission parsing
+│       ├── visualizations.py     # Plotly & Matplotlib charts
+│       └── warehouse.py          # Kimball star-schema builder
 │
-├── data/
-│   └── placement_prediction_cleaned.csv  # 15,000 certified records (1.6 MB)
+├── frontend/                      # Modern React + Vite Single-Page Application
+│   ├── src/
+│   │   ├── components/           # TopHeader, Sidebar, Navigation
+│   │   ├── pages/
+│   │   │   ├── admin/            # Admin analytics, OLAP, DWH, ML pages
+│   │   │   ├── student/          # Student portal, prediction, skills
+│   │   │   ├── HomePage.jsx      # Public landing page
+│   │   │   └── LoginPage.jsx     # Authentication & registration
+│   │   ├── App.jsx               # Application router & theme
+│   │   └── index.css             # Glassmorphism styling & tokens
+│   ├── package.json              # Frontend scripts & dependencies
+│   └── vite.config.js            # Vite proxy configuration (/api -> :8000)
 │
-├── docs/
-│   ├── STAR_SCHEMA.md          # Star schema relational specifications
-│   └── project_report.md       # DWM architecture and methodology report
-│
-├── models/                     # Persisted scikit-learn serializations (.joblib)
-│   ├── random_forest.joblib    # High-capacity ensemble classifier
-│   ├── decision_tree.joblib    # Interpretable decision tree classifier
-│   ├── naive_bayes.joblib      # Gaussian probabilistic classifier
-│   ├── kmeans.joblib           # Pre-fitted K-Means clustering model
-│   ├── slr.joblib              # Simple linear regression model
-│   └── mlr.joblib              # Multiple linear regression model
-│
-├── outputs/                    # SQLite database & analytical exports
-│   ├── placement_dw.sqlite     # Star-Schema SQLite database (Users, DWH, History)
-│   ├── classification_metrics.csv
-│   ├── regression_metrics.csv
-│   ├── kmeans_cluster_profiles.csv
-│   ├── agglomerative_output.csv
-│   ├── student_submissions.csv
-│   └── VALIDATION_REPORT.md
-│
-├── pages/                      # 22 Dedicated Streamlit multi-page views
-│   ├── 0_Home.py               # Public landing page with live institutional KPIs
-│   ├── 0_Login.py              # Common Sign In & New Student Registration
-│   ├── 1_Student_Dashboard.py  # Student placement readiness overview (gated)
-│   ├── 2_Student_Profile.py    # 20-parameter candidate profile entry form
-│   ├── 3_Placement_Prediction.py# Real-time probabilistic ML placement inference
-│   ├── 4_Skill_Analysis.py     # Multi-dimensional radar vs. placed medians
-│   ├── 5_Improvement_Plan.py   # Prioritized gap analysis & targeted roadmap
-│   ├── 6_Prediction_History.py # Historical predictions & faculty feedback log
-│   ├── 10_Admin_Dashboard.py   # Executive analytics & unified dataset switcher
-│   ├── 11_Student_Data.py      # Searchable candidate directory & feedback dispatch
-│   ├── 12_Data_Warehouse.py    # Star-Schema visualizer & SQL query workbench
-│   ├── 13_OLAP.py              # Universal OLAP builder, 2D Roll-Up & Drill-Down
-│   ├── 14_Data_Mining.py       # Feature correlations, Mutual Info, Apriori rules
-│   ├── 15_Classification.py    # Classification benchmarks & production selector
-│   ├── 16_Regression.py        # Continuous numerical regression (SLR & MLR)
-│   ├── 17_KMeans.py            # K-Means clustering, WCSS Elbow & PCA plots
-│   ├── 18_Agglomerative.py     # Agglomerative clustering & Scipy dendrograms
-│   ├── 19_Cluster_Comparison.py# Side-by-side clustering metrics benchmark
-│   ├── 20_Admin_Predictor.py   # Candidate inference & batch CSV prediction
-│   ├── 21_Reports.py           # Institutional report generation & CSV downloads
-│   ├── 22_Settings.py          # DWH maintenance & production configuration
-│   └── 99_Logout.py            # Secure session termination
-│
-└── src/                        # 16 Modular backend engine modules
-    ├── __init__.py             # Python package marker
-    ├── auth.py                 # PBKDF2 password hashing & session state management
-    ├── database.py             # SQLite normalized tables & transaction handlers
-    ├── config.py               # Feature schemas, bounds, and admin accounts
-    ├── preprocessing.py        # Dataset validation & Unified Dataset engine
-    ├── warehouse.py            # Kimball star-schema builder & SQL executor
-    ├── olap.py                 # Multi-dimensional OLAP cubes (Slice, Dice, 2D)
-    ├── recommendations.py      # Statistical gap analysis & recommendation logic
-    ├── classification.py       # Classifier model training & performance evaluation
-    ├── regression.py           # Continuous target regression modeling (SLR/MLR)
-    ├── clustering.py           # K-Means, Elbow curve, Agglomerative clustering
-    ├── prediction.py           # Model inference pipeline & batch scoring
-    ├── data_mining.py          # Pearson correlations, mutual info, Apriori rules
-    ├── visualizations.py       # Plotly radar charts, confusion matrices, PCA
-    ├── ui.py                   # Global dark glassmorphism CSS & navigation components
-    └── submissions.py          # Public profile URL parser & feature extractor
+├── docs/                          # Architectural documentation & project report
+├── run_backend.bat                # Root 1-click launcher for FastAPI backend
+├── run_frontend.bat               # Root 1-click launcher for React frontend
+├── start_all.bat                  # Root 1-click launcher to run full stack
+├── README.md                      # Comprehensive manual & docs
+└── TEST_REPORT.md                 # System validation & benchmark report
 ```
 
 ---
@@ -573,10 +575,14 @@ Admins can visit <b>Machine Learning Suite ➔ Classification Suite</b> or <b>Se
 </details>
 
 <details>
-<summary><b>3. What happens if I encounter a port conflict on 8501?</b></summary>
-Run Streamlit on an alternative port:
+<summary><b>3. What happens if I encounter a port conflict on 8000 or 5173?</b></summary>
+Run the backend or frontend on alternative ports:
 ```bash
-streamlit run app.py --server.port 8502
+# FastAPI Backend
+python -m uvicorn api:app --port 8001
+
+# React Frontend
+npm run dev -- --port 5174
 ```
 </details>
 

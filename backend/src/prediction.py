@@ -106,6 +106,7 @@ def predict_placement(input_dict, model=None, reference_df=None, model_name=None
         "readiness_level": rec_results["readiness_level"],
         "top_improvements": rec_results["top_improvements"],
         "all_improvements": rec_results["all_improvements"],
+        "recommendations": rec_results["top_improvements"],
         "strengths": rec_results["strengths"]
     }
 

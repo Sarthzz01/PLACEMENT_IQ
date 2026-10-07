@@ -58,12 +58,13 @@ def aggregate(df, rows, cols, measure, agg="Average"):
 
     return piv.reset_index()
 
-def slice_op(df, dimension, value, measure="placement_prediction", agg="Average"):
+def slice_op(df, dimension, value, measure="placement_prediction", agg="Average", display_dim=None):
     """OLAP Slice: Filter single dimension by a single value."""
     filtered = df[df[dimension].astype(str) == str(value)]
     if len(filtered) == 0:
         return pd.DataFrame()
-    return aggregate(filtered, [dimension], [], measure, agg)
+    rows = [display_dim] if display_dim and display_dim != dimension and display_dim in df.columns else [dimension]
+    return aggregate(filtered, rows, [], measure, agg)
 
 def dice_op(df, conditions, rows, cols, measure="placement_prediction", agg="Average"):
     """OLAP Dice: Multi-dimensional sub-cube filtering across multiple conditions."""

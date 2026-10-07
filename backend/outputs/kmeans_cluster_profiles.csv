@@ -1,5 +1,5 @@
-Cluster,cgpa,backlogs,attendance_percentage,dsa_questions_solved,leetcode_questions_solved,hackerrank_questions_solved,internships_count,projects_count,placement_prediction
-0,7.177,0.497,82.861,74.083,39.703,22.169,0.878,2.25,0.12
-1,8.255,0.611,81.061,182.707,96.719,54.936,1.63,3.776,0.548
-2,7.358,0.58,80.555,216.286,117.732,69.217,0.592,1.803,0.265
-3,8.071,0.521,82.838,336.07,194.691,114.254,1.043,2.986,0.75
+Cluster,age,cgpa,backlogs,attendance_percentage,dsa_questions_solved,leetcode_questions_solved,hackerrank_questions_solved,internships_count,projects_count,hackathons_count,certifications_count,aptitude_score,communication_score,coding_skill_score,github_repos,mock_interview_score,placement_prediction
+0,21.353,8.226,0.556,81.017,338.199,193.147,112.503,1.024,3.147,0.986,2.042,70.072,5.879,6.502,10.196,7.938,0.832
+1,21.571,8.14,0.556,81.442,169.731,91.302,51.459,1.429,3.516,1.075,2.067,67.907,6.204,5.376,11.177,8.067,0.581
+2,21.518,7.452,0.682,82.172,242.479,134.539,79.368,0.747,1.908,0.939,2.021,57.964,5.715,5.505,6.816,6.236,0.218
+3,21.416,7.12,0.513,82.103,87.139,45.898,26.127,0.808,2.293,1.095,1.982,54.597,5.756,4.478,8.062,6.186,0.069

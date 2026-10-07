@@ -1,11 +1,16 @@
 import pandas as pd
-import streamlit as st
 from .config import DATA_PATH, TARGET, BASE_NUMERIC
 
 EXPECTED = BASE_NUMERIC + [
     "gender_Male", "gender_Other", "branch_CSE", "branch_Civil", "branch_ECE",
     "branch_ENTC", "branch_IT", "branch_Mechanical", "placement_training_Yes", TARGET
 ]
+
+_DATA_CACHE = {}
+
+def clear_data_cache():
+    """Clear in-memory cached datasets."""
+    _DATA_CACHE.clear()
 
 def validate_dataset(path=DATA_PATH):
     """Inspect dataset and return health summary metrics."""
@@ -73,13 +78,16 @@ def convert_profiles_to_dataset_format(profiles_df):
             out_df[col] = 0
     return out_df[EXPECTED]
 
-@st.cache_data(show_spinner=False)
-def load_data(path=DATA_PATH, include_new_students=False):
+def load_data(path=DATA_PATH, include_new_students=False, force_reload=False):
     """
     Load, validate, clean, and enrich placement prediction dataset.
     If include_new_students is True, merges original dataset with valid newly
     registered students from SQLite database to form a Unified Analytics Dataset.
     """
+    cache_key = (str(path), bool(include_new_students))
+    if not force_reload and cache_key in _DATA_CACHE:
+        return _DATA_CACHE[cache_key].copy()
+
     df = pd.read_csv(path)
     missing = [c for c in EXPECTED if c not in df.columns]
     if missing:
@@ -115,7 +123,9 @@ def load_data(path=DATA_PATH, include_new_students=False):
         except Exception:
             pass
 
-    return add_derived(df)
+    result_df = add_derived(df)
+    _DATA_CACHE[cache_key] = result_df
+    return result_df.copy()
 
 def get_dataset_counts():
     """Retrieve counts for Original, New, and Combined datasets."""

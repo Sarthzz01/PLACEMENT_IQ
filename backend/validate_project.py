@@ -1,7 +1,14 @@
+import sys
 import time
 import os
 import json
 from pathlib import Path
+
+# Ensure backend root is in sys.path
+BACKEND_DIR = Path(__file__).resolve().parent
+if str(BACKEND_DIR) not in sys.path:
+    sys.path.insert(0, str(BACKEND_DIR))
+
 import pandas as pd
 from src.config import ADMIN_EMAILS
 from src.auth import login_user, register_student_account, logout_user
@@ -212,7 +219,7 @@ validation_report = f"""# PLACEMENT IQ System Validation & Audit Report
 
 **Date of Execution:** {time.strftime('%Y-%m-%d %H:%M:%S')}  
 **Application:** Student Placement Analytics & Intelligence Platform  
-**System Architecture:** Streamlit + Scikit-Learn + SQLite Star Schema  
+**System Architecture:** FastAPI + React + Scikit-Learn + SQLite Star Schema  
 
 ---
 
