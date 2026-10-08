@@ -1,12 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { Target, Users, User, Upload, CheckCircle2, AlertTriangle, ArrowRight, Save, Download } from 'lucide-react';
+import { Target, Users, User, Upload, CheckCircle2, AlertTriangle, ArrowRight, Save, Download, Cpu, Layers, Sparkles, TrendingUp, Shield, GitBranch, Award, Zap } from 'lucide-react';
 import AcademicJustification from '../../components/AcademicJustification';
+
+const MODEL_OPTIONS = [
+  { value: 'Random Forest', label: 'Random Forest (Ensemble Bagging ~86% Acc)', badge: 'Ensemble' },
+  { value: 'Gradient Boosting', label: 'Gradient Boosting (Sequential Boosting ~85% Acc)', badge: 'Boosting' },
+  { value: 'Decision Tree', label: 'Decision Tree (White-Box Rule Tree)', badge: 'Rules' },
+  { value: 'Logistic Regression', label: 'Logistic Regression (Linear Log-Odds Baseline)', badge: 'Linear' },
+  { value: 'Naive Bayes', label: 'Gaussian Naive Bayes (Probabilistic Prior)', badge: 'Bayesian' }
+];
 
 export default function PredictionCenter({ user }) {
   const [activeTab, setActiveTab] = useState('registered');
   const [students, setStudents] = useState([]);
   const [selectedStudentEmail, setSelectedStudentEmail] = useState('');
-  const [modelChoice, setModelChoice] = useState('Random Forest');
+  const [modelChoice, setModelChoice] = useState('Gradient Boosting');
   const [loading, setLoading] = useState(false);
   
   // Registered student state
@@ -14,6 +22,10 @@ export default function PredictionCenter({ user }) {
   const [feedbackStatus, setFeedbackStatus] = useState('High Potential');
   const [feedbackNotes, setFeedbackNotes] = useState('');
   const [feedbackSuccess, setFeedbackSuccess] = useState(false);
+
+  // Multi-model consensus comparison state
+  const [comparisonResult, setComparisonResult] = useState(null);
+  const [comparing, setComparing] = useState(false);
 
   // Ad-hoc candidate form state
   const [adHocForm, setAdHocForm] = useState({
@@ -76,6 +88,25 @@ export default function PredictionCenter({ user }) {
     }
   };
 
+  const handleCompareRegistered = async () => {
+    const student = students.find((s) => s.email === selectedStudentEmail);
+    if (!student) return;
+    setComparing(true);
+    try {
+      const res = await fetch('/api/admin/predict/compare', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ data: student }),
+      });
+      const data = await res.json();
+      setComparisonResult(data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setComparing(false);
+    }
+  };
+
   const handleSaveFeedback = async (e) => {
     e.preventDefault();
     if (!selectedStudentEmail) return;
@@ -85,7 +116,7 @@ export default function PredictionCenter({ user }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           student_email: selectedStudentEmail,
-          admin_name: user?.name || 'Administrator',
+          admin_name: user?.name || 'Prof. Shruti Agrawal',
           status: feedbackStatus,
           notes: feedbackNotes,
         }),
@@ -118,6 +149,23 @@ export default function PredictionCenter({ user }) {
     }
   };
 
+  const handleCompareAdHoc = async () => {
+    setComparing(true);
+    try {
+      const res = await fetch('/api/admin/predict/compare', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ data: adHocForm }),
+      });
+      const data = await res.json();
+      setComparisonResult(data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setComparing(false);
+    }
+  };
+
   const handleBatchUpload = async (e) => {
     e.preventDefault();
     if (!batchFile) return;
@@ -144,17 +192,17 @@ export default function PredictionCenter({ user }) {
     <div>
       <div style={{ marginBottom: 24 }}>
         <h1 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--text-main)', margin: '0 0 6px 0' }}>
-          Placement Prediction Center & Batch Assessment
+          Placement Prediction Center & Multi-Model Inference Suite
         </h1>
         <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', margin: 0 }}>
-          Evaluate candidate likelihoods across registered student records or upload external CSV rosters for automated batch scoring.
+          Evaluate candidate placement readiness with 5 distinct ML algorithms (Random Forest, Gradient Boosting, Decision Tree, Logistic Regression, Naive Bayes), run consensus voting, or score departmental CSV rosters.
         </p>
       </div>
 
       {/* Tabs */}
       <div style={{ display: 'flex', gap: 12, borderBottom: '1px solid var(--border-color)', marginBottom: 24 }}>
         <button
-          onClick={() => setActiveTab('registered')}
+          onClick={() => { setActiveTab('registered'); setComparisonResult(null); }}
           style={{
             display: 'flex',
             alignItems: 'center',
@@ -172,7 +220,7 @@ export default function PredictionCenter({ user }) {
           <Users size={16} /> 1. Assess Registered Student
         </button>
         <button
-          onClick={() => setActiveTab('adhoc')}
+          onClick={() => { setActiveTab('adhoc'); setComparisonResult(null); }}
           style={{
             display: 'flex',
             alignItems: 'center',
@@ -190,7 +238,7 @@ export default function PredictionCenter({ user }) {
           <User size={16} /> 2. Ad-Hoc Candidate Profile
         </button>
         <button
-          onClick={() => setActiveTab('batch')}
+          onClick={() => { setActiveTab('batch'); setComparisonResult(null); }}
           style={{
             display: 'flex',
             alignItems: 'center',
@@ -211,153 +259,252 @@ export default function PredictionCenter({ user }) {
 
       {/* Tab 1: Registered Student */}
       {activeTab === 'registered' && (
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24, marginBottom: 24 }}>
-          <div className="campus-card">
-            <h3 style={{ fontSize: '1.1rem', fontWeight: 700, margin: '0 0 16px 0', color: 'var(--text-main)' }}>
-              Candidate Selection & Model Parameters
-            </h3>
+        <div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(420px, 1fr))', gap: 24, marginBottom: 24 }}>
+            <div className="campus-card">
+              <h3 style={{ fontSize: '1.1rem', fontWeight: 700, margin: '0 0 16px 0', color: 'var(--text-main)' }}>
+                Candidate Selection & Model Parameters
+              </h3>
 
-            <div style={{ marginBottom: 16 }}>
-              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-muted)', marginBottom: 6 }}>
-                Select Registered Student:
-              </label>
-              <select
-                className="input-field"
-                value={selectedStudentEmail}
-                onChange={(e) => {
-                  setSelectedStudentEmail(e.target.value);
-                  setRegisteredResult(null);
-                  setFeedbackSuccess(false);
-                }}
-              >
-                {students.map((s) => (
-                  <option key={s.email} value={s.email}>
-                    {s.name} ({s.branch || 'CSE'} - {s.email})
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div style={{ marginBottom: 20 }}>
-              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-muted)', marginBottom: 6 }}>
-                Evaluation Classifier:
-              </label>
-              <select
-                className="input-field"
-                value={modelChoice}
-                onChange={(e) => setModelChoice(e.target.value)}
-              >
-                <option value="Random Forest">Random Forest (Recommended - 86.5% Acc)</option>
-                <option value="Decision Tree">Decision Tree (Transparent Rules)</option>
-                <option value="Naive Bayes">Gaussian Naive Bayes (Probabilistic)</option>
-              </select>
-            </div>
-
-            {selectedStudent && (
-              <div style={{ background: '#F8FAFC', padding: 14, borderRadius: 8, border: '1px solid #E2E8F0', fontSize: '0.85rem', lineHeight: 1.8, marginBottom: 20 }}>
-                <div><b>Candidate:</b> {selectedStudent.name} &bull; <b>Branch:</b> {selectedStudent.branch || 'CSE'}</div>
-                <div><b>CGPA:</b> {selectedStudent.cgpa || 0} &bull; <b>Attendance:</b> {selectedStudent.attendance_percentage || 0}% &bull; <b>Backlogs:</b> {selectedStudent.backlogs || 0}</div>
-                <div><b>DSA Solved:</b> {selectedStudent.dsa_problems_solved || 0} &bull; <b>Aptitude:</b> {selectedStudent.aptitude_score || 0}/100 &bull; <b>Coding:</b> {selectedStudent.coding_skill_score || 0}/10</div>
-              </div>
-            )}
-
-            <button
-              onClick={handleRunRegisteredPredict}
-              disabled={loading || !selectedStudentEmail}
-              className="btn-primary"
-              style={{ width: '100%' }}
-            >
-              <Target size={16} /> {loading ? 'Running Model Inference...' : 'Evaluate Candidate Placement'}
-            </button>
-          </div>
-
-          <div>
-            {registeredResult ? (
-              <div className="campus-card">
-                <h3 style={{ fontSize: '1.1rem', fontWeight: 700, margin: '0 0 16px 0', color: 'var(--text-main)' }}>
-                  Inference Outcome
-                </h3>
-
-                <div
-                  style={{
-                    padding: 20,
-                    borderRadius: 12,
-                    textAlign: 'center',
-                    marginBottom: 20,
-                    background: registeredResult.status === 'Placed' ? '#F0FDF4' : '#FEF2F2',
-                    border: `1.5px solid ${registeredResult.status === 'Placed' ? '#86EFAC' : '#FECACA'}`,
+              <div style={{ marginBottom: 16 }}>
+                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-muted)', marginBottom: 6 }}>
+                  Select Registered Student:
+                </label>
+                <select
+                  className="input-field"
+                  value={selectedStudentEmail}
+                  onChange={(e) => {
+                    setSelectedStudentEmail(e.target.value);
+                    setRegisteredResult(null);
+                    setComparisonResult(null);
+                    setFeedbackSuccess(false);
                   }}
                 >
-                  <div style={{ fontSize: '1.6rem', fontWeight: 900, color: registeredResult.status === 'Placed' ? '#16A34A' : '#DC2626' }}>
-                    {registeredResult.status === 'Placed' ? '✓ PLACED' : '⚠️ NOT PLACED'} ({registeredResult.probability_percent}%)
-                  </div>
-                  <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: 4 }}>
-                    Model: <b>{registeredResult.model_name}</b> &bull; Readiness: <b>{registeredResult.readiness_level}</b>
-                  </div>
+                  {students.map((s) => (
+                    <option key={s.email} value={s.email}>
+                      {s.name} ({s.branch || 'CSE'} - {s.email})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div style={{ marginBottom: 20 }}>
+                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-muted)', marginBottom: 6 }}>
+                  Inference Classifier (5 Algorithms Available):
+                </label>
+                <select
+                  className="input-field"
+                  value={modelChoice}
+                  onChange={(e) => setModelChoice(e.target.value)}
+                >
+                  {MODEL_OPTIONS.map((opt) => (
+                    <option key={opt.value} value={opt.value}>{opt.label}</option>
+                  ))}
+                </select>
+              </div>
+
+              {selectedStudent && (
+                <div style={{ background: '#F8FAFC', padding: 14, borderRadius: 8, border: '1px solid #E2E8F0', fontSize: '0.85rem', lineHeight: 1.8, marginBottom: 20 }}>
+                  <div><b>Candidate:</b> {selectedStudent.name} &bull; <b>Branch:</b> {selectedStudent.branch || 'CSE'}</div>
+                  <div><b>CGPA:</b> {selectedStudent.cgpa || 0} &bull; <b>Attendance:</b> {selectedStudent.attendance_percentage || 0}% &bull; <b>Backlogs:</b> {selectedStudent.backlogs || 0}</div>
+                  <div><b>DSA Solved:</b> {selectedStudent.dsa_problems_solved || 0} &bull; <b>Aptitude:</b> {selectedStudent.aptitude_score || 0}/100 &bull; <b>Coding:</b> {selectedStudent.coding_skill_score || 0}/10</div>
                 </div>
+              )}
 
-                {/* Faculty Feedback Form */}
-                <h4 style={{ fontSize: '0.95rem', fontWeight: 700, margin: '0 0 12px 0', color: 'var(--text-main)' }}>
-                  Record Official Faculty Feedback
-                </h4>
-                <form onSubmit={handleSaveFeedback}>
-                  <div style={{ marginBottom: 12 }}>
-                    <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-muted)', marginBottom: 4 }}>
-                      Verdict:
-                    </label>
-                    <select
-                      className="input-field"
-                      value={feedbackStatus}
-                      onChange={(e) => setFeedbackStatus(e.target.value)}
-                    >
-                      <option value="High Potential">High Potential</option>
-                      <option value="Placed">Placed</option>
-                      <option value="At Risk">At Risk (Needs Mentorship)</option>
-                      <option value="Not Placed">Not Placed</option>
-                    </select>
+              <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                <button
+                  onClick={handleRunRegisteredPredict}
+                  disabled={loading || !selectedStudentEmail}
+                  className="btn-primary"
+                  style={{ flex: 1, minWidth: '180px' }}
+                >
+                  <Target size={16} /> {loading ? 'Running Model...' : `Predict with ${modelChoice}`}
+                </button>
+                <button
+                  onClick={handleCompareRegistered}
+                  disabled={comparing || !selectedStudentEmail}
+                  className="btn-secondary"
+                  style={{ flex: 1, minWidth: '180px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
+                >
+                  <Layers size={16} /> {comparing ? 'Comparing...' : 'Compare All 5 Models'}
+                </button>
+              </div>
+            </div>
+
+            <div>
+              {registeredResult ? (
+                <div className="campus-card">
+                  <h3 style={{ fontSize: '1.1rem', fontWeight: 700, margin: '0 0 16px 0', color: 'var(--text-main)' }}>
+                    Inference Outcome
+                  </h3>
+
+                  <div
+                    style={{
+                      padding: 20,
+                      borderRadius: 12,
+                      textAlign: 'center',
+                      marginBottom: 20,
+                      background: registeredResult.status === 'Placed' ? '#F0FDF4' : '#FEF2F2',
+                      border: `1.5px solid ${registeredResult.status === 'Placed' ? '#86EFAC' : '#FECACA'}`,
+                    }}
+                  >
+                    <div style={{ fontSize: '1.6rem', fontWeight: 900, color: registeredResult.status === 'Placed' ? '#16A34A' : '#DC2626' }}>
+                      {registeredResult.status === 'Placed' ? '✓ PLACED' : '⚠️ NOT PLACED'} ({registeredResult.probability_percent}%)
+                    </div>
+                    <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: 4 }}>
+                      Model: <b>{registeredResult.model_name}</b> &bull; Readiness: <b>{registeredResult.readiness_level}</b>
+                    </div>
                   </div>
 
-                  <div style={{ marginBottom: 14 }}>
-                    <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-muted)', marginBottom: 4 }}>
-                      Advisory Notes (Visible to Student):
-                    </label>
-                    <textarea
-                      className="input-field"
-                      rows={3}
-                      value={feedbackNotes}
-                      onChange={(e) => setFeedbackNotes(e.target.value)}
-                      placeholder="e.g. Focus on graph algorithms and improve mock interview communication before next week's campus drive."
-                      required
-                    />
-                  </div>
-
-                  {feedbackSuccess && (
-                    <div style={{ padding: 10, borderRadius: 6, background: '#DCFCE7', color: '#166534', fontSize: '0.85rem', marginBottom: 12 }}>
-                      ✓ Feedback recorded and synchronized to student's portal!
+                  {/* Strengths & Improvements */}
+                  {registeredResult.strengths?.length > 0 && (
+                    <div style={{ marginBottom: 14 }}>
+                      <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#16A34A', textTransform: 'uppercase', marginBottom: 4 }}>
+                        Key Competitive Strengths
+                      </div>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                        {registeredResult.strengths.slice(0, 3).map((s, idx) => (
+                          <span key={idx} className="badge badge-green" style={{ fontSize: '0.75rem' }}>{s}</span>
+                        ))}
+                      </div>
                     </div>
                   )}
 
-                  <button type="submit" className="btn-secondary" style={{ width: '100%' }}>
-                    <Save size={16} /> Save Feedback to Student Profile
-                  </button>
-                </form>
-              </div>
-            ) : (
-              <div className="campus-card" style={{ textAlign: 'center', padding: 40, color: 'var(--text-muted)' }}>
-                <Target size={40} style={{ opacity: 0.3, marginBottom: 12 }} />
-                <p>Select a candidate and click "Evaluate Candidate Placement" to generate predictive insights.</p>
-              </div>
-            )}
+                  {/* Faculty Feedback Form */}
+                  <h4 style={{ fontSize: '0.95rem', fontWeight: 700, margin: '16px 0 12px 0', color: 'var(--text-main)' }}>
+                    Record Official Faculty Feedback
+                  </h4>
+                  <form onSubmit={handleSaveFeedback}>
+                    <div style={{ marginBottom: 12 }}>
+                      <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-muted)', marginBottom: 4 }}>
+                        Verdict:
+                      </label>
+                      <select
+                        className="input-field"
+                        value={feedbackStatus}
+                        onChange={(e) => setFeedbackStatus(e.target.value)}
+                      >
+                        <option value="High Potential">High Potential</option>
+                        <option value="Placed">Placed</option>
+                        <option value="At Risk">At Risk (Needs Mentorship)</option>
+                        <option value="Not Placed">Not Placed</option>
+                      </select>
+                    </div>
+
+                    <div style={{ marginBottom: 14 }}>
+                      <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-muted)', marginBottom: 4 }}>
+                        Advisory Notes (Visible to Student):
+                      </label>
+                      <textarea
+                        className="input-field"
+                        rows={3}
+                        value={feedbackNotes}
+                        onChange={(e) => setFeedbackNotes(e.target.value)}
+                        placeholder="e.g. Focus on graph algorithms and improve mock interview communication before next week's campus drive."
+                        required
+                      />
+                    </div>
+
+                    {feedbackSuccess && (
+                      <div style={{ padding: 10, borderRadius: 6, background: '#DCFCE7', color: '#166534', fontSize: '0.85rem', marginBottom: 12 }}>
+                        ✓ Feedback recorded and synchronized to student's portal!
+                      </div>
+                    )}
+
+                    <button type="submit" className="btn-secondary" style={{ width: '100%' }}>
+                      <Save size={16} /> Save Feedback to Student Profile
+                    </button>
+                  </form>
+                </div>
+              ) : (
+                <div className="campus-card" style={{ textAlign: 'center', padding: 40, color: 'var(--text-muted)' }}>
+                  <Target size={40} style={{ opacity: 0.3, marginBottom: 12 }} />
+                  <p>Select a candidate and click "Predict" or "Compare All 5 Models" to evaluate placement likelihood.</p>
+                </div>
+              )}
+            </div>
           </div>
+
+          {/* Multi-Model Comparison Card */}
+          {comparisonResult && (
+            <div className="campus-card" style={{ marginBottom: 24, border: '2px solid var(--primary)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+                <div>
+                  <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--navy)', margin: 0 }}>
+                    5-Algorithm Consensus Evaluation
+                  </h3>
+                  <div style={{ fontSize: '0.85rem', color: '#64748B' }}>
+                    Comparing prediction outputs across all 5 trained models for candidate {selectedStudent?.name}
+                  </div>
+                </div>
+
+                <div style={{
+                  padding: '8px 16px',
+                  borderRadius: '20px',
+                  background: comparisonResult.consensus?.status === 'Placed' ? '#DCFCE7' : '#FEE2E2',
+                  color: comparisonResult.consensus?.status === 'Placed' ? '#166534' : '#991B1B',
+                  fontWeight: 800,
+                  fontSize: '0.9rem'
+                }}>
+                  Consensus: {comparisonResult.consensus?.status} ({comparisonResult.consensus?.placed_votes}/{comparisonResult.consensus?.total_models} models agree)
+                </div>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 14 }}>
+                {Object.entries(comparisonResult.models || {}).map(([mName, mRes]) => {
+                  const isPl = mRes.status === 'Placed';
+                  return (
+                    <div
+                      key={mName}
+                      style={{
+                        padding: 14,
+                        borderRadius: 10,
+                        background: isPl ? '#F0FDF4' : '#FEF2F2',
+                        border: `1.5px solid ${isPl ? '#86EFAC' : '#FECACA'}`
+                      }}
+                    >
+                      <div style={{ fontSize: '0.82rem', fontWeight: 700, color: '#334155', marginBottom: 4 }}>
+                        {mName}
+                      </div>
+                      <div style={{ fontSize: '1.25rem', fontWeight: 900, color: isPl ? '#16A34A' : '#DC2626' }}>
+                        {mRes.status}
+                      </div>
+                      <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#64748B', marginTop: 2 }}>
+                        {mRes.probability_percent}% probability
+                      </div>
+                      <div style={{ fontSize: '0.72rem', color: '#94A3B8', marginTop: 4 }}>
+                        Readiness: {mRes.readiness_level}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
         </div>
       )}
 
       {/* Tab 2: Ad-Hoc Profile */}
       {activeTab === 'adhoc' && (
         <form onSubmit={handleRunAdHocPredict} className="campus-card" style={{ marginBottom: 24 }}>
-          <h3 style={{ fontSize: '1.1rem', fontWeight: 700, margin: '0 0 16px 0', color: 'var(--text-main)' }}>
-            Ad-Hoc Candidate Feature Input
-          </h3>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+            <h3 style={{ fontSize: '1.1rem', fontWeight: 700, margin: 0, color: 'var(--text-main)' }}>
+              Ad-Hoc Candidate Feature Input & Multi-Algorithm Testing
+            </h3>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <label style={{ fontSize: '0.82rem', fontWeight: 600, color: '#64748B' }}>Classifier:</label>
+              <select
+                className="input-field"
+                style={{ width: '220px', padding: '6px 10px', fontSize: '0.85rem' }}
+                value={modelChoice}
+                onChange={(e) => setModelChoice(e.target.value)}
+              >
+                {MODEL_OPTIONS.map((opt) => (
+                  <option key={opt.value} value={opt.value}>{opt.value}</option>
+                ))}
+              </select>
+            </div>
+          </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16, marginBottom: 20 }}>
             <div>
@@ -405,9 +552,12 @@ export default function PredictionCenter({ user }) {
             </div>
           </div>
 
-          <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
+          <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
             <button type="submit" disabled={loading} className="btn-primary" style={{ flex: 1 }}>
-              <Target size={16} /> {loading ? 'Evaluating...' : 'Predict Ad-Hoc Outcome'}
+              <Target size={16} /> {loading ? 'Evaluating...' : `Predict with ${modelChoice}`}
+            </button>
+            <button type="button" onClick={handleCompareAdHoc} disabled={comparing} className="btn-secondary" style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+              <Layers size={16} /> {comparing ? 'Comparing...' : 'Compare Across All 5 Algorithms'}
             </button>
           </div>
 
@@ -429,8 +579,33 @@ export default function PredictionCenter({ user }) {
                   {adHocResult.status === 'Placed' ? '✓ Likely Placed' : '⚠️ Unlikely Placed'} ({adHocResult.probability_percent}%)
                 </div>
                 <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                  Readiness: <b>{adHocResult.readiness_level}</b> &bull; Evaluated using {adHocResult.model_name}
+                  Readiness: <b>{adHocResult.readiness_level}</b> &bull; Evaluated using <b>{adHocResult.model_name}</b>
                 </div>
+              </div>
+            </div>
+          )}
+
+          {comparisonResult && (
+            <div style={{ marginTop: 20, padding: 18, background: '#F8FAFC', borderRadius: 12, border: '1.5px solid #CBD5E1' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
+                <strong style={{ color: 'var(--navy)', fontSize: '1.05rem' }}>5-Algorithm Consensus Analysis</strong>
+                <span className="badge" style={{
+                  background: comparisonResult.consensus?.status === 'Placed' ? '#DCFCE7' : '#FEE2E2',
+                  color: comparisonResult.consensus?.status === 'Placed' ? '#166534' : '#991B1B',
+                  fontWeight: 800
+                }}>
+                  {comparisonResult.consensus?.placed_votes}/{comparisonResult.consensus?.total_models} Models Predict Placed
+                </span>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))', gap: 10 }}>
+                {Object.entries(comparisonResult.models || {}).map(([mName, mRes]) => (
+                  <div key={mName} style={{ padding: 10, background: '#FFF', borderRadius: 8, border: '1px solid #E2E8F0' }}>
+                    <div style={{ fontSize: '0.78rem', color: '#64748B', fontWeight: 600 }}>{mName}</div>
+                    <div style={{ fontSize: '1.1rem', fontWeight: 800, color: mRes.status === 'Placed' ? '#16A34A' : '#DC2626' }}>
+                      {mRes.status} ({mRes.probability_percent}%)
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           )}
@@ -444,8 +619,24 @@ export default function PredictionCenter({ user }) {
             Automated Roster Scoring via CSV
           </h3>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: 20 }}>
-            Upload a departmental candidate list (CSV) with standard feature columns (e.g. cgpa, dsa_problems_solved, aptitude_score) to score all candidates in a single high-throughput batch.
+            Upload a departmental candidate list (CSV) with standard feature columns (e.g. cgpa, dsa_problems_solved, aptitude_score) to score all candidates in a single high-throughput batch using your chosen ML algorithm.
           </p>
+
+          <div style={{ marginBottom: 16 }}>
+            <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-muted)', marginBottom: 6 }}>
+              Batch Scoring Classifier:
+            </label>
+            <select
+              className="input-field"
+              style={{ maxWidth: 400 }}
+              value={modelChoice}
+              onChange={(e) => setModelChoice(e.target.value)}
+            >
+              {MODEL_OPTIONS.map((opt) => (
+                <option key={opt.value} value={opt.value}>{opt.label}</option>
+              ))}
+            </select>
+          </div>
 
           <form onSubmit={handleBatchUpload} style={{ display: 'flex', gap: 16, alignItems: 'center', marginBottom: 24 }}>
             <input
@@ -456,7 +647,7 @@ export default function PredictionCenter({ user }) {
               required
             />
             <button type="submit" disabled={loading || !batchFile} className="btn-primary">
-              <Upload size={16} /> {loading ? 'Scoring Roster...' : 'Score Batch Roster'}
+              <Upload size={16} /> {loading ? 'Scoring Roster...' : `Score Roster with ${modelChoice}`}
             </button>
           </form>
 
@@ -514,12 +705,40 @@ export default function PredictionCenter({ user }) {
         </div>
       )}
 
-      {/* Academic Justification */}
+      {/* Analytical Conclusion & Project Outcomes */}
       <AcademicJustification
-        title="Predictive Scoring Center & Batch Inference Justification"
-        algorithmRationale="The Prediction Center serves as the operational inference engine bridging trained statistical learning models with live administrative decision-making. By allowing placement officers to evaluate individual candidates or execute batch inference across external rosters, the platform verifies model generalization on out-of-sample data. Multiple model choices (Random Forest, Decision Trees, and Naive Bayes) allow administrators to cross-validate marginal predictions against both complex ensemble aggregations and transparent rule trees."
+        title="Predictive Inference Center: Multi-Model Scoring & Project Outcomes"
+        techniqueName="Ensemble Scoring Console • Multi-Model Consensus Voting • High-Throughput Batch Inference"
+        whyChosen={[
+          [
+            "Why an Operational Multi-Model Inference Center is Deployed",
+            "Individual offline ML models often fail to translate into practical administrative workflows. The Prediction Center operationalizes all 5 trained models (Random Forest, Gradient Boosting, Decision Tree, Logistic Regression, Naive Bayes) into an interactive real-time console supporting both individual candidate assessment and high-throughput batch scoring."
+          ],
+          [
+            "Why Multi-Model Consensus Voting is Valuable",
+            "Rather than relying blindly on a single algorithm, consensus voting aggregates predictions across multiple distinct inductive principles (bagging, boosting, linear hyperplanes, and probability densities), providing higher confidence when evaluating borderline candidates."
+          ],
+          [
+            "Why High-Throughput Batch CSV Scoring is Integrated",
+            "Campus placement cells manage hundreds of eligible candidates per department. Batch inference vectorizes candidate feature matrices, scoring 500+ student profiles in milliseconds."
+          ]
+        ]}
+        whatWeGet={[
+          [
+            "Proactive Placement Readiness Rosters",
+            "Scores graduating classes 6 to 12 months ahead of company visits, generating an early ranked roster of candidate readiness and probability distributions."
+          ],
+          [
+            "Individualized Risk Factor Diagnosis",
+            "Breaks down individual prediction confidence, highlighting specific features (e.g. low mock interview score or weak DSA problem count) holding a student back."
+          ],
+          [
+            "Objective, Data-Backed Placement Mentoring",
+            "Equips placement coordinators with quantifiable, unbiased guidance to support student counseling and track improvements after training interventions."
+          ]
+        ]}
         institutionalImpact="Enables early proactive intervention before recruitment drives commence. Placement directors can rapidly score entire departmental cohorts to identify students needing urgent skill bootcamps, mock interviews, or aptitude training, converting retrospective placement reports into forward-looking guidance."
-        dwmConcepts="Supervised Model Inference, Out-of-sample Generalization, Threshold Calibration, Batch Matrix Feature Engineering, Direct Actionable Prescriptive Analytics."
+        dwmConcept="Supervised Model Inference, Out-of-sample Generalization, Multi-Model Consensus Voting, Threshold Calibration, Batch Matrix Feature Engineering, Actionable Prescriptive Analytics."
       />
     </div>
   );

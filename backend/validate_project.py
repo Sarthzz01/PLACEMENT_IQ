@@ -81,8 +81,8 @@ print(f"[PASS] 4. Unified Dataset Architecture: Original ({len(df_orig):,}) + DB
 
 # 5. Supervised Classification
 metrics_df, artifacts, y_test = train_models(df_unified)
-assert metrics_df.shape[0] == 3
-for m in ["Decision Tree", "Random Forest", "Naive Bayes"]:
+assert metrics_df.shape[0] == 5
+for m in ["Random Forest", "Gradient Boosting", "Decision Tree", "Logistic Regression", "Naive Bayes"]:
     assert m in artifacts
     assert "roc_auc" in artifacts[m]
     assert "cm" in artifacts[m]
@@ -93,9 +93,11 @@ styled = metrics_df.style.format("{:.3f}", subset=subset_cols)
 assert styled is not None
 
 # Set and verify production model setting
+set_system_setting("production_model", "Gradient Boosting")
+assert get_production_model_name() == "Gradient Boosting"
 set_system_setting("production_model", "Random Forest")
 assert get_production_model_name() == "Random Forest"
-print(f"[PASS] 5. Classification Suite (DT, RF, NB) trained & verified without pandas styling errors.")
+print(f"[PASS] 5. Classification Suite (RF, GB, DT, LR, NB) trained & verified without pandas styling errors.")
 
 # 6. Continuous Numerical Regression
 reg_df, reg_art = train_regression(df_unified, target_col="aptitude_score")
@@ -208,7 +210,7 @@ assert "Confidence" in batch_res.columns
 print("[PASS] 12. Batch CSV Scoring verified.")
 
 # 13. Admin Feedback & SQLite Dispatch
-save_admin_feedback("STU-10492", "student@college.com", "Placed", "Excellent interview readiness", "High", "Prof. Sharma")
+save_admin_feedback("STU-10492", "student@college.com", "Placed", "Excellent interview readiness", "High", "Prof. Shruti Agrawal")
 fb_rows = get_student_feedback("student@college.com")
 assert len(fb_rows) > 0
 assert fb_rows.iloc[0]["prediction"] == "Placed"

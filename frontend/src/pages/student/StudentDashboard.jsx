@@ -138,7 +138,7 @@ export default function StudentDashboard({ user, onNavigate }) {
           <div className="campus-card-header">
             <div>
               <div className="card-title">Latest Placement Prediction</div>
-              <div className="card-subtitle">Output from trained institutional model</div>
+              <div className="card-subtitle">Official Campus Placement Assessment</div>
             </div>
             <button className="btn btn-primary" style={{ fontSize: '0.8rem', padding: '6px 12px' }} onClick={() => onNavigate('prediction')}>
               Re-Calculate
@@ -165,7 +165,7 @@ export default function StudentDashboard({ user, onNavigate }) {
                   {prob}% Probability
                 </div>
                 <div style={{ fontSize: '0.85rem', color: '#64748B', marginTop: '4px' }}>
-                  Evaluated with {latestPred.model_name || 'Random Forest'} Classifier
+                  Official Placement Cell Assessment
                 </div>
               </div>
 
@@ -188,7 +188,7 @@ export default function StudentDashboard({ user, onNavigate }) {
               <Target size={48} style={{ opacity: 0.3, marginBottom: '12px' }} />
               <h4>No prediction generated yet</h4>
               <p style={{ fontSize: '0.88rem', marginTop: '6px', marginBottom: '16px' }}>
-                Run your first prediction against our verified machine learning models to unlock your personalized placement trajectory.
+                Calculate your placement readiness to evaluate your profile and unlock your personalized improvement roadmap.
               </p>
               <button className="btn btn-primary" onClick={() => onNavigate('prediction')}>
                 Generate Prediction Now

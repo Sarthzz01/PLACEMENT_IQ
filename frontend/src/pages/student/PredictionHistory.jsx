@@ -37,7 +37,7 @@ export default function PredictionHistory({ user }) {
       <div style={{ marginBottom: '24px' }}>
         <h2 style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--navy)' }}>Prediction Audit History</h2>
         <p style={{ color: 'var(--text-muted)', fontSize: '0.92rem' }}>
-          Historical record tracking your placement probability progression across model runs.
+          Historical record tracking your placement probability progression over time.
         </p>
       </div>
 
@@ -79,7 +79,7 @@ export default function PredictionHistory({ user }) {
               <thead>
                 <tr>
                   <th>Timestamp</th>
-                  <th>Classifier Model</th>
+                  <th>Assessment Type</th>
                   <th>Outcome</th>
                   <th>Probability</th>
                   <th>Audit Reference</th>
@@ -96,7 +96,7 @@ export default function PredictionHistory({ user }) {
                   return (
                     <tr key={row.id || i}>
                       <td style={{ color: '#0F172A', fontWeight: 600 }}>{timestamp}</td>
-                      <td>{row.model_name || 'Random Forest'}</td>
+                      <td>Automated Placement Evaluation</td>
                       <td>
                         <span className={`badge ${isPlaced ? 'badge-placed' : 'badge-not-placed'}`}>
                           {isPlaced ? 'PLACED' : 'NOT PLACED'}

@@ -32,12 +32,19 @@ export default function AdminDashboard({ user, onNavigate }) {
     <div>
       {/* Header title */}
       <div style={{ marginBottom: '24px' }}>
-        <h2 style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--navy)' }}>
-          Placement Intelligence Executive Dashboard
-        </h2>
-        <p style={{ color: 'var(--text-muted)', fontSize: '0.92rem' }}>
-          Real-time institutional cohort analytics, predictive conversion benchmarks, and database activity streams.
-        </p>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
+          <div>
+            <h2 style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--navy)', margin: 0 }}>
+              Welcome back, {user?.name || 'Prof. Shruti Agrawal'} 👋
+            </h2>
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.92rem', margin: '4px 0 0 0' }}>
+              Real-time institutional cohort analytics, predictive conversion benchmarks, and database activity streams.
+            </p>
+          </div>
+          <div className="badge badge-role" style={{ fontSize: '0.8rem', padding: '6px 14px' }}>
+            Lead Faculty: {user?.name || 'Prof. Shruti Agrawal'}
+          </div>
+        </div>
       </div>
 
       {/* KPI Cards Row */}

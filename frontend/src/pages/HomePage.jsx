@@ -172,7 +172,7 @@ export default function HomePage({ onGoToLogin, onNavigate }) {
                 <CheckCircle2 size={16} color="#2563EB" /> 6-D Dynamic OLAP Engine (Slice, Dice, Roll-Up, Pivot)
               </li>
               <li style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.88rem', color: '#2563EB' }}>
-                <CheckCircle2 size={16} color="#2563EB" /> Supervised Models (Random Forest, Decision Tree, Naive Bayes)
+                <CheckCircle2 size={16} color="#2563EB" /> 5 Supervised Models (Random Forest, Gradient Boosting, Decision Tree, Logistic Regression, Naive Bayes)
               </li>
               <li style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.88rem', color: '#2563EB' }}>
                 <CheckCircle2 size={16} color="#2563EB" /> Clustering Analysis (K-Means & Agglomerative Hierarchical)

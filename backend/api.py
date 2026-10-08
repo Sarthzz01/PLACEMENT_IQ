@@ -24,7 +24,7 @@ from src.database import (
     get_student_feedback, get_all_student_profiles_df,
     get_system_setting, set_system_setting, log_olap_query, get_olap_history
 )
-from src.prediction import predict_placement, get_production_model_name, batch_predict
+from src.prediction import predict_placement, get_production_model_name, batch_predict, MODEL_FILENAME_MAP
 from src.recommendations import generate_recommendations
 from src.warehouse import (
     build_warehouse, get_warehouse_summary, get_sample_records,
@@ -37,6 +37,7 @@ from src.classification import train_models
 from src.regression import train_regression
 from src.clustering import kmeans, elbow, agglomerative, dendrogram_data
 from src.data_mining import correlation, mutual_information, feature_importance, association_insights
+from src.profile_fetcher import fetch_external_profile_stats
 
 init_database()
 
@@ -103,6 +104,11 @@ class ProfileUpdateRequest(BaseModel):
     email: str
     data: Dict[str, Any]
 
+class FetchExternalStatsRequest(BaseModel):
+    github_url: Optional[str] = ""
+    leetcode_url: Optional[str] = ""
+    hackerrank_url: Optional[str] = ""
+
 class PredictRequest(BaseModel):
     email: Optional[str] = None
     data: Dict[str, Any]
@@ -132,6 +138,18 @@ class OLAPQueryRequest(BaseModel):
 class SettingRequest(BaseModel):
     key: str
     value: str
+
+class ClassificationTrainRequest(BaseModel):
+    test_size: Optional[float] = 0.2
+    random_state: Optional[int] = 42
+    dt_depth: Optional[int] = 6
+    rf_estimators: Optional[int] = 150
+    rf_depth: Optional[int] = 10
+    gb_estimators: Optional[int] = 100
+    gb_depth: Optional[int] = 3
+    gb_learning_rate: Optional[float] = 0.1
+    lr_max_iter: Optional[int] = 1000
+    lr_C: Optional[float] = 1.0
 
 # -------------------------------------------------------------
 # AUTHENTICATION
@@ -263,6 +281,15 @@ def student_profile_save(req: ProfileUpdateRequest):
     payload["email"] = req.email.strip().lower()
     save_student_profile(payload)
     return {"status": "success", "message": "Profile updated successfully."}
+
+@app.post("/api/student/fetch-external-stats")
+def api_fetch_external_stats(req: FetchExternalStatsRequest):
+    result = fetch_external_profile_stats(
+        github_url=req.github_url or "",
+        leetcode_url=req.leetcode_url or "",
+        hackerrank_url=req.hackerrank_url or ""
+    )
+    return result
 
 @app.post("/api/student/predict")
 def student_predict(req: PredictRequest):
@@ -440,6 +467,42 @@ def admin_predict(req: PredictRequest):
             evaluated_by="Admin Assessment"
         )
     return result
+
+@app.post("/api/admin/predict/compare")
+def admin_predict_compare(req: PredictRequest):
+    df = load_data()
+    models_to_test = list(MODEL_FILENAME_MAP.keys())
+    results = {}
+    placed_count = 0
+    total_models = len(models_to_test)
+    
+    for m in models_to_test:
+        try:
+            res = predict_placement(req.data, reference_df=df, model_name=m)
+            is_placed = res["status"] == "Placed"
+            if is_placed:
+                placed_count += 1
+            results[m] = {
+                "status": res["status"],
+                "probability": res["probability"],
+                "probability_percent": res["probability_percent"],
+                "readiness_level": res.get("readiness_level", "")
+            }
+        except Exception as e:
+            results[m] = {"error": str(e)}
+            
+    consensus_percent = round((placed_count / total_models) * 100, 1) if total_models > 0 else 0
+    consensus_status = "Placed" if placed_count >= (total_models / 2) else "Not Placed"
+    
+    return {
+        "models": results,
+        "consensus": {
+            "status": consensus_status,
+            "placed_votes": placed_count,
+            "total_models": total_models,
+            "consensus_percent": consensus_percent
+        }
+    }
 
 @app.post("/api/admin/predict/batch")
 async def admin_predict_batch(file: UploadFile = File(...), model_name: Optional[str] = "Random Forest"):
@@ -668,6 +731,46 @@ def admin_classification():
         "artifacts": serialized_artifacts
     }
 
+@app.post("/api/admin/classification/train")
+def admin_classification_train(req: Optional[ClassificationTrainRequest] = None):
+    df = load_data(include_new_students=True)
+    kwargs = {}
+    if req:
+        if req.test_size is not None: kwargs["test_size"] = req.test_size
+        if req.random_state is not None: kwargs["random_state"] = req.random_state
+        if req.dt_depth is not None: kwargs["dt_depth"] = req.dt_depth
+        if req.rf_estimators is not None: kwargs["rf_estimators"] = req.rf_estimators
+        if req.rf_depth is not None: kwargs["rf_depth"] = req.rf_depth
+        if req.gb_estimators is not None: kwargs["gb_estimators"] = req.gb_estimators
+        if req.gb_depth is not None: kwargs["gb_depth"] = req.gb_depth
+        if req.gb_learning_rate is not None: kwargs["gb_learning_rate"] = req.gb_learning_rate
+        if req.lr_max_iter is not None: kwargs["lr_max_iter"] = req.lr_max_iter
+        if req.lr_C is not None: kwargs["lr_C"] = req.lr_C
+
+    metrics_df, artifacts, _ = train_models(df, **kwargs)
+    
+    formatted_metrics = metrics_df.to_dict(orient="records")
+    for row in formatted_metrics:
+        row["ROC AUC"] = row.get("ROC-AUC", 0.0)
+    
+    serialized_artifacts = {}
+    for m_name, art in artifacts.items():
+        serialized_artifacts[m_name] = {
+            "roc_auc": round(float(art["roc_auc"]), 4),
+            "pr_auc": round(float(art["pr_auc"]), 4),
+            "confusion_matrix": art["cm"].tolist(),
+            "fpr": art["fpr"][::max(1, len(art["fpr"]) // 50)].tolist(),
+            "tpr": art["tpr"][::max(1, len(art["tpr"]) // 50)].tolist(),
+            "feature_importance": art["feature_importance"].head(10).to_dict(orient="records") if art["feature_importance"] is not None else None
+        }
+
+    return {
+        "status": "success",
+        "message": f"Successfully trained {len(metrics_df)} classification algorithms.",
+        "metrics": formatted_metrics,
+        "artifacts": serialized_artifacts
+    }
+
 @app.get("/api/admin/regression")
 def admin_regression(target_col: str = "aptitude_score"):
     df = load_data()
@@ -781,6 +884,7 @@ def admin_settings_get():
     curr_model = get_system_setting("production_model", "Random Forest")
     return {
         "production_model": curr_model,
+        "available_models": list(MODEL_FILENAME_MAP.keys()),
         "dataset_counts": counts,
         "database_path": str(DB_PATH.name)
     }

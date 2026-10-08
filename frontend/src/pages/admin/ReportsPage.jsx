@@ -81,10 +81,12 @@ The platform provides a fully dynamic OLAP query engine supporting:
 
 ## 5. Supervised Machine Learning Benchmark
 ### 5.1 Classification Suite
-Three benchmark classifiers were trained and evaluated using stratified train-test splits:
-1. **Random Forest Classifier (150 estimators, max_depth=10):** Achieved peak test accuracy (~86.5%) and F1-score (~0.846), successfully learning nonlinear interactions.
-2. **Decision Tree Classifier (max_depth=6):** Transparent white-box model delivering ~81.4% accuracy with high interpretability.
-3. **Gaussian Naive Bayes:** Probabilistic baseline delivering ~80.9% accuracy with rapid sub-second convergence.
+Five benchmark classifiers were trained and evaluated using stratified train-test splits:
+1. **Random Forest Classifier (150 estimators, max_depth=10):** Ensemble bagging achieving peak test accuracy (~86.5%) and F1-score (~0.846), successfully learning nonlinear interactions.
+2. **Gradient Boosting Classifier (100 estimators, max_depth=3):** Sequential error-correcting boosting ensemble delivering ~85.2% accuracy and robust ROC-AUC (~0.899).
+3. **Decision Tree Classifier (max_depth=6):** Transparent white-box model delivering ~81.4% accuracy with high rule interpretability.
+4. **Logistic Regression (L2 regularized):** Scaled linear log-odds classifier achieving ~82.0% accuracy and high ROC-AUC (~0.906) with instant execution.
+5. **Gaussian Naive Bayes:** Probabilistic baseline delivering ~80.9% accuracy with rapid sub-second convergence.
 
 ### 5.2 Regression Analysis
 Evaluated continuous skill prediction across \`aptitude_score\`, \`coding_skill_score\`, and \`cgpa\`. Multiple Linear Regression (MLR) demonstrated superior variance explanation (R² ~ 0.417) compared to univariate Simple Linear Regression (SLR R² ~ 0.209).
@@ -263,12 +265,36 @@ PLACEMENT IQ bridges the gap between theoretical data warehousing concepts and p
         </div>
       )}
 
-      {/* Academic Justification */}
+      {/* Analytical Conclusion & Project Outcomes */}
       <AcademicJustification
-        title="Reporting & Intelligence Export Justification"
-        algorithmRationale="Standardized reporting and verifiable data artifact dissemination are critical requirements of data warehousing lifecycles. Reproducibility ensures that institutional evaluators and external audit committees can independently verify algorithm benchmarking metrics, schema integrity, and distribution statistics without proprietary software dependencies."
+        title="Institutional Intelligence & Reporting: Artifact Export & Project Outcomes"
+        techniqueName="Automated Institutional Intelligence • Multi-Format Artifact Serializer • Data Lineage Tracking"
+        whyChosen={[
+          [
+            "Why Automated Intelligence Export Replaces Manual Reporting",
+            "Institutional accreditation committees (NAAC, NBA, NIRF) and placement directorates require verifiable documentation of analytical findings. Manual compilation in spreadsheets is error-prone, subjective, and slow. Automated serializing generates reproducible, audit-ready Markdown and CSV artifacts directly from warehouse facts."
+          ],
+          [
+            "Why Full Data Lineage and Metadata Tracking are Enforced",
+            "Every report captures training timestamps, model version hashes, data record counts, and algorithm hyperparameters, guaranteeing complete reproducibility for external academic audits."
+          ]
+        ]}
+        whatWeGet={[
+          [
+            "Instant Audit-Ready Accreditation Documentation",
+            "Generates comprehensive placement performance reports, confusion matrices, and departmental breakdowns with a single click, eliminating weeks of manual spreadsheet labor."
+          ],
+          [
+            "Executive Leadership Summaries",
+            "Synthesizes complex machine learning and OLAP aggregations into clear executive summaries tailored for the University Board and Academic Deans."
+          ],
+          [
+            "Guaranteed Data Provenance & Lineage",
+            "Every metric reported can be traced directly back to underlying warehouse fact tables and validated model checkpoints."
+          ]
+        ]}
         institutionalImpact="Provides the Departmental Academic Committee with rigorous, evidence-based documentation supporting curriculum improvements, accreditation reviews, and institutional placement performance reports."
-        dwmConcepts="Metadata Management, Data Lineage & Auditability, Artifact Serializability, Reproducible Analytical Workflows, Executive Governance Reporting."
+        dwmConcept="Metadata Management, Data Lineage & Auditability, Artifact Serializability, Reproducible Analytical Pipelines, Executive Governance."
       />
     </div>
   );

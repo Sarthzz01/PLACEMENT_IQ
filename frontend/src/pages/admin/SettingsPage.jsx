@@ -165,8 +165,10 @@ export default function SettingsPage() {
                 value={selectedModel}
                 onChange={(e) => setSelectedModel(e.target.value)}
               >
-                <option value="Random Forest">Random Forest (Recommended - 86.5% Test Accuracy)</option>
+                <option value="Random Forest">Random Forest (Ensemble Bagging ~86% Accuracy)</option>
+                <option value="Gradient Boosting">Gradient Boosting (Sequential Boosting Ensemble ~85% Accuracy)</option>
                 <option value="Decision Tree">Decision Tree (Transparent White-Box Rules)</option>
+                <option value="Logistic Regression">Logistic Regression (L2-Regularized Linear Log-Odds)</option>
                 <option value="Naive Bayes">Gaussian Naive Bayes (Fast Probabilistic Baseline)</option>
               </select>
             </div>
@@ -183,9 +185,11 @@ export default function SettingsPage() {
           </form>
 
           <div style={{ marginTop: 24, padding: 16, background: '#F8FAFC', borderRadius: 8, border: '1px solid #E2E8F0', fontSize: '0.85rem', lineHeight: 1.8 }}>
-            <div><b style={{ color: 'var(--primary)' }}>• Random Forest:</b> Ensemble bagging of 150 randomized decision trees. Highest cross-validated accuracy and resistance to feature noise.</div>
-            <div><b style={{ color: 'var(--primary)' }}>• Decision Tree:</b> Single pruned CART tree. Enables full rule auditability for educational transparency.</div>
-            <div><b style={{ color: 'var(--primary)' }}>• Gaussian Naive Bayes:</b> Assumes conditional feature independence with Gaussian probability density estimation.</div>
+            <div><b style={{ color: 'var(--primary)' }}>• Random Forest:</b> Ensemble bagging of 150 randomized decision trees. Aggregates orthogonal feature subspaces to reduce variance and prevent overfitting.</div>
+            <div><b style={{ color: 'var(--primary)' }}>• Gradient Boosting:</b> Sequential residual boosting trees. Iteratively fits pseudo-residuals to capture complex non-linear attribute interactions.</div>
+            <div><b style={{ color: 'var(--primary)' }}>• Decision Tree:</b> Single pruned CART tree with Gini impurity splitting. Enables full rule auditability for educational counselling transparency.</div>
+            <div><b style={{ color: 'var(--primary)' }}>• Logistic Regression:</b> Standardized linear logit model with L2 regularization. Provides direct log-odds interpretations and rapid sub-second scoring.</div>
+            <div><b style={{ color: 'var(--primary)' }}>• Gaussian Naive Bayes:</b> Assumes conditional feature independence with Gaussian probability density estimation as a fast probabilistic benchmark.</div>
           </div>
         </div>
       )}
@@ -290,12 +294,36 @@ export default function SettingsPage() {
         </div>
       )}
 
-      {/* Academic Justification */}
+      {/* Analytical Conclusion & Project Outcomes */}
       <AcademicJustification
-        title="System Governance & Architecture Justification"
-        algorithmRationale="System settings and model registry controls ensure reproducible ML governance across institutional deployments. Decoupling the production model designation from source code enables data scientists to promote newer champion models (such as an updated Random Forest) without server downtime or code modifications."
+        title="Platform Governance & Model Registry: Architectural Control & Project Outcomes"
+        techniqueName="Dynamic Model Registry • Zero-Downtime Model Routing • Role Boundary Enforcement"
+        whyChosen={[
+          [
+            "Why Dynamic Model Registry Decoupling is Vital",
+            "Hardcoding machine learning models inside source code creates brittleness and deployment downtime whenever retraining occurs. Decoupling the active production model designation into a dynamic system setting enables administrators to seamlessly promote champion models (e.g. promoting Gradient Boosting or Random Forest) without server restarts."
+          ],
+          [
+            "Why Strict Role Boundary & Governance is Enforced",
+            "Preserves ethical boundaries between student self-assessment and administrative decision-making. Students receive actionable guidance and probability insights without exposure to model switching mechanics, while administrators maintain full governance over warehouse tables, training parameters, and audit feedback."
+          ]
+        ]}
+        whatWeGet={[
+          [
+            "Zero-Downtime Hot-Reloadable Model Swapping",
+            "Our project can switch between any of the 5 trained algorithms in production with instant cutover, allowing live experimentation without service interruptions."
+          ],
+          [
+            "Self-Healing Data Warehouse Maintenance",
+            "Provides one-click ETL refresh and schema rebuilding, allowing the data warehouse to incorporate fresh semester enrollments while preserving conformed dimensional integrity."
+          ],
+          [
+            "Real-Time System Health & Diagnostics",
+            "Live monitoring of SQLite database connectivity, dimensional table row counts, and server response times ensures high reliability during peak recruitment periods."
+          ]
+        ]}
         institutionalImpact="Provides institutional administrators with a secure, centralized control panel to manage role boundaries, audit registered accounts, rebuild warehouse dimensional tables upon new semester enrollments, and monitor data warehouse integrity."
-        dwmConcepts="Model Registry & Lifecycle Governance, Dimensional Table Refresh Policies, Role-Based Access Control (RBAC), Data Warehouse Health Diagnostics."
+        dwmConcept="Model Registry & Lifecycle Governance, Hot-Reloadable Production Routing, Role-Based Access Control (RBAC), Data Warehouse Health Diagnostics."
       />
     </div>
   );

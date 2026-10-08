@@ -10,7 +10,9 @@ from .database import get_system_setting
 
 MODEL_FILENAME_MAP = {
     "Random Forest": "random_forest.joblib",
+    "Gradient Boosting": "gradient_boosting.joblib",
     "Decision Tree": "decision_tree.joblib",
+    "Logistic Regression": "logistic_regression.joblib",
     "Naive Bayes": "naive_bayes.joblib"
 }
 

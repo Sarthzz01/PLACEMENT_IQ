@@ -110,17 +110,40 @@ export default function AgglomerativePage() {
         </>
       )}
 
-      {/* Academic Justification */}
+      {/* Analytical Conclusion & Project Outcomes */}
       <AcademicJustification
-        title="Bottom-Up Hierarchical Taxonomy & Multi-Level Skill Clustering"
-        algorithmName={`Agglomerative Hierarchical Clustering (${linkage.toUpperCase()} Linkage, K=${k})`}
-        whyUsed={[
-          ["Nested Hierarchical Skill Taxonomy", "Unlike flat partitional algorithms like K-Means which impose rigid sphere boundaries, Agglomerative Hierarchical Clustering begins with each candidate in their own singleton cluster and recursively merges nearest pairs based on Ward's variance minimization criterion. This constructs a complete phylogenetic-style dendrogram of student capabilities."],
-          ["Continuous Multi-Granular Inspection", "Placement drives feature diverse hiring profiles—from specialized R&D roles seeking niche algorithmic depth to mass IT recruitment hiring generalists. By examining the dendrogram at variable horizontal cut thresholds (cophenetic distance), placement directors can inspect fine-grained micro-specializations (e.g. Competitive Coders vs Full-Stack Developers) or broad macro cohorts without re-running the model."],
-          ["Validation of Partitioned Boundaries", "Comparing bottom-up hierarchical agglomerations against top-down K-Means centroids verifies whether identified student clusters are genuine natural structures in the educational data or mathematical artifacts of the K-Means distance function."]
+        title="Hierarchical Taxonomy Discovery: Agglomerative Clustering & Project Outcomes"
+        techniqueName={`Agglomerative Bottom-Up Clustering (${linkage.toUpperCase()} Linkage, K=${k})`}
+        whyChosen={[
+          [
+            "Why Hierarchical Agglomerative Clustering is Selected",
+            "Unlike flat partitional algorithms like K-Means which enforce rigid spherical boundaries, Agglomerative clustering begins with each student as an independent leaf and recursively merges nearest pairs using Ward's minimum variance criterion. This constructs a complete taxonomic tree of candidate competencies."
+          ],
+          [
+            "Why Variable Dendrogram Cut Depth is Invaluable",
+            "Recruiters from different tiers require different levels of candidate granularity—from specialized R&D roles seeking niche algorithmic depth to mass IT recruiters seeking generalists. Pruning the dendrogram at variable horizontal cophenetic distances allows the placement cell to dynamically extract micro-specializations or macro cohorts without retraining."
+          ],
+          [
+            "Why It Validates K-Means Partitions",
+            "Comparing bottom-up hierarchical agglomerations against top-down K-Means centroids mathematically proves whether identified student cohorts are genuine natural structures in the academic data or artifacts of distance functions."
+          ]
         ]}
-        institutionalImpact={`Achieved a measured silhouette quality score of ${data?.silhouette || 0.063} across representative candidate samples. Provides placement departments with an intuitive visual roadmap of how student skill profiles naturally coalesce, allowing recruiters from different market tiers (mass vs super-dream) to easily target cohorts at appropriate dendrogram cut depths.`}
-        dwmConcept="Hierarchical Clustering, Agglomerative Bottom-Up Merge, Ward Linkage Variance Optimization, Cophenetic Distance, Dendrogram Interpretation."
+        whatWeGet={[
+          [
+            "Interactive Visual Dendrogram of Student Competencies",
+            "Our project generates an interpretable dendrogram tree that illustrates how candidate skill profiles merge from individual learners into campus-wide talent pools."
+          ],
+          [
+            "Tier-Specific Recruiter Candidate Shortlists",
+            "Placement officers can cut the tree at fine granularities to quickly curate specialized shortlists for high-paying dream drives (e.g. Competitive Coders with 300+ DSA problems)."
+          ],
+          [
+            "Cluster Distance & Skill Gap Diagnostics",
+            "Calculates cophenetic distances between struggling student clusters and placed clusters, pinpointing exactly how far underprepared students are from the hiring threshold."
+          ]
+        ]}
+        institutionalImpact={`Achieved a measured silhouette quality score of ${data?.silhouette || 0.063} across representative candidate samples. Provides placement departments with an intuitive visual roadmap of how student skill profiles naturally coalesce, allowing recruiters from different market tiers to easily target cohorts at appropriate dendrogram cut depths.`}
+        dwmConcept="Hierarchical Clustering, Ward's Minimum Variance Linkage, Cophenetic Distance, Dendrogram Pruning, Agglomerative Tree Synthesis."
       />
     </div>
   );

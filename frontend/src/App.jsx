@@ -109,10 +109,10 @@ export default function App() {
 
   const getHeaderInfo = (tab, role) => {
     const titles = {
-      dashboard: role === 'Admin' ? 'Executive Placement Dashboard' : 'Student Career Cockpit',
+      dashboard: role === 'Admin' ? 'Executive Placement Dashboard' : 'Student Placement Dashboard',
       profile: 'Candidate Profile & Credentials',
-      prediction: 'Real-Time Placement Inference',
-      predict: 'Real-Time Placement Inference',
+      prediction: role === 'Admin' ? 'Placement Inference Center' : 'Placement Readiness Assessment',
+      predict: role === 'Admin' ? 'Placement Inference Center' : 'Placement Readiness Assessment',
       skills: 'Cohort Skill Gap Benchmarks',
       plan: 'Actionable Career Roadmap',
       history: 'Prediction Audit Trail',
@@ -132,7 +132,9 @@ export default function App() {
     };
     return {
       title: titles[tab] || (role === 'Admin' ? 'Executive Intelligence Suite' : 'Student Workspace'),
-      subtitle: 'Data Warehousing & Machine Learning University Platform'
+      subtitle: role === 'Admin'
+        ? 'Data Warehousing & Machine Learning University Platform'
+        : 'Campus Placement Readiness & Career Analytics'
     };
   };
 

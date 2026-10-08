@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Search, Filter, MessageSquare, CheckCircle2, User, Eye, Send } from 'lucide-react';
+import { Search, Filter, MessageSquare, CheckCircle2, User, Eye, Send, ExternalLink, Globe, Code } from 'lucide-react';
 
 export default function StudentData({ user }) {
   const [students, setStudents] = useState([]);
@@ -44,7 +44,7 @@ export default function StudentData({ user }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           student_email: selectedStudent.email,
-          admin_name: user?.name || 'Admin',
+          admin_name: user?.name || 'Prof. Shruti Agrawal',
           status: feedbackStatus,
           notes: feedbackNotes
         })
@@ -170,10 +170,51 @@ export default function StudentData({ user }) {
             <div style={{ marginBottom: '16px', fontSize: '0.85rem', display: 'flex', flexDirection: 'column', gap: '6px' }}>
               <div><strong>Branch:</strong> {selectedStudent.branch || 'Computer Science'}</div>
               <div><strong>CGPA:</strong> {selectedStudent.cgpa || '7.8'}</div>
-              <div><strong>DSA Problems:</strong> {selectedStudent.dsa_problems_solved || 120}</div>
+              <div><strong>DSA Problems:</strong> {selectedStudent.dsa_questions_solved ?? selectedStudent.dsa_problems_solved ?? 120}</div>
+              <div><strong>LeetCode Solved:</strong> {selectedStudent.leetcode_questions_solved ?? selectedStudent.leetcode_problems_solved ?? '—'}</div>
+              <div><strong>Public Repos:</strong> {selectedStudent.github_repos ?? selectedStudent.github_repos_count ?? '—'}</div>
               <div><strong>Projects Count:</strong> {selectedStudent.projects_count || 3}</div>
               <div><strong>Internships:</strong> {selectedStudent.internships_completed || 1}</div>
             </div>
+
+            {/* Profile Links */}
+            {(selectedStudent.leetcode_url || selectedStudent.github_url || selectedStudent.portfolio_url) && (
+              <div style={{ marginBottom: '16px', padding: '10px 12px', background: '#F8FAFC', borderRadius: '8px', border: '1px solid #E2E8F0' }}>
+                <div style={{ fontSize: '0.78rem', fontWeight: 700, color: '#475569', marginBottom: '8px' }}>Verified Profile Links:</div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                  {selectedStudent.leetcode_url && (
+                    <a 
+                      href={selectedStudent.leetcode_url.startsWith('http') ? selectedStudent.leetcode_url : `https://leetcode.com/u/${selectedStudent.leetcode_url}`} 
+                      target="_blank" 
+                      rel="noreferrer"
+                      style={{ fontSize: '0.78rem', color: '#D97706', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 600 }}
+                    >
+                      <Code size={14} /> LeetCode Profile <ExternalLink size={12} />
+                    </a>
+                  )}
+                  {selectedStudent.github_url && (
+                    <a 
+                      href={selectedStudent.github_url.startsWith('http') ? selectedStudent.github_url : `https://github.com/${selectedStudent.github_url}`} 
+                      target="_blank" 
+                      rel="noreferrer"
+                      style={{ fontSize: '0.78rem', color: '#0F172A', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 600 }}
+                    >
+                      <Globe size={14} /> GitHub Profile <ExternalLink size={12} />
+                    </a>
+                  )}
+                  {selectedStudent.portfolio_url && (
+                    <a 
+                      href={selectedStudent.portfolio_url.startsWith('http') ? selectedStudent.portfolio_url : `https://${selectedStudent.portfolio_url}`} 
+                      target="_blank" 
+                      rel="noreferrer"
+                      style={{ fontSize: '0.78rem', color: '#2563EB', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 600 }}
+                    >
+                      <ExternalLink size={14} /> Portfolio / Website
+                    </a>
+                  )}
+                </div>
+              </div>
+            )}
 
             {msg && (
               <div style={{ background: '#F0FDF4', color: '#16A34A', padding: '8px 12px', borderRadius: '6px', fontSize: '0.8rem', marginBottom: '12px' }}>

@@ -49,10 +49,34 @@ export default function ClusterComparisonPage() {
       </div>
 
       <AcademicJustification
-        title="Comparative Clustering Justification (K-Means vs Agglomerative)"
-        algorithmRationale="Comparing centroid-based K-Means against bottom-up Agglomerative Hierarchical clustering provides an empirical validation of cluster boundaries. While K-Means minimizes intra-cluster Euclidean inertia via iterative expectation-maximization assuming spherical clusters, Agglomerative clustering iteratively merges nearest pairs via Ward's minimal variance linkage without assuming spherical geometry. Testing both algorithms under identical feature subsets validates whether student skill profiles naturally conform to hyper-spherical clusters or exhibit hierarchical density structures."
-        institutionalImpact="Enables campus placement officers to choose the most mathematically sound student categorization framework. A higher silhouette score proves the resulting student buckets (e.g. 'High Achievers' vs 'Foundational Learners') are distinctly separable, ensuring mentorship resources are targeted without misallocating borderline candidates."
-        dwmConcepts="Silhouette Coefficient analysis, Ward's Minimum Variance Linkage, Centroid Vector convergence, Voronoi Cell Partitioning vs Dendrogram Tree Decomposition, Cluster Separation vs Compactness."
+        title="Cluster Topology Evaluation: Methodological Comparison & Project Outcomes"
+        techniqueName="Partitional K-Means vs Hierarchical Agglomerative Comparative Analysis"
+        whyChosen={[
+          [
+            "Why Dual Unsupervised Comparison is Necessary",
+            "Unsupervised clustering lacks ground-truth class labels. Comparing centroid-based K-Means against bottom-up Agglomerative Hierarchical clustering provides rigorous cross-algorithmic validation of candidate cluster boundaries."
+          ],
+          [
+            "Why Spherical vs Hierarchical Geometry is Benchmarked",
+            "While K-Means assumes hyper-spherical clusters via Euclidean centroid convergence, Agglomerative clustering iteratively merges nearest pairs via Ward's minimal variance linkage without spherical geometry assumptions. Testing both methods verifies whether candidate profiles naturally conform to compact spheres or nested density hierarchies."
+          ]
+        ]}
+        whatWeGet={[
+          [
+            "Empirical Cluster Validity Proof (Silhouette & Davies-Bouldin)",
+            "Our project quantitatively proves whether identified student cohorts (e.g. 'High Practical Coders' vs 'At-Risk Candidates') possess mathematically significant separation and cohesion."
+          ],
+          [
+            "Runtime vs Granularity Trade-Off Insights",
+            "Validates that K-Means delivers sub-second execution for real-time batch cohort scoring, while Agglomerative clustering provides structural explainability for curriculum review committees."
+          ],
+          [
+            "Protection Against Arbitrary Student Partitioning",
+            "Ensures university mentorship and bootcamp resources are allocated based on statistically verified student groupings rather than arbitrary cutoff marks."
+          ]
+        ]}
+        institutionalImpact="Enables campus placement officers to choose the most mathematically sound student categorization framework, ensuring mentorship resources are targeted without misallocating borderline candidates."
+        dwmConcept="Silhouette Coefficient Analysis, Ward's Minimum Variance Linkage, Centroid Vector Convergence, Voronoi Cell Partitioning vs Dendrogram Decomposition, Cluster Separation vs Compactness."
       />
 
       {/* Controls & Benchmark Cards */}

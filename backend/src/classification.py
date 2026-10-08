@@ -4,7 +4,8 @@ import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
+from sklearn.linear_model import LogisticRegression
 from sklearn.naive_bayes import GaussianNB
 from sklearn.metrics import (
     accuracy_score, precision_score, recall_score, f1_score,
@@ -29,10 +30,16 @@ def train_models(
     rf_min_split=2,
     rf_min_leaf=1,
     rf_max_features="sqrt",
+    gb_estimators=100,
+    gb_depth=3,
+    gb_learning_rate=0.1,
+    lr_max_iter=1000,
+    lr_C=1.0,
     nb_var_smoothing=1e-9
 ):
     """
-    Train Decision Tree, Random Forest, and Gaussian Naive Bayes models with customizable hyperparameters.
+    Train 5 diverse classification models (Random Forest, Gradient Boosting, Decision Tree,
+    Logistic Regression, and Gaussian Naive Bayes) with customizable hyperparameters.
     Computes all standard DWM classification metrics, ROC & PR curves, feature importances, and execution times.
     """
     X, y, features = model_matrix(df)
@@ -41,14 +48,6 @@ def train_models(
     )
     
     models = {
-        "Decision Tree": DecisionTreeClassifier(
-            max_depth=dt_depth,
-            criterion=dt_criterion,
-            min_samples_split=dt_min_split,
-            min_samples_leaf=dt_min_leaf,
-            random_state=random_state,
-            class_weight="balanced"
-        ),
         "Random Forest": RandomForestClassifier(
             n_estimators=rf_estimators,
             max_depth=rf_depth,
@@ -59,6 +58,29 @@ def train_models(
             n_jobs=-1,
             class_weight="balanced"
         ),
+        "Gradient Boosting": GradientBoostingClassifier(
+            n_estimators=gb_estimators,
+            max_depth=gb_depth,
+            learning_rate=gb_learning_rate,
+            random_state=random_state
+        ),
+        "Decision Tree": DecisionTreeClassifier(
+            max_depth=dt_depth,
+            criterion=dt_criterion,
+            min_samples_split=dt_min_split,
+            min_samples_leaf=dt_min_leaf,
+            random_state=random_state,
+            class_weight="balanced"
+        ),
+        "Logistic Regression": Pipeline([
+            ("scaler", StandardScaler()),
+            ("model", LogisticRegression(
+                max_iter=lr_max_iter,
+                C=lr_C,
+                random_state=random_state,
+                class_weight="balanced"
+            ))
+        ]),
         "Naive Bayes": Pipeline([
             ("scaler", StandardScaler()),
             ("model", GaussianNB(var_smoothing=nb_var_smoothing))
@@ -92,6 +114,18 @@ def train_models(
             feat_imp = pd.DataFrame({
                 "Feature": features,
                 "Importance": m.feature_importances_
+            }).sort_values("Importance", ascending=False)
+        elif hasattr(m, "named_steps") and hasattr(m.named_steps.get("model", None), "coef_"):
+            coefs = np.abs(m.named_steps["model"].coef_[0])
+            feat_imp = pd.DataFrame({
+                "Feature": features,
+                "Importance": coefs / (coefs.sum() if coefs.sum() > 0 else 1.0)
+            }).sort_values("Importance", ascending=False)
+        elif hasattr(m, "coef_"):
+            coefs = np.abs(m.coef_[0])
+            feat_imp = pd.DataFrame({
+                "Feature": features,
+                "Importance": coefs / (coefs.sum() if coefs.sum() > 0 else 1.0)
             }).sort_values("Importance", ascending=False)
             
         metrics.append({

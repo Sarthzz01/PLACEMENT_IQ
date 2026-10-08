@@ -184,17 +184,40 @@ export default function KMeansPage() {
         </>
       )}
 
-      {/* Academic Justification */}
+      {/* Analytical Conclusion & Project Outcomes */}
       <AcademicJustification
-        title="Unsupervised Student Persona Discovery & Cohort Segmentation"
-        algorithmName="K-Means Clustering with Elbow Inertia & Silhouette Optimization"
-        whyUsed={[
-          ["Label-Free Candidate Persona Discovery", "Supervised classification models predict outcomes based on historical placement decisions, which may incorporate systemic company biases or hiring market volatility. K-Means operates without class labels, partitioning the 15,000+ student feature space strictly by Euclidean distance into natural, unbiased behavioral archetypes (such as 'High Academic / Low Practical Coding', 'Balanced Performers', and 'At-Risk Candidates')."],
-          ["Mathematical K-Selection via Elbow & Silhouette", "Rather than arbitrarily assigning students into predefined buckets, K-Means pairs with the Elbow Method (minimizing Within-Cluster Sum of Squares, WCSS) and Silhouette Coefficient analysis. This mathematically validates the natural cluster boundaries where intra-cluster cohesion is maximized and inter-cluster separation is optimized."],
-          ["Principal Component Analysis (PCA) Projection", "Because multi-dimensional student data (spanning CGPA, DSA counts, hackathons, and soft skills) exists in high-dimensional hyperspace, 2D PCA projection preserves the maximum explained variance, enabling placement directors to visually inspect cluster separation, overlaps, and transitional candidates."]
+        title="Unsupervised Cohort Segmentation: K-Means Rationale & Project Outcomes"
+        techniqueName="K-Means Partitional Clustering with Elbow Method & Silhouette Validation"
+        whyChosen={[
+          [
+            "Why Unsupervised K-Means is Used Alongside Classification",
+            "Supervised classifiers depend on historical placement labels, which may be biased by external hiring market fluctuations. K-Means operates without labels, partitioning the 15,000+ student feature space strictly by Euclidean distance into natural, unbiased competency archetypes."
+          ],
+          [
+            "Why Elbow Inertia & Silhouette Coefficients are Combined",
+            "Instead of guessing K, our system combines Within-Cluster Sum of Squares (Inertia Elbow) with Silhouette boundary cohesion analysis, identifying mathematically optimal natural student cluster counts."
+          ],
+          [
+            "Why 2D PCA Dimensionality Reduction is Applied",
+            "Student records span over 10 continuous and discrete dimensions. Fitting 2D Principal Component Analysis (PCA) captures the primary directions of variance, allowing administrators to visually inspect cluster separation, overlaps, and transitional candidates."
+          ]
+        ]}
+        whatWeGet={[
+          [
+            "Actionable Student Personas & Behavioral Archetypes",
+            "Our project discovers distinct student clusters: 'High Academic / Needs Coding Practice', 'Balanced High-Performers', and 'At-Risk Low Engagement'."
+          ],
+          [
+            "Personalized Group Interventions vs Generic Seminars",
+            "Enables placement deans to route specific clusters into tailored interventions (e.g., intensive DSA bootcamps for Cluster 1, leadership & mock interview training for Cluster 3)."
+          ],
+          [
+            "Objective Centroid Benchmarks for Student Growth",
+            "Provides mathematical centroid coordinate profiles that define clear target milestones for students striving to advance into top-tier placement cohorts."
+          ]
         ]}
         institutionalImpact="Enables placement training deans to discard one-size-fits-all training curricula in favor of personalized group interventions—for example, routing Cluster 1 ('Academic Learners') into intensive coding bootcamps while directing Cluster 3 ('High Practical Coders') into leadership and communication development."
-        dwmConcept="Partitional Clustering, Lloyd's Centroid Iteration, Within-Cluster Sum of Squares (Inertia), Silhouette Cohesion-Separation Metric, PCA Dimensionality Reduction."
+        dwmConcept="Partitional Clustering, Lloyd's Centroid Iteration, Within-Cluster Sum of Squares (WCSS), Silhouette Cohesion-Separation, Principal Component Analysis (PCA)."
       />
     </div>
   );

@@ -397,7 +397,7 @@ Authentication uses **PBKDF2 HMAC SHA-256** with random per-user salts across 10
 
 | Portal Role | Registered Email | Password | Pre-loaded Context / Demonstration Purpose |
 | :--- | :--- | :--- | :--- |
-| **Administrator** | `admin@college.com` | `admin123` | **Prof. K. Sharma**: DWM Lead; full executive dashboard, SQL workbench, model switcher. |
+| **Administrator** | `admin@college.com` | `admin123` | **Prof. Shruti Agrawal**: DWM Lead; full executive dashboard, SQL workbench, model switcher. |
 | **Administrator** | `placement@college.com` | `placement123` | **Dean D. Joshi**: TPO Lead; candidate directory, batch scoring, institutional report export. |
 | **Student (Placed)** | `student@college.com` | `student123` | **Rohan Verma**: CSE, CGPA 8.74, 380 DSA solved; high placement readiness demo. |
 | **Student (Action Needed)**| `vikram.m@campus.edu` | `student123` | **Vikram Malhotra**: Mech, CGPA 6.10, backlogs; demonstrates deficit gap engine & roadmap. |

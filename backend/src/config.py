@@ -17,7 +17,7 @@ ADMIN_EMAILS = [
     "admin@college.com",
     "placement@college.com",
     "admin@campus.edu",
-    "sharma.dwm@campus.edu",
+    "shruti.agrawal@college.com",
     "tpo@college.edu",
     "dean.placement@college.edu"
 ]

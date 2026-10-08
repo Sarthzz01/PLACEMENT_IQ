@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Target, CheckCircle2, AlertTriangle, ArrowRight, Sparkles, TrendingUp, Cpu } from 'lucide-react';
+import { Target, CheckCircle2, AlertTriangle, ArrowRight, Sparkles, TrendingUp } from 'lucide-react';
 
 const DEFAULT_PROFILE = {
   cgpa: 8.2,
@@ -24,7 +24,6 @@ const DEFAULT_PROFILE = {
 
 export default function PlacementPrediction({ user, onNavigate }) {
   const [profile, setProfile] = useState(DEFAULT_PROFILE);
-  const [selectedModel, setSelectedModel] = useState('Random Forest');
   const [prediction, setPrediction] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -47,7 +46,7 @@ export default function PlacementPrediction({ user, onNavigate }) {
       const res = await fetch('/api/student/predict', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: studentEmail, data: profile, model_name: selectedModel })
+        body: JSON.stringify({ email: studentEmail, data: profile })
       });
       const data = await res.json();
       setPrediction(data);
@@ -65,28 +64,26 @@ export default function PlacementPrediction({ user, onNavigate }) {
   return (
     <div>
       <div style={{ marginBottom: '24px' }}>
-        <h2 style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--navy)' }}>Real-Time Placement Inference Engine</h2>
+        <h2 style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--navy)' }}>Real-Time Placement Assessment Engine</h2>
         <p style={{ color: 'var(--text-muted)', fontSize: '0.92rem' }}>
-          Evaluate your placement probability across multiple institutional models trained on 15,000+ university candidate records.
+          Evaluate your placement likelihood based on institutional analytics and benchmarks derived from 15,000+ candidate records.
         </p>
       </div>
 
-      {/* Model Selector & Action Card */}
+      {/* Action Card */}
       <div className="campus-card" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px', marginBottom: '24px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Cpu size={20} color="var(--primary)" />
-            <label style={{ fontSize: '0.9rem', fontWeight: 700, color: '#334155' }}>Inference Classifier:</label>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+          <div style={{ width: '44px', height: '44px', borderRadius: '12px', background: '#EFF6FF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Sparkles size={22} color="var(--primary)" />
           </div>
-          <select className="form-select" style={{ width: '220px' }} value={selectedModel} onChange={e => setSelectedModel(e.target.value)}>
-            <option value="Random Forest">Random Forest (Ensemble ~86.5%)</option>
-            <option value="Decision Tree">Decision Tree (White-Box ~81.4%)</option>
-            <option value="Naive Bayes">Gaussian Naive Bayes (~80.9%)</option>
-          </select>
+          <div>
+            <div style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--navy)' }}>Automated Placement Assessment</div>
+            <div style={{ fontSize: '0.82rem', color: '#64748B' }}>Analyzes your current academics, coding milestones, and co-curricular credentials</div>
+          </div>
         </div>
 
-        <button className="btn btn-primary" style={{ padding: '12px 24px' }} onClick={handlePredict} disabled={loading}>
-          <Target size={18} /> {loading ? 'Running ML Inference...' : 'Calculate Placement Readiness'}
+        <button className="btn btn-primary" style={{ padding: '12px 28px', fontSize: '0.95rem' }} onClick={handlePredict} disabled={loading}>
+          <Target size={18} /> {loading ? 'Evaluating Readiness...' : 'Calculate Placement Readiness'}
         </button>
       </div>
 
@@ -113,7 +110,7 @@ export default function PlacementPrediction({ user, onNavigate }) {
             borderRadius: '999px',
             marginBottom: '12px'
           }}>
-            EVALUATION: {prediction.model_name || selectedModel}
+            OFFICIAL PLACEMENT READINESS ASSESSMENT
           </span>
 
           <div style={{ fontSize: '3rem', fontWeight: 900, color: isPlaced ? 'var(--success)' : 'var(--error)', lineHeight: 1.1, marginBottom: '8px' }}>
@@ -121,7 +118,7 @@ export default function PlacementPrediction({ user, onNavigate }) {
           </div>
 
           <div style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--navy)', marginBottom: '8px' }}>
-            {prob}% Model Confidence Score
+            {prob}% Placement Probability Score
           </div>
 
           <p style={{ color: '#475569', maxWidth: '600px', margin: '0 auto', fontSize: '0.95rem' }}>

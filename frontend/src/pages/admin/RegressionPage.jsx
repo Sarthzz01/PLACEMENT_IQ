@@ -159,17 +159,40 @@ export default function RegressionPage() {
         </>
       )}
 
-      {/* Academic Justification */}
+      {/* Analytical Conclusion & Project Outcomes */}
       <AcademicJustification
-        title="Continuous Placement Competency & Skill Estimation"
-        algorithmName="Simple Linear Regression (SLR) & Multiple Linear Regression (MLR)"
-        whyUsed={[
-          ["Univariate Baseline with SLR", "Simple Linear Regression isolates the direct, single-variable predictive power of foundational academic metrics (like CGPA) against quantitative skill targets (like Aptitude Score). By computing the slope and R², it demonstrates the empirical ceiling of relying solely on classroom marks for hiring competency."],
-          ["Multivariate Weight Decomposition with MLR", "Multiple Linear Regression models the composite interaction of academic, coding, and experiential attributes simultaneously. The learned regression coefficients (β) quantify the exact marginal return for each unit increase in a feature (e.g., how much each additional project or 10 DSA questions lifts expected aptitude/coding competency), holding all other variables constant."],
-          ["Residual Analysis & Error Diagnostics", "Visualizing residual error distributions verifies the fundamental Gauss-Markov assumptions (homoscedasticity, normality of error terms, zero mean). Centered, bell-shaped residual distributions validate that our linear formulations capture the true continuous trend without systematic bias."]
+        title="Continuous Skill Estimation: Linear Modeling Rationale & Project Outcomes"
+        techniqueName="Simple Linear Regression (SLR) & Multiple Linear Regression (MLR)"
+        whyChosen={[
+          [
+            "Why Simple Linear Regression (SLR) is Used as a Baseline",
+            "SLR isolates the unconfounded, bivariate relationship between foundational academic performance (CGPA) and quantitative technical skill targets (Aptitude Score). By calculating the exact slope and R² coefficient of determination, it proves mathematically that classroom marks alone account for only a modest portion of total hiring competency."
+          ],
+          [
+            "Why Multiple Linear Regression (MLR) is Essential",
+            "Placement capability is fundamentally multivariate. MLR fits an Ordinary Least Squares (OLS) hyperplane across academic metrics, DSA questions solved, project counts, hackathons, and attendance. It computes partial regression coefficients (β) that quantify the exact marginal return of each specific skill while holding all other candidate attributes constant."
+          ],
+          [
+            "Why Gauss-Markov Residual Diagnostics are Evaluated",
+            "Evaluating residual distributions (homoscedasticity, zero conditional mean, absence of systematic curvature) confirms that linear modeling assumptions hold without systematic bias toward specific engineering departments."
+          ]
         ]}
-        institutionalImpact="Equips placement advisors with quantifiable, parametric equations to set realistic semester-by-semester skill improvement milestones for students, moving beyond qualitative advice to precise numerical guidance."
-        dwmConcept="Continuous Numerical Prediction, Ordinary Least Squares (OLS) Optimization, Multivariate Coefficient Interpretation, Residual Diagnostics."
+        whatWeGet={[
+          [
+            "Parametric Skill Sensitivity Coefficients (β Weights)",
+            "Our project obtains exact mathematical formulas showing students and mentors precisely how much their expected aptitude and coding scores increase per 25 additional DSA problems or per completed engineering project."
+          ],
+          [
+            "Continuous Growth Tracking vs Binary Endpoints",
+            "Rather than giving students only an all-or-nothing binary prediction at graduation, MLR provides continuous milestone targets (e.g. 'Aim to lift predicted skill score from 68 to 82 by Semester 6')."
+          ],
+          [
+            "Empirical Evidence for Holistic Student Evaluation",
+            "Proves with statistical rigor that students with average CGPA can dramatically boost their overall placement competency score through structured problem solving and technical project deliverables."
+          ]
+        ]}
+        institutionalImpact="Equips faculty placement advisors with quantifiable, parametric equations to set realistic semester-by-semester skill improvement milestones for students, moving beyond qualitative advice to precise numerical guidance."
+        dwmConcept="Continuous Numerical Prediction, Ordinary Least Squares (OLS) Optimization, Multivariate Beta Decomposition, Gauss-Markov Homoscedasticity, Residual Diagnostics."
       />
     </div>
   );

@@ -158,7 +158,7 @@ def init_database():
 
     # Seed Admin Users
     admin_seed = [
-        ("ADM-001", "Prof. K. Sharma (DWM Lead)", "admin@college.com", "admin123", "admin", "CSE"),
+        ("ADM-001", "Prof. Shruti Agrawal", "admin@college.com", "admin123", "admin", "CSE"),
         ("ADM-002", "Dean D. Joshi (TPO)", "placement@college.com", "placement123", "admin", "IT"),
         ("ADM-003", "System Administrator", "admin@campus.edu", "admin123", "admin", "CSE"),
     ]
@@ -259,7 +259,7 @@ def init_database():
         """, (
             "STU-10492", "student@college.com", "Placed",
             "Excellent technical aptitude and problem-solving readiness. Recommended for Day-1 High Package Product Drives.",
-            "High", "Prof. K. Sharma (DWM Lead)", now_str
+            "High", "Prof. Shruti Agrawal", now_str
         ))
         c.execute("""
         INSERT INTO admin_feedback (student_id, email, prediction, recommendation, priority, admin_name, created_at)
