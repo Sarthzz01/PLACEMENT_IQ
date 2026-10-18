@@ -34,7 +34,10 @@ def kmeans(df, features, k=4, init="k-means++", n_init=10, max_iter=300, random_
     labels = m.fit_predict(Z)
     t_fit = time.time() - t0
     
-    p = PCA(n_components=2, random_state=random_state).fit_transform(Z)
+    pca = PCA(n_components=2, random_state=random_state)
+    p = pca.fit_transform(Z)
+    centroid_p = pca.transform(m.cluster_centers_)
+    m.cluster_centers_pca_ = centroid_p
     
     result = df[["placement_status", "placement_prediction"]].copy()
     if "branch" in df.columns:
@@ -49,6 +52,8 @@ def kmeans(df, features, k=4, init="k-means++", n_init=10, max_iter=300, random_
     prof["Cluster"] = labels
     cols_to_profile = features + (["placement_prediction"] if "placement_prediction" in prof.columns else [])
     profile = prof.groupby("Cluster")[cols_to_profile].mean().round(3)
+    profile["PCA1"] = centroid_p[:, 0].round(3)
+    profile["PCA2"] = centroid_p[:, 1].round(3)
     
     # Save outputs
     MODEL_DIR.mkdir(parents=True, exist_ok=True)

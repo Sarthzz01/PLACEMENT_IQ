@@ -41,31 +41,78 @@ def load_or_train_model(model_name=None, df=None):
     target_key = model_name if model_name in artifacts else "Random Forest"
     return artifacts[target_key]["model"], target_key
 
+def normalize_student_dict(raw_dict):
+    """Normalize feature aliases and scale ranges across all models."""
+    d = dict(raw_dict)
+    alias_map = {
+        "dsa_questions_solved": ["dsa_problems_solved", "dsa_solved", "dsa"],
+        "leetcode_questions_solved": ["leetcode_problems_solved", "leetcode_solved", "leetcode"],
+        "hackerrank_questions_solved": ["hackerrank_score", "hackerrank_problems_solved", "hackerrank"],
+        "internships_count": ["internships_completed", "internships"],
+        "projects_count": ["projects_completed", "projects"],
+        "hackathons_count": ["hackathons_participated", "hackathons"],
+        "github_repos": ["github_repos_count", "repos", "repos_count"],
+        "certifications_count": ["certifications_earned", "certifications"],
+        "coding_skill_score": ["coding_score", "coding_skill", "coding"],
+        "aptitude_score": ["aptitude"],
+        "mock_interview_score": ["mock_interview", "mock_score"],
+        "attendance_percentage": ["attendance", "attendance_pct"],
+        "placement_training": ["placement_training_enrolled", "training"]
+    }
+    for canon, alts in alias_map.items():
+        if canon not in d or d[canon] is None or d[canon] == "":
+            for alt in alts:
+                if alt in d and d[alt] is not None and d[alt] != "":
+                    d[canon] = d[alt]
+                    break
+
+    # Scale normalization: mock_interview, coding_skill, communication are 0-10 scale in dataset
+    for ten_scale_col in ["mock_interview_score", "coding_skill_score", "communication_score"]:
+        if ten_scale_col in d and d[ten_scale_col] is not None:
+            try:
+                v = float(d[ten_scale_col])
+                if v > 10.0:
+                    d[ten_scale_col] = round(v / 10.0, 2)
+            except (ValueError, TypeError):
+                pass
+
+    # CGPA normalization: 0-10 scale
+    if "cgpa" in d and d["cgpa"] is not None:
+        try:
+            c = float(d["cgpa"])
+            if c > 10.0:
+                d["cgpa"] = round(c / 10.0, 2)
+        except (ValueError, TypeError):
+            pass
+
+    return d
+
 def format_student_row(input_dict, reference_df=None):
     """Format user form input into model feature matrix."""
     if reference_df is None:
         reference_df = load_data()
         
+    norm_input = normalize_student_dict(input_dict)
     row = {c: 0 for c in reference_df.columns if c not in ["placement_status", "cgpa_band", "aptitude_band", "attendance_band", "coding_band", "internship_band", "projects_band", "backlog_band", "data_source"]}
     
     # Assign numeric attributes
     for col in BASE_NUMERIC:
-        if col in input_dict:
+        if col in norm_input and norm_input[col] is not None:
             try:
-                row[col] = float(input_dict[col])
+                row[col] = float(norm_input[col])
             except (ValueError, TypeError):
                 row[col] = 0.0
             
     # Assign one-hot categoricals
-    gender = str(input_dict.get("gender", "Male")).capitalize()
+    gender = str(norm_input.get("gender", "Male")).capitalize()
     row["gender_Male"] = (gender == "Male")
     row["gender_Other"] = (gender == "Other")
     
-    branch = str(input_dict.get("branch", "CSE")).upper()
+    branch = str(norm_input.get("branch", "CSE")).upper()
     for b_col in [c for c in row.keys() if c.startswith("branch_")]:
         row[b_col] = (b_col.upper() == f"BRANCH_{branch}")
         
-    training = str(input_dict.get("placement_training", "Yes")).lower()
+    training = str(norm_input.get("placement_training", "Yes")).lower()
     row["placement_training_Yes"] = (training in ["yes", "true", "1"])
     
     row[TARGET] = 0
@@ -97,8 +144,9 @@ def predict_placement(input_dict, model=None, reference_df=None, model_name=None
 
     outcome = "Placed" if prob >= 0.5 else "Not Placed"
     
-    # Data-driven recommendations using actual dataset statistics
-    rec_results = generate_recommendations(input_dict, reference_df)
+    # Data-driven recommendations using actual dataset statistics with normalized feature keys
+    norm_dict = normalize_student_dict(input_dict)
+    rec_results = generate_recommendations(norm_dict, reference_df)
     
     return {
         "status": outcome,

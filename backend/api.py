@@ -22,7 +22,9 @@ from src.database import (
     get_student_profile, save_student_profile,
     log_prediction_to_db, get_student_prediction_history, save_admin_feedback,
     get_student_feedback, get_all_student_profiles_df,
-    get_system_setting, set_system_setting, log_olap_query, get_olap_history
+    get_system_setting, set_system_setting, get_all_system_settings,
+    get_admin_users, add_admin_user, delete_admin_user,
+    log_olap_query, get_olap_history
 )
 from src.prediction import predict_placement, get_production_model_name, batch_predict, MODEL_FILENAME_MAP
 from src.recommendations import generate_recommendations
@@ -138,6 +140,16 @@ class OLAPQueryRequest(BaseModel):
 class SettingRequest(BaseModel):
     key: str
     value: str
+
+class BatchSettingRequest(BaseModel):
+    settings: Dict[str, Any]
+
+class CreateAdminRequest(BaseModel):
+    name: str
+    email: str
+    password: str
+    branch: Optional[str] = "CSE"
+    role: Optional[str] = "admin"
 
 class ClassificationTrainRequest(BaseModel):
     test_size: Optional[float] = 0.2
@@ -811,17 +823,43 @@ def admin_kmeans(k: int = 4):
     size_df = res_df["Cluster"].value_counts().sort_index().reset_index()
     size_df.columns = ["Cluster", "Count"]
     
-    sample_pca = res_df.sample(n=min(200, len(res_df)), random_state=42)[["PC1", "PC2", "Cluster"]].to_dict(orient="records")
-    for s in sample_pca:
-        s["PCA1"] = s.get("PC1")
-        s["PCA2"] = s.get("PC2")
+    # Balanced representative sampling across each cluster
+    sample_records = []
+    points_per_cluster = max(60, min(120, 360 // max(1, k)))
+    sample_cols = ["PC1", "PC2", "Cluster"]
+    for opt_c in ["branch", "cgpa", "placement_status"]:
+        if opt_c in res_df.columns:
+            sample_cols.append(opt_c)
+            
+    for c_id in range(k):
+        c_subset = res_df[res_df["Cluster"] == c_id]
+        n_sample = min(points_per_cluster, len(c_subset))
+        if n_sample > 0:
+            sample_records.extend(c_subset.sample(n=n_sample, random_state=42)[sample_cols].to_dict(orient="records"))
+            
+    for s in sample_records:
+        s["PCA1"] = round(float(s.get("PC1", 0)), 3)
+        s["PCA2"] = round(float(s.get("PC2", 0)), 3)
+        s["Cluster"] = int(s.get("Cluster", 0))
+
+    # Centroids in PCA 2D space
+    centroids = []
+    if hasattr(model, "cluster_centers_pca_"):
+        for i in range(k):
+            centroids.append({
+                "Cluster": i,
+                "PCA1": round(float(model.cluster_centers_pca_[i, 0]), 3),
+                "PCA2": round(float(model.cluster_centers_pca_[i, 1]), 3),
+                "isCentroid": True
+            })
 
     return {
         "k": k,
         "silhouette": round(float(sil), 4),
         "cluster_sizes": size_df.to_dict(orient="records"),
         "profile": profile.reset_index().to_dict(orient="records"),
-        "pca_sample": sample_pca
+        "pca_sample": sample_records,
+        "centroids": centroids
     }
 
 @app.get("/api/admin/kmeans/elbow")
@@ -842,10 +880,23 @@ def admin_agglomerative(k: int = 4, sample_size: int = 1500, linkage_method: str
     size_df = sample_df["Cluster"].value_counts().sort_index().reset_index()
     size_df.columns = ["Cluster", "Count"]
     
-    sample_pca = sample_df.sample(n=min(200, len(sample_df)), random_state=42)[["PC1", "PC2", "Cluster"]].to_dict(orient="records")
-    for s in sample_pca:
-        s["PCA1"] = s.get("PC1")
-        s["PCA2"] = s.get("PC2")
+    sample_records = []
+    points_per_cluster = max(60, min(120, 360 // max(1, k)))
+    sample_cols = ["PC1", "PC2", "Cluster"]
+    for opt_c in ["branch", "cgpa", "placement_status"]:
+        if opt_c in sample_df.columns:
+            sample_cols.append(opt_c)
+            
+    for c_id in range(k):
+        c_subset = sample_df[sample_df["Cluster"] == c_id]
+        n_sample = min(points_per_cluster, len(c_subset))
+        if n_sample > 0:
+            sample_records.extend(c_subset.sample(n=n_sample, random_state=42)[sample_cols].to_dict(orient="records"))
+            
+    for s in sample_records:
+        s["PCA1"] = round(float(s.get("PC1", 0)), 3)
+        s["PCA2"] = round(float(s.get("PC2", 0)), 3)
+        s["Cluster"] = int(s.get("Cluster", 0))
 
     return {
         "k": k,
@@ -854,7 +905,7 @@ def admin_agglomerative(k: int = 4, sample_size: int = 1500, linkage_method: str
         "linkage": linkage_method,
         "cluster_sizes": size_df.to_dict(orient="records"),
         "profile": profile.reset_index().to_dict(orient="records"),
-        "pca_sample": sample_pca
+        "pca_sample": sample_records
     }
 
 @app.get("/api/admin/cluster-comparison")
@@ -881,10 +932,14 @@ def admin_cluster_comparison(k: int = 4):
 @app.get("/api/admin/settings")
 def admin_settings_get():
     counts = get_dataset_counts()
-    curr_model = get_system_setting("production_model", "Random Forest")
+    all_settings = get_all_system_settings()
+    curr_model = all_settings.get("production_model", "Random Forest")
+    admins = get_admin_users()
     return {
         "production_model": curr_model,
         "available_models": list(MODEL_FILENAME_MAP.keys()),
+        "settings": all_settings,
+        "admins": admins,
         "dataset_counts": counts,
         "database_path": str(DB_PATH.name)
     }
@@ -892,7 +947,63 @@ def admin_settings_get():
 @app.post("/api/admin/settings")
 def admin_settings_save(req: SettingRequest):
     set_system_setting(req.key, req.value)
-    return {"status": "success", "message": f"Setting {req.key} set to {req.value}"}
+    return {"status": "success", "message": f"Setting '{req.key}' updated successfully."}
+
+@app.post("/api/admin/settings/batch")
+def admin_settings_save_batch(req: BatchSettingRequest):
+    for k, v in req.settings.items():
+        set_system_setting(k, str(v))
+    return {"status": "success", "message": "All settings saved successfully.", "settings": get_all_system_settings()}
+
+@app.post("/api/admin/settings/admin-user")
+def admin_create_user(req: CreateAdminRequest):
+    success, msg, user_data = add_admin_user(
+        name=req.name,
+        email=req.email,
+        password=req.password,
+        branch=req.branch or "CSE",
+        role=req.role or "admin"
+    )
+    if not success:
+        raise HTTPException(status_code=400, detail=msg)
+    return {"status": "success", "message": msg, "user": user_data, "admins": get_admin_users()}
+
+@app.delete("/api/admin/settings/admin-user/{user_id}")
+def admin_delete_user(user_id: int):
+    success, msg = delete_admin_user(user_id)
+    if not success:
+        raise HTTPException(status_code=400, detail=msg)
+    return {"status": "success", "message": msg, "admins": get_admin_users()}
+
+@app.get("/api/admin/reports/export/{dataset_name}")
+def admin_export_dataset(dataset_name: str):
+    name = dataset_name.lower().strip()
+    if name in ["cleaned", "clean_dataset", "dataset"]:
+        df = load_data()
+        return {
+            "name": "placement_prediction_cleaned",
+            "columns": list(df.columns),
+            "total_rows": len(df),
+            "sample": df.head(100).to_dict(orient="records")
+        }
+    elif name in ["students", "roster", "students_roster"]:
+        df = get_all_student_profiles_df()
+        return {
+            "name": "registered_students_roster",
+            "columns": list(df.columns),
+            "total_rows": len(df),
+            "sample": df.replace({np.nan: None}).to_dict(orient="records")
+        }
+    elif name in ["predictions", "history"]:
+        df = get_student_prediction_history()
+        return {
+            "name": "placement_predictions_audit",
+            "columns": list(df.columns),
+            "total_rows": len(df),
+            "sample": df.head(100).replace({np.nan: None}).to_dict(orient="records")
+        }
+    else:
+        raise HTTPException(status_code=404, detail="Dataset not found")
 
 if __name__ == "__main__":
     import uvicorn

@@ -590,3 +590,89 @@ def set_system_setting(key: str, value: str):
     c.execute("INSERT OR REPLACE INTO system_settings (key, value) VALUES (?, ?)", (key, str(value)))
     conn.commit()
     conn.close()
+
+def get_all_system_settings() -> dict:
+    """Retrieve all persistent system configuration key-value pairs."""
+    init_database()
+    conn = get_db_connection()
+    c = conn.cursor()
+    c.execute("SELECT key, value FROM system_settings")
+    rows = c.fetchall()
+    conn.close()
+    settings = {r["key"]: r["value"] for r in rows}
+    defaults = {
+        "production_model": "Random Forest",
+        "training_data_mode": "Original Dataset",
+        "university_name": "University Institute of Technology — Department of Computer Engineering",
+        "academic_year": "2025-2026",
+        "min_eligibility_cgpa": "6.50",
+        "max_backlogs_allowed": "0",
+        "decision_threshold": "0.50",
+        "consensus_enabled": "true",
+        "auto_retrain": "false"
+    }
+    for k, v in defaults.items():
+        if k not in settings:
+            settings[k] = v
+    return settings
+
+def get_admin_users():
+    """Retrieve all users with admin privileges."""
+    init_database()
+    conn = get_db_connection()
+    c = conn.cursor()
+    c.execute("""
+        SELECT id, student_id, name, email, role, branch, created_at, last_login 
+        FROM users 
+        WHERE LOWER(role) = 'admin'
+        ORDER BY id ASC
+    """)
+    rows = c.fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+def add_admin_user(name: str, email: str, password: str, branch: str = "CSE", role: str = "admin") -> tuple:
+    """Create a new administrative user."""
+    init_database()
+    conn = get_db_connection()
+    c = conn.cursor()
+    clean_email = email.strip().lower()
+    c.execute("SELECT id FROM users WHERE LOWER(email) = ?", (clean_email,))
+    if c.fetchone():
+        conn.close()
+        return False, "An account with this email address already exists.", None
+
+    admin_count = c.execute("SELECT COUNT(*) FROM users WHERE LOWER(role) = 'admin'").fetchone()[0]
+    sid = f"ADM-{str(admin_count + 1).zfill(3)}"
+    now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    c.execute("""
+        INSERT INTO users (student_id, name, email, password_hash, role, branch, created_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    """, (sid, name.strip(), clean_email, hash_password(password), role.lower(), branch, now_str))
+    new_id = c.lastrowid
+    conn.commit()
+    conn.close()
+    return True, "Administrator account created successfully.", {"id": new_id, "student_id": sid, "name": name, "email": clean_email}
+
+def delete_admin_user(user_id: int) -> tuple:
+    """Delete an administrative user (preserving at least one admin)."""
+    init_database()
+    conn = get_db_connection()
+    c = conn.cursor()
+    c.execute("SELECT id, email FROM users WHERE id = ? AND LOWER(role) = 'admin'", (user_id,))
+    target = c.fetchone()
+    if not target:
+        conn.close()
+        return False, "Administrator account not found."
+
+    admin_count = c.execute("SELECT COUNT(*) FROM users WHERE LOWER(role) = 'admin'").fetchone()[0]
+    if admin_count <= 1:
+        conn.close()
+        return False, "Cannot delete the sole remaining administrator account."
+
+    c.execute("DELETE FROM users WHERE id = ?", (user_id,))
+    conn.commit()
+    conn.close()
+    return True, "Administrator account deleted successfully."
+

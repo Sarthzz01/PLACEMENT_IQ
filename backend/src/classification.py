@@ -14,6 +14,7 @@ from sklearn.metrics import (
 )
 from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import Pipeline
+from sklearn.calibration import CalibratedClassifierCV
 from .preprocessing import model_matrix
 from .config import MODEL_DIR, OUTPUT_DIR
 
@@ -35,18 +36,28 @@ def train_models(
     gb_learning_rate=0.1,
     lr_max_iter=1000,
     lr_C=1.0,
-    nb_var_smoothing=1e-9
+    nb_var_smoothing=1e-2
 ):
     """
     Train 5 diverse classification models (Random Forest, Gradient Boosting, Decision Tree,
-    Logistic Regression, and Gaussian Naive Bayes) with customizable hyperparameters.
-    Computes all standard DWM classification metrics, ROC & PR curves, feature importances, and execution times.
+    Logistic Regression, and Gaussian Naive Bayes) on the exact same feature space.
+    Calibrated probabilities prevent step-function 0%/100% artifacts.
     """
     X, y, features = model_matrix(df)
     Xtr, Xte, ytr, yte = train_test_split(
         X, y, test_size=test_size, random_state=random_state, stratify=y
     )
     
+    # Base decision tree for calibration
+    base_dt = DecisionTreeClassifier(
+        max_depth=dt_depth,
+        criterion=dt_criterion,
+        min_samples_split=dt_min_split,
+        min_samples_leaf=dt_min_leaf,
+        random_state=random_state,
+        class_weight="balanced"
+    )
+
     models = {
         "Random Forest": RandomForestClassifier(
             n_estimators=rf_estimators,
@@ -64,13 +75,10 @@ def train_models(
             learning_rate=gb_learning_rate,
             random_state=random_state
         ),
-        "Decision Tree": DecisionTreeClassifier(
-            max_depth=dt_depth,
-            criterion=dt_criterion,
-            min_samples_split=dt_min_split,
-            min_samples_leaf=dt_min_leaf,
-            random_state=random_state,
-            class_weight="balanced"
+        "Decision Tree": CalibratedClassifierCV(
+            estimator=base_dt,
+            cv=5,
+            method="sigmoid"
         ),
         "Logistic Regression": Pipeline([
             ("scaler", StandardScaler()),
@@ -83,7 +91,11 @@ def train_models(
         ]),
         "Naive Bayes": Pipeline([
             ("scaler", StandardScaler()),
-            ("model", GaussianNB(var_smoothing=nb_var_smoothing))
+            ("model", CalibratedClassifierCV(
+                estimator=GaussianNB(var_smoothing=nb_var_smoothing),
+                cv=5,
+                method="sigmoid"
+            ))
         ])
     }
     
@@ -115,6 +127,19 @@ def train_models(
                 "Feature": features,
                 "Importance": m.feature_importances_
             }).sort_values("Importance", ascending=False)
+        elif hasattr(m, "calibrated_classifiers_"):
+            # Average feature importances across calibrated folds
+            fold_imps = []
+            for c in m.calibrated_classifiers_:
+                sub_est = getattr(c, "estimator", None)
+                if sub_est and hasattr(sub_est, "feature_importances_"):
+                    fold_imps.append(sub_est.feature_importances_)
+            if fold_imps:
+                avg_imp = np.mean(fold_imps, axis=0)
+                feat_imp = pd.DataFrame({
+                    "Feature": features,
+                    "Importance": avg_imp
+                }).sort_values("Importance", ascending=False)
         elif hasattr(m, "named_steps") and hasattr(m.named_steps.get("model", None), "coef_"):
             coefs = np.abs(m.named_steps["model"].coef_[0])
             feat_imp = pd.DataFrame({

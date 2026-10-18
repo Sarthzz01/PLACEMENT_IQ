@@ -4,7 +4,7 @@ from .config import ADMIN_EMAILS
 DEMO_ACCOUNTS = {
     "admin": {
         "email": "admin@college.com",
-        "name": "Prof. Shruti Agrawal",
+        "name": "Prof. Shruti Agarwal",
         "role": "Admin",
         "id": "ADM-001"
     },
