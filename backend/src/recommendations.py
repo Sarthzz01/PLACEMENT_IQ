@@ -91,6 +91,54 @@ FEATURE_GUIDANCE = {
     }
 }
 
+def _normalize_dict(raw_dict):
+    """Normalize feature aliases and scale ranges across all models."""
+    if not raw_dict:
+        return {}
+    d = dict(raw_dict)
+    alias_map = {
+        "dsa_questions_solved": ["dsa_problems_solved", "dsa_solved", "dsa"],
+        "leetcode_questions_solved": ["leetcode_problems_solved", "leetcode_solved", "leetcode"],
+        "hackerrank_questions_solved": ["hackerrank_score", "hackerrank_problems_solved", "hackerrank"],
+        "internships_count": ["internships_completed", "internships"],
+        "projects_count": ["projects_completed", "projects"],
+        "hackathons_count": ["hackathons_participated", "hackathons"],
+        "github_repos": ["github_repos_count", "repos", "repos_count"],
+        "certifications_count": ["certifications_earned", "certifications"],
+        "coding_skill_score": ["coding_score", "coding_skill", "coding"],
+        "aptitude_score": ["aptitude"],
+        "mock_interview_score": ["mock_interview", "mock_score"],
+        "attendance_percentage": ["attendance", "attendance_pct"],
+        "placement_training": ["placement_training_enrolled", "training"]
+    }
+    for canon, alts in alias_map.items():
+        if canon not in d or d[canon] is None or d[canon] == "":
+            for alt in alts:
+                if alt in d and d[alt] is not None and d[alt] != "":
+                    d[canon] = d[alt]
+                    break
+
+    # Scale normalization: mock_interview, coding_skill, communication are 0-10 scale in dataset
+    for ten_scale_col in ["mock_interview_score", "coding_skill_score", "communication_score"]:
+        if ten_scale_col in d and d[ten_scale_col] is not None:
+            try:
+                v = float(d[ten_scale_col])
+                if v > 10.0:
+                    d[ten_scale_col] = round(v / 10.0, 2)
+            except (ValueError, TypeError):
+                pass
+
+    # CGPA normalization: 0-10 scale
+    if "cgpa" in d and d["cgpa"] is not None:
+        try:
+            c = float(d["cgpa"])
+            if c > 10.0:
+                d["cgpa"] = round(c / 10.0, 2)
+        except (ValueError, TypeError):
+            pass
+
+    return d
+
 def generate_recommendations(student_dict, reference_df=None):
     """
     Generate data-driven, actionable recommendations by comparing student features
@@ -101,6 +149,8 @@ def generate_recommendations(student_dict, reference_df=None):
         - weaknesses: list of detailed gap analysis objects
         - overall_readiness_level: High / Moderate / Developing
     """
+    student_dict = _normalize_dict(student_dict)
+
     if reference_df is None:
         reference_df = load_data()
 
@@ -136,10 +186,14 @@ def generate_recommendations(student_dict, reference_df=None):
         if feature not in reference_df.columns:
             continue
 
-        try:
-            s_val = float(student_dict.get(feature, 0.0))
-        except (ValueError, TypeError):
-            continue
+        raw_val = student_dict.get(feature)
+        if raw_val is None or raw_val == "":
+            s_val = 0.0
+        else:
+            try:
+                s_val = float(raw_val)
+            except (ValueError, TypeError):
+                s_val = 0.0
 
         placed_median = float(placed_cohort[feature].median())
         all_median = float(all_cohort[feature].median())

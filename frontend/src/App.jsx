@@ -151,7 +151,7 @@ export default function App() {
         case 'skills':
           return <SkillAnalysis user={user} />;
         case 'plan':
-          return <ImprovementPlan user={user} />;
+          return <ImprovementPlan user={user} onNavigate={setCurrentPage} />;
         case 'history':
           return <PredictionHistory user={user} />;
         default:

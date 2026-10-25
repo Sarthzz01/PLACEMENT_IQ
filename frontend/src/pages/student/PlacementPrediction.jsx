@@ -37,6 +37,16 @@ export default function PlacementPrediction({ user, onNavigate }) {
         }
       })
       .catch(console.error);
+
+    // Restore cached prediction from localStorage if available
+    try {
+      const cached = localStorage.getItem(`placementiq_latest_prediction_${studentEmail}`);
+      if (cached) {
+        setPrediction(JSON.parse(cached));
+      }
+    } catch (e) {
+      console.error('Error restoring prediction cache:', e);
+    }
   }, [user]);
 
   const handlePredict = async () => {
@@ -50,6 +60,15 @@ export default function PlacementPrediction({ user, onNavigate }) {
       });
       const data = await res.json();
       setPrediction(data);
+
+      // Save to localStorage so ImprovementPlan immediately reflects this exact prediction
+      try {
+        localStorage.setItem(`placementiq_latest_prediction_${studentEmail}`, JSON.stringify(data));
+        const allGaps = data.all_improvements || data.top_improvements || data.recommendations || [];
+        localStorage.setItem(`placementiq_latest_plan_${studentEmail}`, JSON.stringify(allGaps));
+      } catch (e) {
+        console.error('Error persisting prediction cache:', e);
+      }
     } catch (err) {
       console.error(err);
     } finally {
@@ -141,27 +160,34 @@ export default function PlacementPrediction({ user, onNavigate }) {
       {/* Target Improvements */}
       {rawImprovements.length > 0 && (
         <div className="campus-card">
-          <div className="campus-card-header">
+          <div className="campus-card-header" style={{ flexWrap: 'wrap', gap: '12px' }}>
             <div>
-              <div className="card-title">Empirical Gaps Identified</div>
-              <div className="card-subtitle">Key metrics where your current numbers differ from placed cohort medians</div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <div className="card-title">Empirical Gaps Identified</div>
+                <span className="badge badge-role" style={{ fontSize: '0.8rem', padding: '4px 10px' }}>
+                  All {rawImprovements.length} Gaps Identified
+                </span>
+              </div>
+              <div className="card-subtitle">
+                All identified competency gaps below are dynamically synchronized with your personalized Improvement Plan.
+              </div>
             </div>
-            <button className="btn btn-secondary" onClick={() => onNavigate('plan')}>
-              Explore Remediation Roadmap <ArrowRight size={16} />
+            <button className="btn btn-primary" style={{ padding: '8px 18px', fontSize: '0.88rem' }} onClick={() => onNavigate('plan')}>
+              View All in Improvement Plan <ArrowRight size={16} />
             </button>
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '16px' }}>
-            {rawImprovements.slice(0, 4).map((rec, i) => (
+            {rawImprovements.map((rec, i) => (
               <div key={i} style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: '12px', padding: '20px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
                   <span style={{ fontWeight: 800, color: 'var(--navy)', fontSize: '1rem' }}>
                     {rec.title || rec.feature || 'Competency Domain'}
                   </span>
                   <span className="badge" style={{
-                    background: rec.priority === 'High' ? 'var(--error-soft)' : 'var(--warning-soft)',
-                    color: rec.priority === 'High' ? 'var(--error)' : 'var(--warning)',
-                    border: `1px solid ${rec.priority === 'High' ? 'var(--error-border)' : 'var(--warning-border)'}`
+                    background: rec.priority === 'Critical' || rec.priority === 'High' ? 'var(--error-soft)' : 'var(--warning-soft)',
+                    color: rec.priority === 'Critical' || rec.priority === 'High' ? 'var(--error)' : 'var(--warning)',
+                    border: `1px solid ${rec.priority === 'Critical' || rec.priority === 'High' ? 'var(--error-border)' : 'var(--warning-border)'}`
                   }}>
                     {rec.priority || 'Medium'} Priority
                   </span>

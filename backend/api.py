@@ -310,6 +310,13 @@ def student_predict(req: PredictRequest):
     if req.email:
         email = req.email.strip().lower()
         profile = get_student_profile(email) or {}
+        # Merge evaluated numbers into profile and mark as active so improvement plan, skills & dashboard reflect it
+        merged = {**profile, **norm_data, "email": email, "is_completed": 1}
+        try:
+            save_student_profile(merged)
+        except Exception as e:
+            print(f"Profile update error on predict: {e}")
+
         sid = profile.get("student_id", f"STU-{abs(hash(email)) % 90000 + 10000}")
         log_prediction_to_db(
             student_id=sid,
@@ -386,9 +393,28 @@ def student_skills(email: str):
 def student_plan(email: str):
     email = email.strip().lower()
     profile = get_student_profile(email) or {}
+
+    # Check if profile lacks core metrics; if so, restore from latest prediction snapshot
+    if not profile or not any(profile.get(k) is not None for k in ["cgpa", "dsa_questions_solved", "attendance_percentage"]):
+        preds_df = get_student_prediction_history(email)
+        if len(preds_df) > 0 and preds_df.iloc[0].get("features_snapshot"):
+            try:
+                snap = json.loads(preds_df.iloc[0]["features_snapshot"])
+                if isinstance(snap, dict):
+                    profile = {**profile, **snap}
+            except Exception:
+                pass
+
+    norm_profile = normalize_student_features(profile)
     df = load_data()
-    plan = generate_recommendations(profile, df)
-    return {"plan": plan}
+    plan = generate_recommendations(norm_profile, df)
+    return {
+        "plan": plan,
+        "all_improvements": plan.get("all_improvements", []),
+        "top_improvements": plan.get("top_improvements", []),
+        "strengths": plan.get("strengths", []),
+        "readiness_level": plan.get("readiness_level", "")
+    }
 
 # -------------------------------------------------------------
 # ADMIN WORKSPACE ENDPOINTS

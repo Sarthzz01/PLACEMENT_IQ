@@ -19,7 +19,17 @@ export default function StudentDashboard({ user, onNavigate }) {
       fetch(`/api/student/plan/${encodeURIComponent(studentEmail)}`).then(r => r.json())
     ]).then(([dashData, skillData, planData]) => {
       setData(dashData);
-      const rawPlan = planData?.plan?.all_improvements || planData?.plan?.top_improvements || (Array.isArray(planData?.plan) ? planData?.plan : []);
+
+      let cachedPred = null;
+      try {
+        const cStr = localStorage.getItem(`placementiq_latest_prediction_${studentEmail}`);
+        if (cStr) cachedPred = JSON.parse(cStr);
+      } catch (e) {}
+
+      const rawPlan = (cachedPred?.all_improvements && cachedPred.all_improvements.length > 0)
+        ? cachedPred.all_improvements
+        : (planData?.all_improvements || planData?.plan?.all_improvements || planData?.plan?.top_improvements || (Array.isArray(planData?.plan) ? planData?.plan : []));
+
       const normalizedPlan = (rawPlan || []).map(p => ({
         area: p.area || p.title || p.feature || 'Competency Area',
         priority: p.priority || 'Medium',
