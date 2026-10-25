@@ -6,6 +6,7 @@ import sqlite3
 from pathlib import Path
 import numpy as np
 import pandas as pd
+import re
 from typing import Optional, List, Dict, Any
 from fastapi import FastAPI, HTTPException, Body, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
@@ -31,6 +32,7 @@ from src.prediction import predict_placement, get_production_model_name, batch_p
 from src.recommendations import generate_recommendations
 from src.warehouse import (
     build_warehouse, get_warehouse_summary, get_sample_records,
+    get_warehouse_health, PRESET_QUERIES,
     query as run_sql, STAR_SCHEMA_DEF, RELATIONSHIPS
 )
 from src.olap import (
@@ -594,16 +596,31 @@ def admin_reports_summary():
 @app.get("/api/admin/warehouse")
 def admin_warehouse_info():
     summary = get_warehouse_summary()
+    health = get_warehouse_health()
     return {
         "tables": summary,
+        "health": health,
         "schema_def": STAR_SCHEMA_DEF,
-        "relationships": RELATIONSHIPS
+        "relationships": RELATIONSHIPS,
+        "presets": PRESET_QUERIES
     }
 
 @app.get("/api/admin/warehouse/sample/{table_name}")
 def admin_warehouse_sample(table_name: str, limit: int = 50):
-    recs = get_sample_records(table_name, limit=limit)
-    return {"table": table_name, "records": recs}
+    if table_name not in STAR_SCHEMA_DEF:
+        raise HTTPException(status_code=400, detail=f"Table '{table_name}' is not recognized in warehouse star schema.")
+    limit = max(5, min(limit, 200))
+    try:
+        df = get_sample_records(table_name, limit=limit)
+        clean_records = df.replace({np.nan: None}).to_dict(orient="records")
+        return {
+            "table": table_name,
+            "columns": list(df.columns),
+            "records": clean_records,
+            "count": len(clean_records)
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to fetch sample records for '{table_name}': {str(e)}")
 
 @app.post("/api/admin/warehouse/query")
 def admin_warehouse_query(req: SQLQueryRequest):
@@ -611,12 +628,20 @@ def admin_warehouse_query(req: SQLQueryRequest):
     # Security constraint: only allow SELECT queries
     if not sql.upper().startswith("SELECT"):
         raise HTTPException(status_code=400, detail="Only SELECT queries are permitted in the warehouse workbench.")
+    disallowed = ["DROP", "DELETE", "INSERT", "UPDATE", "ALTER", "TRUNCATE", "REPLACE", "CREATE"]
+    for word in disallowed:
+        if re.search(r'\b' + word + r'\b', sql, re.IGNORECASE):
+            raise HTTPException(status_code=400, detail=f"Query modification keyword '{word}' is prohibited in analytical workbench.")
     try:
+        t0 = time.perf_counter()
         df_res = run_sql(sql)
+        exec_ms = round((time.perf_counter() - t0) * 1000, 2)
+        clean_rows = df_res.replace({np.nan: None}).to_dict(orient="records")
         return {
             "columns": list(df_res.columns),
-            "rows": df_res.to_dict(orient="records"),
-            "count": len(df_res)
+            "rows": clean_rows,
+            "count": len(clean_rows),
+            "execution_time_ms": exec_ms
         }
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -624,9 +649,15 @@ def admin_warehouse_query(req: SQLQueryRequest):
 @app.post("/api/admin/warehouse/rebuild")
 def admin_warehouse_rebuild():
     try:
+        t0 = time.perf_counter()
         df = load_data(include_new_students=True)
         build_warehouse(df)
-        return {"status": "success", "message": "Star schema warehouse rebuilt successfully."}
+        exec_s = round(time.perf_counter() - t0, 2)
+        health = get_warehouse_health()
+        return {
+            "status": "success",
+            "message": f"Star schema warehouse rebuilt successfully ({health.get('total_facts', 0):,} facts across {health.get('table_count', 6)} tables in {exec_s}s)."
+        }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
