@@ -1,6 +1,6 @@
 # 🎓 PLACEMENT IQ: Student Placement Intelligence & Data Warehousing Platform
 
-> **An enterprise-grade academic analytics and decision-support ecosystem bridging dimensional Data Warehousing (Kimball Star Schema), 2D dynamic OLAP cube operations, dual-paradigm Machine Learning (5-Algorithm Supervised Classification, Continuous Regression & Unsupervised Clustering), and live competitive coding credential synchronization for student placement readiness and campus recruitment optimization.**
+> **An enterprise-grade academic analytics, dimensional data warehousing, and decision-support ecosystem bridging Kimball Star-Schema Warehousing, 2D Dynamic OLAP Cube operations, a 5-Algorithm Supervised Classification Suite, Continuous Numerical Regression, Unsupervised Clustering, Data Mining Pattern Discovery, and Live Competitive Coding Credential Synchronization (LeetCode GraphQL & GitHub REST) for student placement readiness and campus recruitment optimization.**
 
 [![Python Version](https://img.shields.io/badge/Python-3.10%20%7C%203.11%20%7C%203.12-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.110+-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
@@ -15,80 +15,80 @@
 
 ---
 
-## 🧭 Table of Contents
+## 🧭 Comprehensive Table of Contents
 
-- [📌 Executive Overview & Problem Statement](#-executive-overview--problem-statement)
-- [⚡ Key Platform Features & Capabilities](#-key-platform-features--capabilities)
-- [🏛️ Full-Stack System Architecture](#️-full-stack-system-architecture)
-- [📊 Kimball Star-Schema Data Warehouse Design](#-kimball-star-schema-data-warehouse-design)
-- [🧊 2D Dynamic OLAP Analytics Engine](#-2d-dynamic-olap-analytics-engine)
-- [🌐 Live External Profile Metric Extractor (LeetCode & GitHub)](#-live-external-profile-metric-extractor-leetcode--github)
-- [🧠 5-Algorithm Machine Learning & Data Mining Suite](#-5-algorithm-machine-learning--data-mining-suite)
-- [🎯 Executive Conclusions & Project Value Summary](#-executive-conclusions--project-value-summary)
-- [👥 Dual-Persona Interactive Portals](#-dual-persona-interactive-portals)
-  - [🎓 Student Career Portal (Algorithm-Blind Assessment)](#-student-career-portal)
-  - [🛡️ Administrator Intelligence Center (Prof. Shruti Agrawal)](#️-administrator-intelligence-center)
-- [📐 Mathematical Rigor & Formulations](#-mathematical-rigor--formulations)
-- [📈 Validated Benchmarks & Empirical Audit](#-validated-benchmarks--empirical-audit)
-- [🔐 Authentication & Role-Based Access Control](#-authentication--role-based-access-control)
-- [🚀 Quickstart & Installation Guide](#-quickstart--installation-guide)
-- [🧪 13-Suite Automated Quality Assurance](#-13-suite-automated-quality-assurance)
-- [📂 Repository Directory Anatomy](#-repository-directory-anatomy)
-- [📜 Academic Attribution & License](#-academic-attribution--license)
+1. [📌 Executive Overview & Problem Statement](#-executive-overview--problem-statement)
+2. [🏛️ Full-Stack System Architecture](#️-full-stack-system-architecture)
+3. [📊 Kimball Star-Schema Data Warehouse Design](#-kimball-star-schema-data-warehouse-design)
+4. [🧊 2D Dynamic OLAP Analytics Engine](#-2d-dynamic-olap-analytics-engine)
+5. [🧠 Complete Inventory of Implemented Algorithms (20 Algorithms)](#-complete-inventory-of-implemented-algorithms)
+   - [Section A: Supervised Classification Suite (5 Algorithms)](#section-a-supervised-classification-suite)
+   - [Section B: Continuous Numerical Regression (2 Algorithms)](#section-b-continuous-numerical-regression)
+   - [Section C: Unsupervised Clustering & Dimensionality Reduction (3 Algorithms)](#section-c-unsupervised-clustering--dimensionality-reduction)
+   - [Section D: Data Mining & Association Pattern Discovery (4 Algorithms)](#section-d-data-mining--association-pattern-discovery)
+   - [Section E: Prescriptive & Synchronization Engines (6 Algorithms)](#section-e-prescriptive--synchronization-engines)
+6. [✨ Comprehensive Feature Matrix & Interactive Portals](#-comprehensive-feature-matrix--interactive-portals)
+   - [🎓 Student Career Portal (6 Dedicated Modules)](#-student-career-portal-6-modules)
+   - [🛡️ Administrator Intelligence Center (13 Dedicated Modules)](#️-administrator-intelligence-center-13-modules)
+   - [🌐 Public Landing & Authentication Portals](#-public-landing--authentication-portals)
+7. [🌐 Live Competitive Coding & Developer Metric Extractor](#-live-competitive-coding--developer-metric-extractor)
+8. [📐 Mathematical Rigor & Academic Formulations](#-mathematical-rigor--academic-formulations)
+9. [📈 Empirical Validation Benchmarks & Audit Results](#-empirical-validation-benchmarks--audit-results)
+10. [🔌 Full REST API Endpoint Specification](#-full-rest-api-endpoint-specification)
+11. [🔐 Authentication & Role-Based Access Control](#-authentication--role-based-access-control)
+12. [🚀 Quickstart & Installation Guide](#-quickstart--installation-guide)
+13. [🧪 13-Suite Automated Quality Assurance Audit](#-13-suite-automated-quality-assurance-audit)
+14. [📂 Repository Directory Anatomy](#-repository-directory-anatomy)
+15. [📜 Academic Attribution & License](#-academic-attribution--license)
 
 ---
 
 ## 📌 Executive Overview & Problem Statement
 
-Higher education institutions face systemic challenges during campus placement cycles:
-1. **Fragmented Academic Records**: Student performance data remains trapped in disparate spreadsheets (CGPA, attendance, competitive coding handles, hackathon participation, and mock interview notes).
-2. **Uncalibrated Student Expectations**: Students lack quantitative visibility into hiring criteria, often realizing skill deficits only after failing technical screening interviews.
-3. **Static, Retrospective TPO Reporting**: Training & Placement Officers (TPOs) and department heads rely on end-of-year tabular reports, lacking multi-dimensional slice-and-dice tools, proactive at-risk candidate detection, and predictive modeling capabilities.
-4. **Manual Verification Overhead**: Student-reported coding accomplishments (e.g. "200 LeetCode problems solved" or "10 GitHub repositories") require manual checking by placement staff.
+Higher education engineering institutions face severe operational and analytical bottlenecks during campus placement drives:
 
-**PLACEMENT IQ** resolves these institutional challenges by combining **Dimensional Data Warehousing (Kimball Star Schema)**, **Online Analytical Processing (OLAP)**, a **5-Algorithm Machine Learning Suite**, and **Live Competitive Coding Synchronization** into a responsive, full-stack web application.
+1. **Fragmented Data Silos**: Student academic records, semester backlogs, attendance logs, competitive coding problem tallies, and mock interview notes are stored across disconnected spreadsheets, preventing holistic candidate evaluation.
+2. **Uncalibrated Student Expectations**: Undergraduates lack quantitative visibility into actual hiring cutoffs. Many discover fatal deficits (e.g., inadequate DSA problem volume, low aptitude scores, or backlogs) only after failing first-round corporate screening tests.
+3. **Static, Retrospective TPO Reporting**: Training & Placement Officers (TPOs) and department heads rely on post-hoc tabular summaries. They lack multi-dimensional slice-and-dice capability, predictive risk detection, and prescriptive intervention frameworks.
+4. **Manual Verification Overhead**: Student-reported coding accomplishments (e.g., "solved 300 LeetCode questions" or "15 GitHub projects") require tedious manual verification by placement staff.
+
+### The PLACEMENT IQ Solution
+
+**PLACEMENT IQ** transforms campus placement operations into a data-driven, predictive, and multi-dimensional analytics ecosystem:
 
 ```
-┌────────────────────────────────────────────────────────────────────────────────────────┐
-│                                      PLACEMENT IQ                                      │
-│                                                                                        │
-│   ┌─────────────────────┐    ┌───────────────────────────┐    ┌────────────────────┐   │
-│   │   15,000 Verified   │    │    Kimball Star Schema    │    │  5-Model Classifier│   │
-│   │  Alumni Records +   ├───►│     Data Warehouse        ├───►│   + Regression     │   │
-│   │ Dynamic Registrations│    │   (Fact + 5 Dimensions)   │    │   + Clustering     │   │
-│   └──────────┬──────────┘    └─────────────┬─────────────┘    └─────────┬──────────┘   │
-│              │                             │                            │              │
-│              ▼                             ▼                            ▼              │
-│   ┌─────────────────────┐    ┌───────────────────────────┐    ┌────────────────────┐   │
-│   │ Live LeetCode/GitHub│    │      2D Dynamic OLAP      │    │  Multi-Role Web UI │   │
-│   │   Stats Extractor   │    │   Roll-Up, Drill-Down,    ├───►│ React + Vite (SPA) │   │
-│   │ (GraphQL + REST API)│    │   Slice, Dice, Pivot      │    │  FastAPI (Port 8000│   │
-│   └─────────────────────┘    └───────────────────────────┘    └────────────────────┘   │
-└────────────────────────────────────────────────────────────────────────────────────────┘
+┌────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│                                              PLACEMENT IQ                                              │
+│                                                                                                        │
+│   ┌───────────────────────────┐    ┌───────────────────────────┐    ┌──────────────────────────────┐   │
+│   │ 15,000 Certified Alumni   │    │    Kimball Star Schema    │    │ 5-Model Classification Suite │   │
+│   │ Records + Dynamic SQLite  ├───►│     Data Warehouse        ├───►│  Continuous Regression (MLR) │   │
+│   │ Candidate Registrations   │    │   (Fact + 5 Dimensions)   │    │  K-Means & Hierarchical Clust│   │
+│   └─────────────┬─────────────┘    └─────────────┬─────────────┘    └──────────────┬───────────────┘   │
+│                 │                                │                                 │                   │
+│                 ▼                                ▼                                 ▼                   │
+│   ┌───────────────────────────┐    ┌───────────────────────────┐    ┌──────────────────────────────┐   │
+│   │ Live LeetCode & GitHub    │    │      2D Dynamic OLAP      │    │ Dual-Persona Web Experience  │   │
+│   │ Profile Metrics Extractor │    │   Roll-Up, Drill-Down,    ├───►│ React 19 + Vite 6 Frontend   │   │
+│   │ (GraphQL + REST APIs)     │    │   Slice, Dice, Pivot      │    │ FastAPI REST Server (:8000)  │   │
+│   └───────────────────────────┘    └───────────────────────────┘    └──────────────────────────────┘   │
+└────────────────────────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
----
-
-## ⚡ Key Platform Features & Capabilities
-
-| Core Capability | Implementation Architecture | Institutional Value / Impact |
-| :--- | :--- | :--- |
-| **Strict Dataset Grounding** | Certified `placement_prediction_cleaned.csv` (15,000 records, 26 features) | 100% empirical distributions; zero hallucinated metrics or fabricated benchmarks. |
-| **Clean Onboarding Gating** | Session & Profile Completion Verifier (`is_completed = 1`) | Brand-new accounts start completely blank; zero unearned dummy data is displayed until the student enters their details. |
-| **Unified Dataset Architecture** | In-memory normalization + SQLite candidate ingestion | Admins toggle seamlessly between the 15,000 baseline records and the live unified dataset ($15,000 + N$ records) without retraining lag. |
-| **Live Coding Stats Sync** | LeetCode GraphQL API + GitHub REST API integration | Auto-extracts live questions solved, difficulty breakdown (Easy/Med/Hard), global ranking, and public repository count directly from user profile links. |
-| **2D Dynamic OLAP Engine** | Multi-axis roll-up and drill-down across arbitrary rows and columns | Interactive matrix summarization and de-aggregation with automatic audit logging to `olap_query_history`. |
-| **5-Algorithm Classifier Suite** | Random Forest, Gradient Boosting, Decision Tree, Logistic Regression, Gaussian Naive Bayes | Multi-paradigm benchmarking (bagging, boosting, recursive partitioning, log-odds, Bayesian priors) with 1-click champion model routing. |
-| **Algorithm-Blind Student Portal** | Decoupled inference presentation | Students receive calibrated readiness percentages and gap roadmaps without exposure to internal model names or switching mechanics. |
-| **Continuous Skill Estimation** | Simple & Multiple Linear Regression (SLR & MLR) | Quantifies exact marginal returns ($\beta$ coefficients) for each additional project, DSA problem, or attendance percentage point. |
-| **Unsupervised Persona Clustering** | K-Means (Elbow $K=2..10$ + PCA) & Agglomerative Hierarchical (Ward's Linkage + Dendrogram) | Segments students into behavioral archetypes without class labels; enables tailored group interventions over generic seminars. |
-| **Full Security & RBAC** | PBKDF2 HMAC-SHA256 (100,000 rounds) + Role Enforcement | Cryptographically protected credentials with complete separation of student workspaces and administrative analytics consoles. |
+- **Enterprise Data Warehouse**: Kimball Star Schema with a centralized `FactPlacement` table ($15,000+$ rows) and 5 conformed dimension tables (`DimStudent`, `DimAcademic`, `DimSkills`, `DimEngagement`, `DimPlacement`).
+- **2D Dynamic OLAP Analytics Engine**: Multi-axis roll-up, drill-down, slice, dice, pivot with heatmaps, and cross-dimensional drilling across any arbitrary combination of attributes.
+- **5-Algorithm Supervised Classification**: Multi-paradigm machine learning (Random Forest, Gradient Boosting, Decision Tree, Logistic Regression, Gaussian Naive Bayes) with 1-click active production model deployment.
+- **Continuous Numerical Skill Regression**: Simple and Multiple Linear Regression (SLR & MLR) predicting quantitative targets (`aptitude_score`, `coding_skill_score`, `cgpa`) with exact $\beta$ marginal sensitivity coefficients.
+- **Unsupervised Cohort Clustering**: K-Means ($K=2..8$ with WCSS Elbow and Silhouette optimization) and Agglomerative Hierarchical Clustering (Ward's linkage with Scipy Dendrograms) for demographic persona discovery.
+- **Data Mining & Association Rules**: Pearson correlation matrix, Shannon Mutual Information gain, Random Forest Gini MDI importance, and Apriori association rule discovery.
+- **Live Competitive Coding Synchronization**: Real-time extraction of live LeetCode stats via GraphQL and GitHub repository counts via REST API directly from user profile links.
+- **Clean Onboarding Gating**: Zero pre-filled dummy data for new accounts; students must complete their onboarding details before receiving calibrated evaluations.
 
 ---
 
 ## 🏛️ Full-Stack System Architecture
 
-PLACEMENT IQ is architected as a high-throughput, decoupled single-page application (SPA) powered by a high-performance REST API:
+PLACEMENT IQ is designed as a decoupled, high-performance web architecture:
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────────────────────────┐
@@ -97,17 +97,18 @@ PLACEMENT IQ is architected as a high-throughput, decoupled single-page applicat
 │                                                                                                 │
 │   ┌──────────────────────────────────────────────┐  ┌────────────────────────────────────────┐  │
 │   │         STUDENT CAREER PORTAL                │  │    ADMINISTRATIVE INTELLIGENCE CENTER   │  │
-│   │ • Dashboard (Readiness Gauge & KPIs)         │  │ • Executive Dashboard (Cohort Overview) │  │
-│   │ • Profile (Live LeetCode & GitHub Sync)      │  │ • Student Directory (Review & Feedback) │  │
-│   │ • Placement Prediction (Algorithm-Blind)     │  │ • Data Warehouse (Kimball Star Schema)  │  │
-│   │ • Skill Analysis (Radar Benchmarks)          │  │ • OLAP Analytics (2D Roll-Up & Slice)   │  │
-│   │ • Improvement Plan (Actionable Roadmaps)     │  │ • Data Mining (Mutual Info & Apriori)   │  │
-│   │ • Prediction History (Advisory Timeline)     │  │ • Classification (5-Algorithm Suite)    │  │
-│   └──────────────────────────────────────────────┘  │ • Regression (Continuous Skill Bounds)  │  │
-│                                                     │ • K-Means & Agglomerative Clustering    │  │
-│                                                     │ • Prediction Center (Consensus Voting)  │  │
-│                                                     │ • Reports & Artifacts (Accreditation)   │  │
-│                                                     │ • System Settings & Model Registry      │  │
+│   │ • Placement Readiness Dashboard              │  │ • Executive Placement Overview         │  │
+│   │ • Student Profile (Live Coding Stats Sync)   │  │ • Student Candidate Directory & Audit   │  │
+│   │ • Placement Prediction (Algorithm-Blind)     │  │ • Kimball Star Schema Workbench        │  │
+│   │ • Skill Analysis (Radar Benchmarks)          │  │ • 2D Dynamic OLAP Analytics Studio     │  │
+│   │ • Improvement Plan (Actionable Roadmaps)     │  │ • Data Mining & Association Rules      │  │
+│   │ • Prediction History (Advisory Timeline)     │  │ • Classification Studio (5 Models)     │  │
+│   └──────────────────────────────────────────────┘  │ • Continuous Regression Studio (MLR)   │  │
+│                                                     │ • K-Means & Agglomerative Clustering   │  │
+│                                                     │ • Cluster Comparison Benchmark Studio  │  │
+│                                                     │ • Prediction Center (Consensus/Batch)  │  │
+│                                                     │ • Institutional Reports & Dossier      │  │
+│                                                     │ • System Settings & Model Registry     │  │
 │                                                     └────────────────────────────────────────┘  │
 └───────────────────────────────────────────────┬─────────────────────────────────────────────────┘
                                                 │ REST API Requests (/api/*)
@@ -120,7 +121,7 @@ PLACEMENT IQ is architected as a high-throughput, decoupled single-page applicat
 │   │   api.py (Endpoints)  │  │   Authentication      │  │   Profile Fetcher Module          │   │
 │   │ • /api/auth/*         │  │ • PBKDF2 HMAC-SHA256  │  │ • LeetCode GraphQL API            │   │
 │   │ • /api/student/*      │  │ • Role Enforcement    │  │ • GitHub REST Public API          │   │
-│   │ • /api/admin/*        │  │ • Token / Session DB  │  │ • Auto-populate student profiles  │   │
+│   │ • /api/admin/*        │  │ • SQLite Session DB   │  │ • Auto-populate student profiles  │   │
 │   └───────────┬───────────┘  └───────────┬───────────┘  └─────────────────┬─────────────────┘   │
 │               │                          │                                │                     │
 │               ▼                          ▼                                ▼                     │
@@ -134,6 +135,7 @@ PLACEMENT IQ is architected as a high-throughput, decoupled single-page applicat
 │   │ • clustering.py: K-Means (Elbow + PCA) & Agglomerative (Ward's Linkage + Dendrogram)    │   │
 │   │ • data_mining.py: Pearson Correlation, Mutual Information, Gini MDI, Apriori Rules     │   │
 │   │ • recommendations.py: Mathematical Gap Deficit Engine vs Placed Alumni Medians          │   │
+│   │ • database.py: SQLite schema, query logging, feedback loop, user management             │   │
 │   └───────────────────────────────────────────┬─────────────────────────────────────────────┘   │
 └───────────────────────────────────────────────┼─────────────────────────────────────────────────┘
                                                 │
@@ -141,9 +143,9 @@ PLACEMENT IQ is architected as a high-throughput, decoupled single-page applicat
 ┌─────────────────────────────────────────────────────────────────────────────────────────────────┐
 │                                      PERSISTENCE LAYER                                          │
 │                                                                                                 │
-│   📂 backend/data/placement_prediction_cleaned.csv  (15,000 Baseline Alumni Records)            │
+│   📂 backend/data/placement_prediction_cleaned.csv  (15,000 Certified Baseline Alumni Records)  │
 │   🗄️ backend/outputs/placement_dw.sqlite            (Normalized App DB + Kimball Star Schema)   │
-│   📦 backend/models/*.joblib                        (Persisted ML Pipelines & Scalers)          │
+│   📦 backend/models/*.joblib                        (Persisted ML Pipelines, Scalers & Models)  │
 │   📝 backend/outputs/*.csv                          (Audit Logs, Benchmarks & Export Artifacts) │
 └─────────────────────────────────────────────────────────────────────────────────────────────────┘
 ```
@@ -152,7 +154,7 @@ PLACEMENT IQ is architected as a high-throughput, decoupled single-page applicat
 
 ## 📊 Kimball Star-Schema Data Warehouse Design
 
-The core data warehouse (`backend/outputs/placement_dw.sqlite`) implements a dimensional Star Schema refreshed directly from the Unified Dataset Engine:
+The platform implements Ralph Kimball's dimensional modeling methodology in an embedded SQLite data warehouse (`backend/outputs/placement_dw.sqlite`):
 
 ```
                             ┌────────────────────────┐
@@ -162,6 +164,7 @@ The core data warehouse (`backend/outputs/placement_dw.sqlite`) implements a dim
                             │     age                │
                             │     gender             │
                             │     branch             │
+                            │     data_source        │
                             └───────────┬────────────┘
                                         │
                                         │ 1:N
@@ -169,49 +172,54 @@ The core data warehouse (`backend/outputs/placement_dw.sqlite`) implements a dim
 ┌────────────────────────┐  N:1 ┌────────────────────────┐ 1:N  ┌────────────────────────┐
 │      DimAcademic       ├─────►│     FactPlacement      │◄─────┤       DimSkills        │
 ├────────────────────────┤      ├────────────────────────┤      ├────────────────────────┤
-│ PK  academic_key       │      │ PK  fact_id            │      │ PK  skill_key          │
+│ PK  student_key        │      │ PK  fact_id            │      │ PK  student_key        │
 │     cgpa               │      │ FK  student_key        │      │     dsa_questions      │
-│     backlogs           │      │ FK  academic_key       │      │     leetcode_questions │
-│     attendance_pct     │      │ FK  skill_key          │      │     hackerrank_quest   │
-└────────────────────────┘      │ FK  engagement_key     │      │     coding_skill_score │
-                                │ FK  placement_key      │      │     aptitude_score     │
-                                │     cgpa               │      │     communication_score│
-                                │     attendance_pct     │      └────────────────────────┘
-                                │     dsa_questions      │
-                                │     aptitude_score     │
-                                │     placed_flag        │
-                                └───────────▲────────────┘
-                                        │
-                         ┌──────────────┴──────────────┐
-                     N:1 │                             │ N:1
-        ┌────────────────┴───────┐      ┌──────────────┴─────────┐
-        │     DimEngagement      │      │      DimPlacement      │
-        ├────────────────────────┤      ├────────────────────────┤
-        │ PK  engagement_key     │      │ PK  placement_key      │
-        │     internships_count  │      │     placement_status   │
-        │     projects_count     │      │     placement_pred     │
-        │     hackathons_count   │      │     training_status    │
-        │     github_repos       │      └────────────────────────┘
-        │     mock_interview_sc  │
-        └────────────────────────┘
+│     backlogs           │      │     cgpa               │      │     leetcode_questions │
+│     attendance_pct     │      │     attendance_pct     │      │     hackerrank_quest   │
+│     cgpa_band          │      │     aptitude_score     │      │     coding_skill_score │
+└────────────────────────┘      │     coding_skill_score │      │     aptitude_score     │
+                                │     internships_count  │      │     communication_score│
+                                │     projects_count     │      │     certifications_cnt │
+                                │     placement_pred     │      │     coding_band        │
+                                └───────────▲────────────┘      └────────────────────────┘
+                                            │
+                             ┌──────────────┴──────────────┐
+                         N:1 │                             │ N:1
+            ┌────────────────┴───────┐      ┌──────────────┴─────────┐
+            │     DimEngagement      │      │      DimPlacement      │
+            ├────────────────────────┤      ├────────────────────────┤
+            │ PK  student_key        │      │ PK  student_key        │
+            │     internships_count  │      │     placement_status   │
+            │     projects_count     │      │     placement_pred     │
+            │     hackathons_count   │      └────────────────────────┘
+            │     github_repos       │
+            │     mock_interview_sc  │
+            │     placement_training │
+            └────────────────────────┘
 ```
 
-### Relational Table Definitions & Measures
+### Star-Schema Relational Specification
 
-| Table Name | Entity Type | Grain / Cardinality | Primary / Foreign Keys | Captured Features / Measures |
+| Table Name | Entity Type | Grain / Cardinality | Primary & Foreign Keys | Stored Attributes / Additive Measures |
 | :--- | :--- | :--- | :--- | :--- |
-| `FactPlacement` | Fact Table | 1 record per student profile ($15,000+$ rows) | `fact_id` (PK), `student_key`, `academic_key`, `skill_key`, `engagement_key`, `placement_key` | Additive & semi-additive measures: `cgpa`, `attendance_pct`, `dsa_questions`, `aptitude_score`, `placed_flag` |
-| `DimStudent` | Dimension | 1 row per unique student demographic | `student_key` (PK) | `age`, `gender`, `branch` |
-| `DimAcademic` | Dimension | 1 row per academic standing combination | `academic_key` (PK) | `cgpa`, `backlogs`, `attendance_percentage` |
-| `DimSkills` | Dimension | 1 row per skill competency profile | `skill_key` (PK) | `dsa_questions_solved`, `leetcode_questions_solved`, `hackerrank_questions_solved`, `coding_skill_score`, `aptitude_score`, `communication_score` |
-| `DimEngagement`| Dimension | 1 row per student co-curricular record | `engagement_key` (PK) | `internships_count`, `projects_count`, `hackathons_count`, `github_repos`, `mock_interview_score` |
-| `DimPlacement` | Dimension | 1 row per placement outcome state | `placement_key` (PK) | `placement_status`, `placement_prediction`, `placement_training` |
+| `FactPlacement` | Fact Table | 1 row per student profile ($15,000+$ rows) | `fact_id` (PK), `student_key` (FK) | Additive measures: `cgpa`, `attendance_percentage`, `aptitude_score`, `coding_skill_score`, `internships_count`, `projects_count`, `placement_prediction` |
+| `DimStudent` | Conformed Dimension | 1 row per candidate demographic | `student_key` (PK) | `age`, `gender`, `branch`, `data_source` |
+| `DimAcademic` | Conformed Dimension | 1 row per academic standing profile | `student_key` (PK) | `cgpa`, `backlogs`, `attendance_percentage`, `cgpa_band` |
+| `DimSkills` | Conformed Dimension | 1 row per technical skill competency | `student_key` (PK) | `dsa_questions_solved`, `leetcode_questions_solved`, `hackerrank_questions_solved`, `aptitude_score`, `communication_score`, `coding_skill_score`, `certifications_count`, `coding_band` |
+| `DimEngagement` | Conformed Dimension | 1 row per co-curricular record | `student_key` (PK) | `internships_count`, `projects_count`, `hackathons_count`, `github_repos`, `mock_interview_score`, `placement_training` |
+| `DimPlacement` | Target Dimension | 1 row per outcome classification | `student_key` (PK) | `placement_prediction`, `placement_status` |
+
+### Key Dimensional Warehousing Capabilities
+
+- **Surrogate Keys**: Integer `student_key` decouples analytics from volatile source system identifiers.
+- **1-Click Warehouse Rebuild**: Administrators can rebuild the entire Star Schema from the Unified Dataset Engine with one click (`POST /api/admin/warehouse/rebuild`), instantly incorporating newly registered students.
+- **Embedded SQL Query Workbench**: Execute live ANSI SQL `SELECT` queries directly in the administrative dashboard with real-time tabular previews and CSV export.
 
 ---
 
 ## 🧊 2D Dynamic OLAP Analytics Engine
 
-PLACEMENT IQ features an interactive On-Line Analytical Processing (OLAP) engine supporting multi-dimensional exploration across all student attributes:
+PLACEMENT IQ features a true multi-dimensional On-Line Analytical Processing (OLAP) engine supporting all standard cube operations:
 
 ```
               ┌────────────────────────────────────────────────────────┐
@@ -244,19 +252,213 @@ PLACEMENT IQ features an interactive On-Line Analytical Processing (OLAP) engine
               └────────────────────────────────────────────────────────┘
 ```
 
-1. **Slice**: Isolates a single dimensional plane (e.g., `Branch = 'CSE'`) and displays instantaneous aggregations (Mean CGPA, Mean Attendance, Placement %).
+### The 6 Core OLAP Operations Implemented
+
+1. **Slice**: Isolates a single dimensional plane (e.g., `Branch = 'CSE'`) and computes instantaneous aggregations (Mean CGPA, Mean Attendance, Placement %).
 2. **Dice**: Extracts a sub-cube by applying compound conjunctional predicates (e.g., `Branch IN ('CSE', 'IT') AND CGPA >= 7.5 AND Attendance >= 75%`).
-3. **2D Simultaneous Roll-Up**: Aggregates both row hierarchies (e.g., `['Branch', 'Gender']` $\rightarrow$ `['Branch']`) and column dimensions (e.g., `['Placement Status', 'Training']` $\rightarrow$ `['Placement Status']`) simultaneously in one operation.
+3. **2D Simultaneous Roll-Up**: Aggregates both row hierarchies (e.g., `['Branch', 'Gender']` $\rightarrow$ `['Branch']`) and column dimensions (e.g., `['Placement Status', 'Training']` $\rightarrow$ `['Placement Status']`) simultaneously in one operation, rendering a side-by-side **Before & After** comparison.
 4. **2D Simultaneous Drill-Down**: De-aggregates parent row and column hierarchies into detailed multi-level sub-matrices simultaneously.
 5. **Pivot**: Rotates dimensional axes (e.g., `Branch` across rows $\times$ `Placement Status` across columns) with interactive density heatmaps.
-6. **Drill-Across**: Traverses foreign keys across `FactPlacement`, `DimStudent`, and `DimAcademic` to correlate disparate performance indicators.
-7. **Query Audit History**: Every executed OLAP operation automatically registers dimensions, aggregation operators, execution runtime, and row counts in the SQLite `olap_query_history` table.
+6. **Drill-Across**: Traverses foreign keys across `FactPlacement`, `DimStudent`, and `DimAcademic` to correlate disparate performance indicators (e.g., correlating DSA problem counts with semester backlogs across branches).
+
+### OLAP Query History & Audit Logging
+
+Every executed OLAP query is automatically logged to the SQLite `olap_query_history` table, recording:
+- Executing user email
+- Operation type (Slice, Dice, Roll-Up, Drill-Down, Pivot, Drill-Across)
+- Selected row and column dimensions
+- Aggregation measure and function (`Average`, `Sum`, `Count`, `Min`, `Max`, `Median`)
+- Filter JSON parameters
+- Result row count and execution timestamp
 
 ---
 
-## 🌐 Live External Profile Metric Extractor (LeetCode & GitHub)
+## 🧠 Complete Inventory of Implemented Algorithms
 
-In the student profile section, students can provide public coding URLs or handles. PlacementIQ contacts the official public APIs to extract live statistics and auto-populate their profile:
+PLACEMENT IQ implements **20 distinct algorithms and statistical engines** spanning supervised classification, numerical regression, unsupervised clustering, data mining pattern discovery, and credential synchronization.
+
+### Section A: Supervised Classification Suite
+
+All 5 classifiers are trained and evaluated on the exact same stratified 80/20 train/test split of the feature matrix $\mathbf{X} \in \mathbb{R}^{n \times 24}$:
+
+#### 1. Random Forest Classifier (Production Anchor)
+- **Family**: Ensemble Bagging (Bootstrap Aggregation)
+- **Architecture**: 150 bootstrapped CART decision trees with randomized feature subsampling ($m = \sqrt{p}$).
+- **Objective**: Drives prediction variance toward zero without increasing bias; highly robust to multicollinearity among academic features.
+- **Hyperparameters**: `n_estimators=150`, `max_depth=10`, `min_samples_split=2`, `min_samples_leaf=1`, `max_features='sqrt'`, `class_weight='balanced'`.
+- **Performance**: **81.52% Accuracy**, **0.8936 ROC-AUC**, **0.7770 F1-Score**.
+
+#### 2. Gradient Tree Boosting Classifier
+- **Family**: Sequential Stage-Wise Additive Boosting
+- **Architecture**: Sequentially fits shallow decision trees to the negative gradient (pseudo-residuals) of the binomial log-likelihood loss function.
+- **Objective**: Focuses model capacity on ambiguous borderline candidates near institutional cutoffs.
+- **Hyperparameters**: `n_estimators=100`, `max_depth=3`, `learning_rate=0.1`.
+- **Performance**: **81.18% Accuracy**, **0.8912 ROC-AUC**, **0.7724 F1-Score**.
+
+#### 3. Decision Tree Classifier (CART)
+- **Family**: White-Box Recursive Partitioning
+- **Architecture**: Single binary tree using Gini impurity reduction to generate transparent IF-THEN splitting rules.
+- **Calibration**: Wrapped in `CalibratedClassifierCV(method='sigmoid', cv=5)` to convert step-function leaves into smooth continuous probabilities.
+- **Hyperparameters**: `max_depth=6`, `criterion='gini'`, `min_samples_split=2`, `min_samples_leaf=1`.
+- **Performance**: **77.52% Accuracy**, **0.8547 ROC-AUC**, **0.7286 F1-Score**.
+
+#### 4. Logistic Regression Classifier
+- **Family**: Generalized Linear Model (Logit Link)
+- **Architecture**: Standardized pipeline (`StandardScaler` + L2 Ridge Regularization) computing parametric log-odds:
+  $$\log\left(\frac{p}{1-p}\right) = \beta_0 + \sum_{j=1}^m \beta_j x_j$$
+- **Objective**: Provides instant baseline inference and direct interpretability of positive/negative odds ratios.
+- **Hyperparameters**: `max_iter=1000`, `C=1.0`, `penalty='l2'`.
+- **Performance**: **79.80% Accuracy**, **0.8710 ROC-AUC**, **0.7428 F1-Score**.
+
+#### 5. Gaussian Naive Bayes Classifier
+- **Family**: Class-Conditional Bayesian Prior
+- **Architecture**: Computes maximum likelihood under the assumption of feature independence:
+  $$P(y = 1 \mid \mathbf{x}) \propto P(y = 1) \prod_{j=1}^m \frac{1}{\sqrt{2\pi \sigma_j^2}} \exp\left(-\frac{(x_j - \mu_j)^2}{2\sigma_j^2}\right)$$
+- **Calibration**: Wrapped in `CalibratedClassifierCV(method='sigmoid', cv=5)` with `var_smoothing=1e-2`.
+- **Performance**: **80.95% Accuracy**, **0.8875 ROC-AUC**, **0.7621 F1-Score**, **0.059s training time**.
+
+#### 6. 1-Click Dynamic Champion Model Deployment Algorithm
+- Administrators can switch the active production model in real time via `POST /api/admin/settings`. The backend persists the choice in the SQLite `system_settings` table and routes all inference requests instantly without server restarts.
+
+#### 7. Multi-Model Consensus Voting Algorithm
+- Evaluates a candidate across all 5 models simultaneously, computing:
+  - Consensus Placement Status (majority vote $\ge 3/5$)
+  - Consensus Percentage ($\frac{\text{placed votes}}{5} \times 100\%$)
+  - Individual probability breakdown across all 5 algorithmic paradigms.
+
+---
+
+### Section B: Continuous Numerical Regression
+
+Predicts continuous competency metrics (`aptitude_score`, `coding_skill_score`, `cgpa`) using ordinary least squares:
+
+#### 8. Simple Linear Regression (SLR)
+- **Equation Fitted** (Target: `aptitude_score`, Feature: `cgpa`):
+  $$\widehat{\text{aptitude}} = 6.2035 \times \text{CGPA} + 14.6948$$
+- **Metrics**: $R^2 = 0.2158$, $\text{MSE} = 102.52$, $\text{RMSE} = 10.125$, $\text{MAE} = 8.047$.
+
+#### 9. Multiple Linear Regression (MLR)
+- **Equation Fitted** (Target: `aptitude_score`, Features: 14 numeric predictors):
+  $$\widehat{\text{aptitude}} = -0.049 \cdot \text{Age} + 4.214 \cdot \text{CGPA} - 0.004 \cdot \text{Backlogs} + 0.082 \cdot \text{DSA} + \dots + 12.249$$
+- **Metrics**: $R^2 = 0.4052$, $\text{MSE} = 77.757$, $\text{RMSE} = 8.818$, $\text{MAE} = 7.057$.
+- **Institutional Value**: Extracts exact marginal sensitivity weights ($\beta_j$) quantifying the expected aptitude score increase per 25 DSA problems solved or project completed.
+
+---
+
+### Section C: Unsupervised Clustering & Dimensionality Reduction
+
+Discovers student behavioral archetypes across 15 numeric competency dimensions without target labels:
+
+#### 10. K-Means Clustering ($K$-Means++)
+- **Algorithm**: Lloyd's iterative centroid relocation with $K$-means++ probabilistic distance seeding.
+- **Optimization**: Computes Within-Cluster Sum of Squares (WCSS / Inertia) across $K = 2 \dots 8$ to plot the Elbow Curve, alongside Silhouette coefficient evaluations.
+- **Deliverables**: Centroid radar profiles, PCA 2D scatter projections, and cluster sizing breakdowns ($K=4$, Silhouette: **0.0762**).
+
+#### 11. Agglomerative Hierarchical Clustering
+- **Algorithm**: Bottom-up hierarchical tree construction using Ward's minimum variance linkage criterion:
+  $$\Delta \text{ESS}_{AB} = \frac{n_A n_B}{n_A + n_B} \|\mathbf{m}_A - \mathbf{m}_B\|^2$$
+- **Deliverables**: Cluster assignments on representative samples ($n=1,000$, Silhouette: **0.0732**) and interactive Scipy Dendrogram hierarchy data.
+
+#### 12. Principal Component Analysis (PCA) 2D Projection
+- **Algorithm**: Eigenvalue decomposition of the feature covariance matrix $\mathbf{\Sigma} = \mathbf{V}\mathbf{\Lambda}\mathbf{V}^T$, projecting 15-dimensional student vectors onto the top 2 orthogonal principal components ($\text{PC}_1, \text{PC}_2$) for 2D scatter visualization.
+
+---
+
+### Section D: Data Mining & Association Pattern Discovery
+
+#### 13. Pearson Product-Moment Correlation Matrix
+- Computes pairwise linear correlation coefficients ($r \in [-1, 1]$) across all 16 numeric attributes to identify collinearity and primary placement drivers.
+
+#### 14. Shannon Mutual Information Gain ($I(X; Y)$)
+- Information-theoretic measure of non-linear dependency between continuous predictors and discrete placement outcomes:
+  $$I(X; Y) = \sum_{x \in \mathcal{X}} \sum_{y \in \mathcal{Y}} p(x, y) \log\left(\frac{p(x, y)}{p(x)p(y)}\right)$$
+- Detects non-linear thresholds (e.g., minimum DSA problem cutoffs) invisible to linear correlation.
+
+#### 15. Random Forest Gini Feature Importance (MDI)
+- Computes Mean Decrease in Impurity across 120 decision trees, quantifying each feature's contribution to purity gain across all split nodes.
+
+#### 16. Apriori Association Rule Mining
+- Mines boolean itemset associations based on academic and skill thresholds (`High_CGPA`, `High_Aptitude`, `High_Attendance`, `Internship_Done`, `Multiple_Projects`, `Strong_Coding`, `Placed`).
+- Evaluates Support, Confidence, and Lift:
+  $$\text{Lift}(A \Rightarrow B) = \frac{P(B \mid A)}{P(B)}$$
+- Discovers prescriptive rules (e.g., `{High_Aptitude, Strong_Coding} → {Placed}` with 89.2% Confidence and 1.48 Lift).
+
+---
+
+### Section E: Prescriptive & Synchronization Engines
+
+#### 17. Mathematical Skill Gap Deficit Algorithm
+- For student competency vector $\mathbf{x}$ and placed alumni median vector $\mathbf{M}^{(\text{placed})}$:
+  $$\text{Deficit}_i = \max\left(0, M_i^{(\text{placed})} - x_i\right), \quad \text{Deficit Percentage}_i = \left(\frac{\text{Deficit}_i}{M_i^{(\text{placed})}}\right) \times 100\%$$
+- Automatically classifies gaps into 3 prioritized tiers:
+  - 🔴 **Critical Priority**: $\ge 35\%$ deficit vs placed alumni medians
+  - 🟡 **Moderate Priority**: $10\% - 35\%$ deficit
+  - 🟢 **Existing Strength**: $< 10\%$ deficit or exceeding median.
+
+#### 18. Live Competitive Coding Metric Extractor
+- Dispatches HTTP requests to official public endpoints:
+  - **LeetCode GraphQL API**: Executes `query getUserProfile($username: String!)` to extract total solved, difficulty breakdown (Easy, Medium, Hard), and global ranking.
+  - **GitHub REST API**: Queries `https://api.github.com/users/{username}` to extract public repositories, followers, and public gists.
+  - Automatically calculates continuous Coding Skill Score and DSA problem counts.
+
+#### 19. Unified Dataset Ingestion & Normalization Engine
+- In-memory merge combining the 15,000 baseline records from `placement_prediction_cleaned.csv` with $N$ dynamic candidate records from the SQLite database.
+- Normalizes feature aliases (e.g., `dsa_problems_solved` $\rightarrow$ `dsa_questions_solved`) and applies one-hot encoding for `branch`, `gender`, and `placement_training`.
+
+#### 20. PBKDF2 HMAC-SHA256 Cryptographic Key Derivation
+- Cryptographic password hashing using 100,000 rounds of PBKDF2 HMAC-SHA256 with project salt for secure role-based authentication.
+
+---
+
+## ✨ Comprehensive Feature Matrix & Interactive Portals
+
+### 🎓 Student Career Portal (6 Modules)
+
+Designed with an **algorithm-blind presentation** so students focus on actionable skill preparation without cognitive clutter:
+
+| Module | Route / Page | Implemented Capabilities & Academic Features |
+| :--- | :--- | :--- |
+| **Placement Readiness Dashboard** | `/student/dashboard` | • **Clean Onboarding Gating**: New accounts with `is_completed = 0` display a friendly prompt rather than misleading dummy metrics.<br>• **Circular Readiness Gauge**: Calibrated continuous placement probability ($0-100\%$).<br>• **Percentile Benchmarks**: CGPA, DSA, and Aptitude percentiles computed against 15,000 alumni.<br>• **Action Alerts**: Direct delivery of faculty advice dispatched by Prof. Shruti Agrawal. |
+| **Profile & Live Stats Sync** | `/student/profile` | • Comprehensive 5-category profile editor (Demographics, Academics, Coding, Co-Curricular, External Links).<br>• **⚡ Fetch & Auto-Fill Stats**: One-click sync with LeetCode GraphQL and GitHub REST APIs.<br>• Auto-calculation of DSA problems and continuous coding skill score. |
+| **Placement Self-Assessment** | `/student/prediction` | • **Algorithm-Blind Inference**: Evaluates current profile against the institution's active champion model without exposing internal model mechanics.<br>• Probability gauge, placement status badge, and positive/negative contributing factor cards. |
+| **Skill Radar Benchmarking** | `/student/skills` | • 8-axis / 15-dimensional interactive radar chart overlaying candidate metrics directly against the median benchmarks of placed alumni.<br>• Highlights positive competitive edges and deficit dimensions. |
+| **Personalized Improvement Plan** | `/student/plan` | • Data-driven gap roadmap based on mathematical deficit formulations.<br>• Prioritized 3-tier categorization: 🔴 Critical Focus Gaps, 🟡 Moderate Improvements, 🟢 Existing Strengths.<br>• Actionable weekly milestone advice for every identified deficit. |
+| **Prediction History & Advisory Timeline** | `/student/history` | • Chronological timeline tracking self-assessments over time.<br>• Score evolution charts and historical log of administrative notes and mentor recommendations. |
+
+---
+
+### 🛡️ Administrator Intelligence Center (13 Modules)
+
+Supervised by **Prof. Shruti Agrawal (DWM Lead)** and **Dean D. Joshi (TPO Lead)**:
+
+| Module | Route / Page | Implemented Capabilities & Administrative Controls |
+| :--- | :--- | :--- |
+| **Executive Dashboard** | `/admin/dashboard` | • Institutional placement velocity KPIs, department-by-department placement distribution charts, registered candidate tallies, and live recent prediction activity feed.<br>• Unified Dataset toggle ($15,000$ base vs. $15,000 + N$ live unified). |
+| **Candidate Directory & Audit Workbench** | `/admin/students` | • Searchable, filterable candidate directory by branch and placement status.<br>• Direct links to verified LeetCode and GitHub profiles with verified coding badges.<br>• **Feedback Dispatcher Modal**: Dispatches personalized advice directly to the student's dashboard. |
+| **Kimball Star Schema Workbench** | `/admin/warehouse` | • Interactive visual ER diagram and schema definitions for `FactPlacement` and 5 dimension tables.<br>• **Live ANSI SQL Query Workbench**: Execute arbitrary `SELECT` queries with CSV export.<br>• 1-Click Warehouse Rebuild button. |
+| **Universal 2D OLAP Studio** | `/admin/olap` | • Interactive execution of Slice, Dice, 2D Simultaneous Roll-Up, 2D Simultaneous Drill-Down, Pivot heatmaps, and Drill-Across.<br>• Dynamic row/column dimension and measure selectors.<br>• Automatic query audit logging to SQLite `olap_query_history`. |
+| **Data Mining Studio** | `/admin/data-mining` | • 16-variable Pearson correlation matrix heatmap.<br>• Shannon Mutual Information Gain ranked bar chart.<br>• Random Forest Gini MDI feature importance ranking.<br>• Apriori association rules table with Support, Confidence, Lift, and natural language interpretations. |
+| **Classification Studio** | `/admin/classification` | • Train, tune, and benchmark 5 classifiers (Random Forest, Gradient Boosting, Decision Tree, Logistic Regression, Gaussian Naive Bayes).<br>• Hyperparameter customization panel (split %, tree depth, estimators, learning rate, C).<br>• Confusion matrices, ROC curves, and **1-Click Active Champion Deployment**. |
+| **Continuous Regression Studio** | `/admin/regression` | • SLR and MLR parameter fitting on continuous targets (`aptitude_score`, `coding_skill_score`, `cgpa`).<br>• Derives exact mathematical equations, beta coefficient weights, $R^2$, MSE, RMSE, and MAE.<br>• Residual normality distribution plots and actual vs. predicted scatter. |
+| **K-Means Clustering Studio** | `/admin/kmeans` | • WCSS Elbow curve analysis ($K=2..8$) and Silhouette score optimization.<br>• 2D PCA cluster projection scatter plot with centroid markers.<br>• Centroid radar geometry and cluster size distribution tables. |
+| **Agglomerative Clustering Studio** | `/admin/agglomerative` | • Hierarchical clustering with Ward's minimum variance, Complete, and Average linkages.<br>• Interactive Scipy Dendrogram hierarchy tree and 2D PCA cluster scatter. |
+| **Cluster Comparison Studio** | `/admin/cluster-comparison` | • Head-to-head side-by-side empirical comparison of K-Means vs Agglomerative clustering across silhouette coefficients, runtime, and centroid vectors. |
+| **Prediction Center (4 Inference Modes)** | `/admin/prediction-center` | • **Mode 1 (Registered Evaluation)**: Evaluate any enrolled student with feedback dispatch.<br>• **Mode 2 (Ad-Hoc Simulator)**: Sliders and numeric fields for external candidate simulation.<br>• **Mode 3 (Multi-Model Consensus)**: Test a candidate across all 5 models simultaneously with agreement gauge.<br>• **Mode 4 (Batch CSV Scoring)**: High-throughput file upload, scoring hundreds of candidates with downloadable enriched CSV. |
+| **Reports & Accreditation Center** | `/admin/reports` | • Audit-ready reports for NAAC, NBA, and NIRF accreditation.<br>• Exportable CSV artifacts: Statistical Feature Summary, Star Schema Topology, Registered Student Roster, and Historical Prediction Audit. |
+| **System Settings & Governance** | `/admin/settings` | • Active production model selector and decision threshold slider.<br>• Consensus voting toggle and database diagnostic telemetry.<br>• Administrator user management (create/delete faculty accounts) and institutional policy parameters. |
+
+---
+
+### 🌐 Public Landing & Authentication Portals
+
+- **`HomePage.jsx`**: Modern institutional landing page featuring animated hero, key platform KPIs, interactive branch placement distribution chart, dual role selector, and quick one-click demo login buttons.
+- **`LoginPage.jsx`**: Clean authentication portal with separate Student and Faculty/Admin login tabs, password hashing, and public student account registration.
+
+---
+
+## 🌐 Live Competitive Coding & Developer Metric Extractor
+
+In the student profile section, students can provide public coding URLs or handles. PlacementIQ contacts official public endpoints to extract live statistics and auto-populate profile fields:
 
 ```
 Student Inputs Profile URLs:
@@ -292,109 +494,7 @@ Student Inputs Profile URLs:
 
 ---
 
-## 🧠 5-Algorithm Machine Learning & Data Mining Suite
-
-```
-                                  ┌──────────────────────────────────────────────┐
-                                  │       DATA MINING & MACHINE LEARNING         │
-                                  └──────────────────────┬───────────────────────┘
-                                                         │
-             ┌───────────────────────────────────────────┼───────────────────────────────────────────┐
-             ▼                                           ▼                                           ▼
-┌───────────────────────────┐               ┌───────────────────────────┐               ┌───────────────────────────┐
-│ SUPERVISED CLASSIFICATION │               │   CONTINUOUS REGRESSION   │               │  UNSUPERVISED CLUSTERING  │
-├───────────────────────────┤               ├───────────────────────────┤               ├───────────────────────────┤
-│ • Random Forest (Ensemble)│               │ • Simple Linear (SLR)     │               │ • K-Means (Elbow K=2..10) │
-│ • Gradient Boosting (Seq) │               │ • Multiple Linear (MLR)   │               │ • Agglomerative (Ward/Avg)│
-│ • Decision Tree (CART)    │               │ • Residual Normal Tests   │               │ • 2D PCA Projections      │
-│ • Logistic Regression     │               │ • R², MSE, RMSE, MAE      │               │ • Silhouette Optimization │
-│ • Gaussian Naive Bayes    │               │ • Beta Sensitivity Weights│               │ • Topology Benchmark      │
-│ • 1-Click Champion Switch │               │ • Milestone Targets       │               │ • Cohort Archetypes       │
-└───────────────────────────┘               └───────────────────────────┘               └───────────────────────────┘
-```
-
-### 1. Supervised Classification (5 Algorithms)
-- **Random Forest (Production Anchor)**: 150 bootstrapped CART trees over random feature subsets. Drives variance toward zero without increasing bias; resilient to collinear academic features (~86% accuracy, ~0.90 ROC-AUC).
-- **Gradient Boosting**: Sequentially fits shallow trees to pseudo-residuals of prior estimators, focusing model capacity on ambiguous borderline candidates.
-- **Decision Tree (CART)**: Generates human-readable IF-THEN split rules via Gini impurity reduction for transparent student mentoring.
-- **Logistic Regression**: Scaled pipeline using logit link function with L2 ridge regularization, computing parametric odds ratios.
-- **Gaussian Naive Bayes**: Fast probabilistic baseline assuming class-conditional feature independence.
-- **1-Click Production Model Switcher**: Administrators designate the active production classifier in one click (`system_settings` table), instantly updating inference endpoints.
-
-### 2. Continuous Numerical Regression
-- **Predictive Targets**: `aptitude_score`, `coding_skill_score`, `cgpa`.
-- **Algorithms**: Simple Linear Regression (SLR) and Multiple Linear Regression (MLR).
-- **Deliverables**: Exact $\beta$ coefficient weights quantifying marginal skill returns per 25 DSA problems or completed projects.
-
-### 3. Unsupervised Clustering & Cohort Segmentation
-- **K-Means Clustering**: WCSS Elbow curve analysis ($K=2$ to $10$), Silhouette score optimization, cluster centroid radar geometry, and 2D PCA projection.
-- **Agglomerative Hierarchical**: Ward's minimum variance linkage with interactive Dendrogram tree visualization.
-- **Cluster Comparison Benchmark**: Side-by-side comparison across silhouette coefficients, Davies-Bouldin separation, and computational runtimes.
-
-### 4. Data Mining & Association Rules
-- **Pearson Correlation**: 16-variable linear correlation matrix.
-- **Mutual Information Gain**: Information-theoretic Shannon entropy $I(X; Y)$ detecting non-linear threshold triggers.
-- **Apriori Association Rules**: Frequent itemset mining discovering prescriptive rule bundles (e.g., `{DSA >= 150, Projects >= 3} → {Placed}` with 89% Confidence and 1.48 Lift).
-
----
-
-## 🎯 Executive Conclusions & Project Value Summary
-
-Every page across the Administrative Intelligence Center features an **Analytical Conclusion & Project Outcomes** module answering two core questions:
-1. **Why We Use This Technique for PlacementIQ**: Methodological justification explaining why the technique fits our 15,000+ student dataset over alternatives.
-2. **What Our Project Gets By Using It**: Concrete deliverables, precision metrics, student counseling levers, and institutional decision-support benefits.
-
-```
-┌────────────────────────────────────────────────────────────────────────────────────────┐
-│ ✨ ANALYTICAL CONCLUSION & PROJECT OUTCOMES    [Random Forest • 5-Classifier Suite]    │
-├───────────────────────────────────────────┬────────────────────────────────────────────┤
-│ 🎯 Why We Use This Technique:             │ 🚀 What Our Project Gets By Using This:    │
-│ • Random Forest as Production Anchor:     │ ✓ ~86% Out-of-Sample Accuracy (~0.90 AUC): │
-│   Aggregates 150 CART trees via bagging   │   Reliable campus placement forecasting.   │
-│   to eliminate single-tree variance.      │ ✓ Continuous Readiness Probability (0-100%):│
-│ • Gradient Boosting for Hard Cases:       │   Calibrated score rewarding progress.     │
-│   Fits pseudo-residuals for borderline    │ ✓ Multi-Algorithm Consensus Auditing:      │
-│   candidate separation.                   │   Eliminates single-model blind spots.     │
-│ • Decision Tree for White-Box Auditing:   │ ✓ Early Warning Interventions:             │
-│   Transparent IF-THEN rules for mentors.  │   Flags at-risk candidates months ahead.   │
-├───────────────────────────────────────────┴────────────────────────────────────────────┤
-│ 🏛️ Institutional Value: Enables the placement cell to deploy high-capacity ensembles   │
-│   while using white-box decision trees to justify counseling interventions.            │
-│ 📚 Core DWM Foundations: [Supervised Learning] [Bagging vs Boosting] [CART] [ROC-AUC] │
-└────────────────────────────────────────────────────────────────────────────────────────┘
-```
-
----
-
-## 👥 Dual-Persona Interactive Portals
-
-### 🎓 Student Career Portal
-Designed with an **algorithm-blind presentation** so students focus on actionable preparation without cognitive clutter:
-- **Placement Readiness Dashboard**: Displays calibrated probability readiness gauge, profile completeness indicator, and key competency metrics. Gated for new users until onboarding details are submitted.
-- **Profile & Live Stats Synchronizer**: 2x2 grid for LeetCode, GitHub, HackerRank, and Portfolio links with one-click **"⚡ Fetch & Auto-Fill Stats"**.
-- **Placement Self-Assessment**: Real-time evaluation against the institution's champion model, returning placement status and confidence.
-- **Multi-Dimensional Radar Benchmarking**: Overlays the candidate's 15 dimensions against placed alumni medians.
-- **Personalized Improvement Roadmap**: Categorizes skill gaps into Critical, Moderate, and Strengths tiers with weekly execution milestones.
-- **Advisory Timeline**: Chronological log of past assessments and administrative feedback dispatched by faculty advisors.
-
-### 🛡️ Administrator Intelligence Center
-Led by **Prof. Shruti Agrawal (DWM Lead)**:
-- **Executive Placement Overview**: Institutional KPIs, department-by-department hiring velocity, and the Unified Dataset Switcher (Base 15,000 vs. Live Unified $15,000 + N$).
-- **Candidate Directory & Audit Workbench**: Searchable, filterable candidate directory with LeetCode/GitHub profile links, verified problem counts, and a one-click **Feedback Dispatcher**.
-- **Kimball Star Schema Workbench**: Visual ER schema explorer with an embedded, live **ANSI SQL Query Workbench**.
-- **Universal OLAP Builder**: Interactive execution of Slice, Dice, 2D Simultaneous Roll-Up & Drill-Down, Pivot heatmaps, and query audit history.
-- **Data Mining & Feature Relevance**: Pearson matrix, Mutual Information gain rankings, Gini MDI importance, and Apriori association rules.
-- **5-Algorithm Classification Suite**: Full training, hyperparameter tuning, confusion matrices, ROC-AUC curves, and 1-click active champion model deployment.
-- **Continuous Regression Studio**: SLR and MLR parameter fitting on continuous skill targets with residual normality tests.
-- **K-Means & Hierarchical Clustering**: WCSS Elbow curve, Silhouette optimization, 2D PCA projection, and interactive Scipy dendrograms.
-- **Cluster Benchmark Comparison**: Side-by-side evaluation of K-Means vs Agglomerative clustering across metrics and geometry.
-- **Predictive Scoring Center**: Multi-model consensus voting and high-throughput batch CSV scoring.
-- **Institutional Reports Generator**: Dynamic generation of audit-ready Markdown and CSV reports for accreditation (NAAC, NBA, NIRF).
-- **System Governance & Settings**: Active production model selector, role boundaries, database diagnostics, and 1-click warehouse rebuild utilities.
-
----
-
-## 📐 Mathematical Rigor & Formulations
+## 📐 Mathematical Rigor & Academic Formulations
 
 ### 1. Skill Gap Recommendation Formulation
 For student competency vector $\mathbf{x} = [x_1, x_2, \dots, x_m]$ and placed alumni median vector $\mathbf{M}^{(\text{placed})} = [M_1, M_2, \dots, M_m]$:
@@ -407,7 +507,7 @@ $$\text{Deficit Percentage}_i = \left( \frac{\text{Deficit}_i}{M_i^{(\text{place
 - **Moderate Priority**: $10\% \le \text{Deficit Percentage}_i < 35\%$
 - **Strength**: $\text{Deficit Percentage}_i < 10\%$ (or $x_i \ge M_i$)
 
-### 2. Regression Formulations (Continuous Target: `aptitude_score`)
+### 2. Numerical Regression Formulations (Target: `aptitude_score`)
 - **Simple Linear Regression (SLR)**:
   $$\widehat{\text{aptitude}} = 6.2035 \times \text{CGPA} + 14.6948$$
 
@@ -431,7 +531,7 @@ $$\text{Deficit Percentage}_i = \left( \frac{\text{Deficit}_i}{M_i^{(\text{place
 
 ---
 
-## 📈 Validated Benchmarks & Empirical Audit
+## 📈 Empirical Validation Benchmarks & Audit Results
 
 *Empirical metrics extracted directly from the system validation engine ([`TEST_REPORT.md`](TEST_REPORT.md))*:
 
@@ -458,6 +558,70 @@ $$\text{Deficit Percentage}_i = \left( \frac{\text{Deficit}_i}{M_i^{(\text{place
 | :--- | :---: | :---: | :--- |
 | **K-Means Clustering** | **0.0762** | 0.417s | 15 numeric competency dimensions |
 | **Agglomerative Hierarchical** | 0.0732 | **0.081s** | 15 numeric competency dimensions ($n=1,000$ sample) |
+
+---
+
+## 🔌 Full REST API Endpoint Specification
+
+The FastAPI REST backend exposes comprehensive endpoints organized into logical functional modules:
+
+### Authentication & Authorization
+| Method | Endpoint | Request Body | Description |
+| :--- | :--- | :--- | :--- |
+| `POST` | `/api/auth/login` | `LoginRequest` (email, password) | Authenticates credentials against PBKDF2 hash; returns user role. |
+| `POST` | `/api/auth/register` | `RegisterRequest` (name, email, password, branch) | Registers new student account; role enforced as `Student`. |
+
+### Student Career Portal
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/api/student/dashboard/{email}` | Returns readiness score, onboarding completion status, percentiles, latest prediction, and faculty feedback. |
+| `GET` | `/api/student/profile/{email}` | Retrieves full candidate profile details from SQLite database. |
+| `POST` | `/api/student/profile` | Persists updated student profile details to SQLite database. |
+| `POST` | `/api/student/fetch-external-stats` | Queries live LeetCode GraphQL & GitHub REST APIs; returns verified metrics. |
+| `POST` | `/api/student/predict` | Executes algorithm-blind inference using active champion model; logs prediction to history. |
+| `GET` | `/api/student/history/{email}` | Retrieves chronological log of all self-assessments and prediction records. |
+| `GET` | `/api/student/skills/{email}` | Computes 15-dimensional radar data comparing student against placed alumni medians. |
+| `GET` | `/api/student/plan/{email}` | Executes mathematical gap deficit engine; returns prioritized improvement plan. |
+
+### Administrative Intelligence Center
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/api/admin/overview` | Returns institutional KPIs, department placement distributions, and recent prediction activity. |
+| `GET` | `/api/admin/students` | Retrieves directory of all registered students with verified coding handles and notes. |
+| `POST` | `/api/admin/feedback` | Saves administrative recommendations and dispatches alerts directly to the student dashboard. |
+| `POST` | `/api/admin/predict` | Executes administrator prediction evaluation for any candidate. |
+| `POST` | `/api/admin/predict/compare` | Evaluates a candidate across all 5 classification models simultaneously for consensus voting. |
+| `POST` | `/api/admin/predict/batch` | High-throughput bulk scoring of uploaded CSV file; returns enriched predictions and confidence. |
+| `GET` | `/api/admin/reports/summary` | Computes statistical feature distributions across the entire student population. |
+| `GET` | `/api/admin/reports/export/{name}` | Exports dataset artifacts (`cleaned`, `roster`, `predictions`) as JSON/CSV structures. |
+
+### Data Warehousing & OLAP
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/api/admin/warehouse` | Returns Star Schema summary, table row counts, schema definitions, and relationship maps. |
+| `GET` | `/api/admin/warehouse/sample/{table}` | Retrieves tabular sample records from any Star Schema table. |
+| `POST` | `/api/admin/warehouse/query` | Executes live ANSI SQL `SELECT` queries against SQLite Star Schema database. |
+| `POST` | `/api/admin/warehouse/rebuild` | 1-Click Star Schema rebuild from the Unified Dataset Engine ($15,000 + N$ records). |
+| `GET` | `/api/admin/olap/meta` | Returns dimensions, measures, aggregation functions, and unique dimension values. |
+| `POST` | `/api/admin/olap/query` | Executes OLAP operations (Slice, Dice, 2D Roll-Up, 2D Drill-Down, Pivot, Drill-Across) and logs audit history. |
+| `GET` | `/api/admin/olap/history` | Retrieves query audit history log from `olap_query_history` table. |
+
+### Data Mining & Machine Learning
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/api/admin/data-mining` | Computes Pearson correlation matrix, Mutual Information gain, Gini MDI, and Apriori association rules. |
+| `GET` | `/api/admin/classification` | Evaluates all 5 classifiers; returns metrics, confusion matrices, ROC curves, and PR curves. |
+| `POST` | `/api/admin/classification/train` | Re-trains classification models with custom hyperparameters. |
+| `GET` | `/api/admin/regression` | Fits SLR and MLR on continuous targets (`aptitude_score`, `coding_skill_score`, `cgpa`); returns equations and residuals. |
+| `GET` | `/api/admin/kmeans` | Runs K-Means clustering; returns Silhouette score, PCA 2D projections, and centroid profiles. |
+| `GET` | `/api/admin/kmeans/elbow` | Computes Within-Cluster Sum of Squares (Inertia) across $K = 2 \dots 8$ for the Elbow Curve. |
+| `GET` | `/api/admin/agglomerative` | Runs Agglomerative Hierarchical clustering; returns Silhouette score and PCA 2D scatter. |
+| `GET` | `/api/admin/cluster-comparison` | Head-to-head empirical comparison of K-Means vs Agglomerative clustering for any chosen $K$. |
+| `GET` | `/api/admin/settings` | Returns active production model, system settings, admin users, and database telemetry. |
+| `POST` | `/api/admin/settings` | Updates system setting (e.g., active production model switcher). |
+| `POST` | `/api/admin/settings/batch` | Batch updates multiple governance settings simultaneously. |
+| `POST` | `/api/admin/settings/admin-user` | Creates new administrative user account. |
+| `DELETE` | `/api/admin/settings/admin-user/{id}` | Deletes administrative user account. |
 
 ---
 
@@ -537,7 +701,7 @@ python backend/validate_project.py
 
 ---
 
-## 🧪 13-Suite Automated Quality Assurance
+## 🧪 13-Suite Automated Quality Assurance Audit
 
 The platform includes an automated testing framework ([`validate_project.py`](backend/validate_project.py)) that executes 13 distinct verification suites:
 
@@ -564,12 +728,12 @@ The platform includes an automated testing framework ([`validate_project.py`](ba
 ```
 PLACEMENT_IQ/
 ├── backend/                       # Python Backend, API Engine & ML Analytics
-│   ├── api.py                    # FastAPI REST server for React frontend
+│   ├── api.py                    # FastAPI REST server with 30+ endpoints
 │   ├── requirements.txt          # Python dependencies (FastAPI, Scikit-learn, etc.)
 │   ├── validate_project.py       # 13-suite automated test engine
 │   ├── verify_link_fetch.py      # Automated verification for LeetCode & GitHub fetcher
 │   ├── data/
-│   │   └── placement_prediction_cleaned.csv  # 15,000 baseline records
+│   │   └── placement_prediction_cleaned.csv  # 15,000 baseline records (26 features)
 │   ├── models/                   # Persisted scikit-learn models (.joblib)
 │   │   ├── random_forest.joblib
 │   │   ├── gradient_boosting.joblib
@@ -588,22 +752,28 @@ PLACEMENT_IQ/
 │       ├── auth.py               # Authentication & PBKDF2 hashing
 │       ├── classification.py     # 5-algorithm supervised classification suite
 │       ├── clustering.py         # K-Means & Agglomerative clustering
-│       ├── config.py             # Feature definitions & paths
-│       ├── database.py           # SQLite persistence layer
-│       ├── data_mining.py        # Correlations, MI, Apriori rules
-│       ├── olap.py               # Multi-dimensional OLAP engine
-│       ├── prediction.py         # Real-time placement inference
+│       ├── config.py             # Feature definitions & system paths
+│       ├── database.py           # SQLite persistence layer & session store
+│       ├── data_mining.py        # Pearson correlations, MI, Apriori rules
+│       ├── olap.py               # Multi-dimensional 2D OLAP engine
+│       ├── prediction.py         # Real-time placement inference & batch predict
 │       ├── profile_fetcher.py    # LeetCode GraphQL & GitHub REST sync module
 │       ├── preprocessing.py      # Data cleaning & unified cohort engine
 │       ├── recommendations.py    # Student improvement roadmap & gap engine
 │       ├── regression.py         # Linear regression (SLR & MLR)
-│       └── warehouse.py          # Kimball star-schema builder
+│       ├── submissions.py        # Candidate submission persistence & history
+│       ├── visualizations.py     # Chart formatting & visual matrix utilities
+│       └── warehouse.py          # Kimball star-schema builder & SQL executor
 │
-├── frontend/                      # Modern React 19 + Vite 6 SPA
+├── frontend/                      # Modern React 19 + Vite 6 Single Page App
 │   ├── src/
-│   │   ├── components/           # AcademicJustification, TopHeader, Sidebar
+│   │   ├── components/           # Reusable UI components
+│   │   │   ├── AcademicJustification.jsx # Analytical conclusion component
+│   │   │   ├── KPICard.jsx       # Standardized KPI indicator card
+│   │   │   ├── Sidebar.jsx       # Role-aware navigational sidebar
+│   │   │   └── TopHeader.jsx     # Institutional top header & profile bar
 │   │   ├── pages/
-│   │   │   ├── admin/            # 11 Admin analytics, OLAP, DWH, ML pages
+│   │   │   ├── admin/            # 13 Admin analytics, OLAP, DWH & ML pages
 │   │   │   │   ├── AdminDashboard.jsx
 │   │   │   │   ├── StudentData.jsx
 │   │   │   │   ├── DataWarehouse.jsx
@@ -632,6 +802,8 @@ PLACEMENT_IQ/
 │   └── vite.config.js            # Vite proxy configuration (/api -> :8000)
 │
 ├── docs/                          # Architectural documentation & project reports
+│   ├── STAR_SCHEMA.md            # Dimensional data warehouse design document
+│   └── project_report.md         # Project methodology & course report
 ├── run_backend.bat                # 1-Click launcher for FastAPI backend
 ├── run_frontend.bat               # 1-Click launcher for React frontend
 ├── start_all.bat                  # 1-Click launcher to start full stack
