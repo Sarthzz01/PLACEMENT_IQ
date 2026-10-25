@@ -1,5 +1,6 @@
 import sys
 import os
+import time
 import json
 import sqlite3
 from pathlib import Path
@@ -33,32 +34,50 @@ from src.warehouse import (
     query as run_sql, STAR_SCHEMA_DEF, RELATIONSHIPS
 )
 from src.olap import (
-    slice_op, dice_op, rollup_2d, drilldown_2d, pivot_op, drill_across
+    slice_op, dice_op, rollup_2d, drilldown_2d, pivot_op, drill_across,
+    HIERARCHIES, rollup_hierarchy, drilldown_hierarchy, multi_measure_op,
+    sanitize_dim, sanitize_dim_list, apply_filters
 )
 from src.classification import train_models
 from src.regression import train_regression
 from src.clustering import kmeans, elbow, agglomerative, dendrogram_data
-from src.data_mining import correlation, mutual_information, feature_importance, association_insights
+from src.data_mining import correlation, mutual_information, feature_importance, association_insights, correlation_matrix
 from src.profile_fetcher import fetch_external_profile_stats
 
 init_database()
 
 DIMENSIONS = [
-    "branch", "gender", "placement_training", "placement_status",
-    "cgpa_band", "aptitude_band", "attendance_band", "coding_band",
-    "internship_band", "projects_band", "backlog_band", "data_source"
+    "branch", "gender", "placement_status", "placement_training",
+    "cgpa_band", "age_group"
 ]
 
 MEASURES = [
-    "cgpa", "attendance_percentage", "dsa_questions_solved",
-    "leetcode_questions_solved", "hackerrank_questions_solved",
-    "internships_count", "projects_count", "hackathons_count",
-    "certifications_count", "aptitude_score", "communication_score",
-    "coding_skill_score", "github_repos", "mock_interview_score",
+    "cgpa", "attendance_percentage", "aptitude_score", "communication_score",
+    "coding_skill_score", "mock_interview_score", "dsa_questions_solved",
+    "leetcode_questions_solved", "hackerrank_questions_solved", "internships_count",
+    "projects_count", "hackathons_count", "certifications_count", "github_repos",
     "placement_prediction"
 ]
 
-AGG_FUNCS = ["Average", "Sum", "Count", "Min", "Max", "Median"]
+AGG_FUNCS = ["Average", "Count", "Sum", "Min", "Max", "Median", "Count Distinct"]
+
+MEASURE_METADATA = {
+    "cgpa": {"label": "CGPA", "unit": "Scale 0-10", "type": "ratio", "allowed_aggs": ["Average", "Min", "Max", "Median"]},
+    "attendance_percentage": {"label": "Attendance %", "unit": "%", "type": "ratio", "allowed_aggs": ["Average", "Min", "Max", "Median"]},
+    "aptitude_score": {"label": "Aptitude Score", "unit": "Scale 0-100", "type": "score", "allowed_aggs": ["Average", "Min", "Max", "Median"]},
+    "communication_score": {"label": "Communication Score", "unit": "Scale 0-10", "type": "score", "allowed_aggs": ["Average", "Min", "Max", "Median"]},
+    "coding_skill_score": {"label": "Coding Skill Score", "unit": "Scale 0-10", "type": "score", "allowed_aggs": ["Average", "Min", "Max", "Median"]},
+    "mock_interview_score": {"label": "Mock Interview Score", "unit": "Scale 0-10", "type": "score", "allowed_aggs": ["Average", "Min", "Max", "Median"]},
+    "dsa_questions_solved": {"label": "DSA Questions Solved", "unit": "Questions", "type": "count", "allowed_aggs": ["Sum", "Average", "Min", "Max", "Median", "Count"]},
+    "leetcode_questions_solved": {"label": "LeetCode Questions", "unit": "Questions", "type": "count", "allowed_aggs": ["Sum", "Average", "Min", "Max", "Median", "Count"]},
+    "hackerrank_questions_solved": {"label": "HackerRank Questions", "unit": "Questions", "type": "count", "allowed_aggs": ["Sum", "Average", "Min", "Max", "Median", "Count"]},
+    "internships_count": {"label": "Internships Completed", "unit": "Count", "type": "count", "allowed_aggs": ["Sum", "Average", "Min", "Max", "Count"]},
+    "projects_count": {"label": "Projects Completed", "unit": "Count", "type": "count", "allowed_aggs": ["Sum", "Average", "Min", "Max", "Count"]},
+    "hackathons_count": {"label": "Hackathons Participated", "unit": "Count", "type": "count", "allowed_aggs": ["Sum", "Average", "Min", "Max", "Count"]},
+    "certifications_count": {"label": "Certifications Earned", "unit": "Count", "type": "count", "allowed_aggs": ["Sum", "Average", "Min", "Max", "Count"]},
+    "github_repos": {"label": "GitHub Repositories", "unit": "Count", "type": "count", "allowed_aggs": ["Sum", "Average", "Min", "Max", "Count"]},
+    "placement_prediction": {"label": "Predicted Placement Rate (%)", "unit": "%", "type": "binary_target", "allowed_aggs": ["Average", "Count", "Sum"]}
+}
 
 app = FastAPI(
     title="PLACEMENT IQ — API Engine",
@@ -132,10 +151,15 @@ class OLAPQueryRequest(BaseModel):
     col_dim: Optional[str] = None
     slice_value: Optional[Any] = None
     measure: str = "cgpa"
-    agg_func: str = "mean"
+    agg_func: str = "Average"
     filters: Optional[Dict[str, Any]] = None
     dice_conditions: Optional[Dict[str, Any]] = None
     measures: Optional[List[str]] = None
+    hierarchy: Optional[str] = None
+    current_level: Optional[str] = None
+    target_level: Optional[str] = None
+    comparison_dim: Optional[str] = None
+    filter_value: Optional[Any] = None
 
 class SettingRequest(BaseModel):
     key: str
@@ -609,6 +633,9 @@ def admin_warehouse_rebuild():
 # -------------------------------------------------------------
 # OLAP ENDPOINTS
 # -------------------------------------------------------------
+# -------------------------------------------------------------
+# OLAP ENDPOINTS
+# -------------------------------------------------------------
 @app.get("/api/admin/olap/meta")
 def admin_olap_meta():
     df = load_data()
@@ -625,9 +652,23 @@ def admin_olap_meta():
             dimension_values[d] = []
 
     dim_labels = {d: DISPLAY_NAMES.get(d, d.replace("_", " ").title()) for d in DIMENSIONS}
-    measure_labels = {m: DISPLAY_NAMES.get(m, m.replace("_", " ").title()) for m in MEASURES}
+    dim_labels["cgpa_decile"] = "Detailed CGPA Range"
+    dim_labels["age"] = "Age (Years)"
+
+    measure_labels = {m: MEASURE_METADATA.get(m, {}).get("label", DISPLAY_NAMES.get(m, m.replace("_", " ").title())) for m in MEASURES}
+
+    # Numeric ranges for dice filters
+    numeric_ranges = {
+        "cgpa": {"min": float(round(df["cgpa"].min(), 1)), "max": float(round(df["cgpa"].max(), 1))},
+        "attendance_percentage": {"min": float(round(df["attendance_percentage"].min(), 1)), "max": float(round(df["attendance_percentage"].max(), 1))},
+        "aptitude_score": {"min": float(round(df["aptitude_score"].min(), 1)), "max": float(round(df["aptitude_score"].max(), 1))},
+        "coding_skill_score": {"min": float(round(df["coding_skill_score"].min(), 1)), "max": float(round(df["coding_skill_score"].max(), 1))},
+        "mock_interview_score": {"min": float(round(df["mock_interview_score"].min(), 1)), "max": float(round(df["mock_interview_score"].max(), 1))},
+        "backlogs": {"min": int(df["backlogs"].min()), "max": int(df["backlogs"].max())}
+    }
 
     return {
+        "total_records": len(df),
         "dimensions": DIMENSIONS,
         "measures": MEASURES,
         "agg_funcs": AGG_FUNCS,
@@ -635,83 +676,172 @@ def admin_olap_meta():
         "dimension_values": dimension_values,
         "dim_labels": dim_labels,
         "measure_labels": measure_labels,
-        "branches": dimension_values.get("branch", ["CSE", "IT", "ECE", "ENTC", "Civil", "Mechanical"]),
-        "genders": dimension_values.get("gender", ["Male", "Female", "Other"]),
+        "measure_metadata": MEASURE_METADATA,
+        "hierarchies": HIERARCHIES,
+        "numeric_ranges": numeric_ranges,
+        "branches": dimension_values.get("branch", ["CSE", "IT", "ECE", "ENTC", "Civil", "Mechanical", "Other"]),
+        "genders": dimension_values.get("gender", ["Female", "Male", "Other"]),
         "placement_statuses": dimension_values.get("placement_status", ["Placed", "Not Placed"]),
-        "training_options": dimension_values.get("placement_training", ["Yes", "No"])
+        "training_options": dimension_values.get("placement_training", ["Yes", "No"]),
+        "cgpa_bands": dimension_values.get("cgpa_band", ["<6", "6-7", "7-8", "8-9", "9+"]),
+        "age_groups": dimension_values.get("age_group", ["< 21", "21 - 22", "> 22"])
     }
 
 @app.post("/api/admin/olap/query")
 def admin_olap_query(req: OLAPQueryRequest):
+    t0 = time.perf_counter()
     df = load_data(include_new_students=True)
-    op = req.operation.lower()
-    
+    op = req.operation.lower().strip()
+
+    # Sanitize dimensions to eliminate KeyError: 'none'
+    san_dimension = sanitize_dim(req.dimension)
+    san_row = sanitize_dim(req.row_dim)
+    san_col = sanitize_dim(req.col_dim)
+    san_comp = sanitize_dim(req.comparison_dim)
+    measure = req.measure if req.measure in df.columns else "cgpa"
+    agg_func = req.agg_func or "Average"
+
     before_df = None
+    norm_df = None
+    totals_dict = {}
+    slice_kpis = None
+    matching_count = len(df)
+    query_desc = ""
+    applied_filters = {}
+
     try:
         if op == "slice":
-            res_df = slice_op(df, req.dimension, req.slice_value, req.measure, req.agg_func, display_dim=req.row_dim)
+            dim = san_dimension or "branch"
+            val = req.slice_value if req.slice_value is not None else (df[dim].iloc[0] if dim in df.columns else "CSE")
+            res_df = slice_op(df, dim, val, measure, agg_func, display_dim=san_row)
+            
+            # Compute slice KPIs
+            filtered_slice = df[df[dim].astype(str) == str(val)]
+            matching_count = len(filtered_slice)
+            pct = round(matching_count / len(df) * 100.0, 1) if len(df) > 0 else 0
+            mean_m = round(float(filtered_slice[measure].mean()), 2) if measure in filtered_slice.columns and len(filtered_slice) > 0 else 0
+            plc_rate = round(float(filtered_slice["placement_prediction"].mean() * 100.0), 1) if "placement_prediction" in filtered_slice.columns and len(filtered_slice) > 0 else 0
+            
+            slice_kpis = {
+                "dimension": dim,
+                "slice_value": str(val),
+                "matching_students": matching_count,
+                "cohort_share_pct": pct,
+                "measure_average": mean_m,
+                "placement_rate_pct": plc_rate
+            }
+            applied_filters = {dim: str(val)}
+            breakdown_text = f" broken down by {san_row}" if san_row and san_row != dim else ""
+            query_desc = f"OLAP Slice on {dim} = '{val}'{breakdown_text} measuring {agg_func}({measure})"
+
         elif op == "dice":
-            rows = [req.row_dim] if req.row_dim else ["branch"]
-            cols = [req.col_dim] if req.col_dim and req.col_dim != "None" else ["placement_status"]
+            rows = [san_row] if san_row else ["branch"]
+            cols = [san_col] if san_col else []
             conditions = req.dice_conditions or req.filters or {}
-            res_df = dice_op(df, conditions, rows, cols, req.measure, req.agg_func)
+            res_df = dice_op(df, conditions, rows, cols, measure, agg_func)
+            
+            # Calculate matching records for dice
+            filtered_df = apply_filters(df, conditions)
+            matching_count = len(filtered_df)
+            applied_filters = conditions
+            query_desc = f"OLAP Dice across {len(conditions)} condition(s) projected onto {rows[0]} × {cols[0] if cols else 'Overall'} measuring {agg_func}({measure})"
+
         elif op == "rollup":
-            curr_rows = (req.filters.get("current_rows") if req.filters else None) or ([req.row_dim, "gender"] if req.row_dim else ["branch", "gender"])
-            targ_rows = (req.filters.get("target_rows") if req.filters else None) or ([req.row_dim] if req.row_dim else ["branch"])
-            curr_cols = (req.filters.get("current_cols") if req.filters else None) or ([req.col_dim] if req.col_dim else ["placement_status"])
-            targ_cols = (req.filters.get("target_cols") if req.filters else None) or []
-            before_df, res_df = rollup_2d(df, curr_rows, targ_rows, curr_cols, targ_cols, req.measure, req.agg_func)
+            if req.hierarchy:
+                before_df, res_df, totals_dict = rollup_hierarchy(
+                    df, req.hierarchy, req.current_level, req.target_level, san_comp, measure, agg_func
+                )
+                query_desc = f"OLAP Hierarchical Roll-Up in {req.hierarchy.title()} hierarchy: {req.current_level} ➔ {req.target_level} measuring {agg_func}({measure})"
+            else:
+                curr_rows = (req.filters.get("current_rows") if req.filters else None) or ([san_row, "gender"] if san_row else ["branch", "gender"])
+                targ_rows = (req.filters.get("target_rows") if req.filters else None) or ([san_row] if san_row else ["branch"])
+                curr_cols = (req.filters.get("current_cols") if req.filters else None) or ([san_col] if san_col else ["placement_status"])
+                targ_cols = (req.filters.get("target_cols") if req.filters else None) or []
+                before_df, res_df = rollup_2d(df, curr_rows, targ_rows, curr_cols, targ_cols, measure, agg_func)
+                query_desc = f"2D Roll-Up from {curr_rows} to {targ_rows} on {measure}"
+
         elif op == "drilldown":
-            curr_rows = (req.filters.get("current_rows") if req.filters else None) or ([req.row_dim] if req.row_dim else ["branch"])
-            targ_rows = (req.filters.get("target_rows") if req.filters else None) or ([req.row_dim, "gender"] if req.row_dim else ["branch", "gender"])
-            curr_cols = (req.filters.get("current_cols") if req.filters else None) or ([req.col_dim] if req.col_dim else ["placement_status"])
-            targ_cols = (req.filters.get("target_cols") if req.filters else None) or []
-            before_df, res_df = drilldown_2d(df, curr_rows, targ_rows, curr_cols, targ_cols, req.measure, req.agg_func)
+            if req.hierarchy:
+                before_df, res_df, totals_dict = drilldown_hierarchy(
+                    df, req.hierarchy, req.current_level, req.target_level, req.filter_value, san_comp, measure, agg_func
+                )
+                filter_text = f" for cohort '{req.filter_value}'" if req.filter_value else ""
+                query_desc = f"OLAP Hierarchical Drill-Down in {req.hierarchy.title()} hierarchy: {req.current_level} ➔ {req.target_level}{filter_text} measuring {agg_func}({measure})"
+                if req.filter_value:
+                    applied_filters = {req.current_level: str(req.filter_value)}
+            else:
+                curr_rows = (req.filters.get("current_rows") if req.filters else None) or ([san_row] if san_row else ["branch"])
+                targ_rows = (req.filters.get("target_rows") if req.filters else None) or ([san_row, "gender"] if san_row else ["branch", "gender"])
+                curr_cols = (req.filters.get("current_cols") if req.filters else None) or ([san_col] if san_col else ["placement_status"])
+                targ_cols = (req.filters.get("target_cols") if req.filters else None) or []
+                before_df, res_df = drilldown_2d(df, curr_rows, targ_rows, curr_cols, targ_cols, measure, agg_func)
+                query_desc = f"2D Drill-Down from {curr_rows} to {targ_rows} on {measure}"
+
         elif op == "pivot":
-            rows = [req.row_dim] if req.row_dim else ["branch"]
-            cols = [req.col_dim] if req.col_dim else ["gender"]
-            res_df = pivot_op(df, rows, cols, req.measure, req.agg_func)
-        elif op == "drill_across":
-            measures = req.measures if req.measures and len(req.measures) > 0 else [req.measure, "aptitude_score", "coding_skill_score"]
-            row = req.row_dim or req.dimension or "branch"
-            col = req.col_dim if req.col_dim and req.col_dim != "None" else None
-            res_df = drill_across(df, row, col, measures, req.agg_func)
+            rows = [san_row] if san_row else ["branch"]
+            cols = [san_col] if san_col else ["gender"]
+            res_df = pivot_op(df, rows, cols, measure, agg_func)
+            query_desc = f"OLAP Pivot Cross-Tabulation: {rows[0]} (Rows) × {cols[0]} (Columns) measuring {agg_func}({measure})"
+
+        elif op in ["multi_measure", "drill_across"]:
+            measures = req.measures if req.measures and len(req.measures) > 0 else [measure, "aptitude_score", "coding_skill_score"]
+            group_dim = san_row or san_dimension or "branch"
+            raw_df, norm_df = multi_measure_op(df, group_dim, measures, agg_func)
+            res_df = raw_df
+            query_desc = f"Multi-Measure Synthesis on {group_dim} consolidating {len(measures)} metrics ({', '.join(measures[:3])}...)"
+
         else:
-            raise HTTPException(status_code=400, detail=f"Unsupported OLAP operation: {op}")
+            raise HTTPException(status_code=400, detail=f"Unsupported OLAP operation: '{op}'. Supported: slice, dice, rollup, drilldown, pivot, multi_measure.")
 
-        # Clean NaN/Inf in res_df and before_df
-        res_df = res_df.replace({np.nan: None})
+        # Clean NaN/Inf in DataFrames
+        res_df = res_df.replace({np.nan: None, np.inf: None, -np.inf: None})
         if before_df is not None:
-            before_df = before_df.replace({np.nan: None})
+            before_df = before_df.replace({np.nan: None, np.inf: None, -np.inf: None})
+        if norm_df is not None:
+            norm_df = norm_df.replace({np.nan: None, np.inf: None, -np.inf: None})
 
-        # Log query to history
+        exec_ms = round((time.perf_counter() - t0) * 1000.0, 2)
+
+        # Log query to history with serializable payload for one-click rerun
         try:
+            req_dict = req.model_dump()
             log_olap_query(
                 user_email="admin@college.com",
                 operation=req.operation,
-                row_dims=[req.row_dim] if req.row_dim else ([req.dimension] if req.dimension else []),
-                col_dims=[req.col_dim] if req.col_dim else [],
-                measure=req.measure,
-                agg_func=req.agg_func,
-                filters=req.filters or req.dice_conditions or {},
+                row_dims=[san_row] if san_row else ([san_dimension] if san_dimension else []),
+                col_dims=[san_col] if san_col else [],
+                measure=measure,
+                agg_func=agg_func,
+                filters=req_dict,
                 result_rows=len(res_df)
             )
         except Exception:
             pass
 
         return {
+            "status": "success",
             "operation": req.operation,
             "columns": list(res_df.columns),
             "rows": res_df.to_dict(orient="records"),
             "data": res_df.to_dict(orient="records"),
             "count": len(res_df),
             "row_count": len(res_df),
+            "matching_count": matching_count,
+            "total_dataset_count": len(df),
+            "execution_time_ms": exec_ms,
+            "description": query_desc,
+            "applied_filters": applied_filters,
+            "slice_kpis": slice_kpis,
+            "totals": totals_dict,
             "before_columns": list(before_df.columns) if before_df is not None else None,
             "before_rows": before_df.to_dict(orient="records") if before_df is not None else None,
-            "before_data": before_df.to_dict(orient="records") if before_df is not None else None,
-            "measure": req.measure,
-            "agg_func": req.agg_func
+            "normalized_rows": norm_df.to_dict(orient="records") if norm_df is not None else None,
+            "measure": measure,
+            "agg_func": agg_func,
+            "request_payload": req.model_dump()
         }
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
@@ -728,20 +858,40 @@ def admin_olap_history():
 # DATA MINING & MACHINE LEARNING
 # -------------------------------------------------------------
 @app.get("/api/admin/data-mining")
-def admin_data_mining():
+def admin_data_mining(min_support: float = 0.03, min_confidence: float = 0.40, min_lift: float = 1.0):
     df = load_data()
     corr_df = correlation(df)
     mi_df = mutual_information(df)
     fi_df = feature_importance(df)
-    rules_df = association_insights(df)
+    rules_df = association_insights(df, min_support=min_support, min_confidence=min_confidence, min_lift=min_lift)
+    matrix_df = correlation_matrix(df)
 
     mi_records = mi_df.to_dict(orient="records") if mi_df is not None else []
+    base_placed = float(df["placement_prediction"].mean() * 100.0) if "placement_prediction" in df.columns else 39.7
+    
+    top_corr = corr_df.iloc[0]["Feature_Label"] if len(corr_df) > 0 else "CGPA"
+    top_corr_val = float(corr_df.iloc[0]["Correlation"]) if len(corr_df) > 0 else 0.0
+    top_mi = mi_df.iloc[0]["Feature_Label"] if len(mi_df) > 0 else "CGPA"
+    top_fi = fi_df.iloc[0]["Feature_Label"] if len(fi_df) > 0 else "Coding Skill Score"
+
     return {
-        "correlation": corr_df.reset_index().to_dict(orient="records") if corr_df is not None else [],
+        "correlation": corr_df.to_dict(orient="records") if corr_df is not None else [],
+        "correlation_matrix": {
+            "columns": list(matrix_df.columns),
+            "rows": matrix_df.reset_index().to_dict(orient="records")
+        },
         "mutual_info": mi_records,
         "mutual_information": mi_records,
         "feature_importance": fi_df.to_dict(orient="records") if fi_df is not None else [],
-        "association_rules": rules_df.to_dict(orient="records") if rules_df is not None else []
+        "association_rules": rules_df.to_dict(orient="records") if rules_df is not None else [],
+        "summary": {
+            "total_records": len(df),
+            "baseline_placement_pct": round(base_placed, 1),
+            "top_linear_driver": f"{top_corr} (r = {top_corr_val:+.3f})",
+            "top_nonlinear_driver": top_mi,
+            "top_tree_driver": top_fi,
+            "rules_count": len(rules_df) if rules_df is not None else 0
+        }
     }
 
 @app.get("/api/admin/classification")

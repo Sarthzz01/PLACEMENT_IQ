@@ -39,12 +39,15 @@ DISPLAY_NAMES = {
     "coding_skill_score": "Coding Skill Score",
     "github_repos": "GitHub Repositories",
     "mock_interview_score": "Mock Interview Score",
-    "placement_prediction": "Placement Prediction",
+    "placement_prediction": "Predicted Placement Rate (%)",
     "age": "Age",
     "gender": "Gender",
-    "branch": "Branch",
-    "placement_training": "Placement Training",
-    "placement_status": "Placement Status"
+    "branch": "Engineering Branch",
+    "placement_training": "Training Status",
+    "placement_status": "Placement Status",
+    "cgpa_band": "CGPA Band",
+    "cgpa_decile": "Detailed CGPA Range",
+    "age_group": "Age Group"
 }
 
 # Base numeric features from placement_prediction_cleaned.csv
@@ -95,7 +98,7 @@ CLUSTER_DEFAULTS = [
 ]
 
 # Valid options for categorical inputs
-BRANCH_OPTIONS = ["CSE", "IT", "ECE", "ENTC", "Civil", "Mechanical"]
+BRANCH_OPTIONS = ["CSE", "IT", "ECE", "ENTC", "Civil", "Mechanical", "Other"]
 GENDER_OPTIONS = ["Male", "Female", "Other"]
 TRAINING_OPTIONS = ["Yes", "No"]
 

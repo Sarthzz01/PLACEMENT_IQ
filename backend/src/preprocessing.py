@@ -160,17 +160,21 @@ def add_derived(df):
         axis=1
     )
     
-    # Reconstruct human-readable branch
+    # Reconstruct human-readable branch (correctly reconstructing baseline category 'Other')
     branch_cols = [c for c in out.columns if c.startswith("branch_")]
     if branch_cols:
+        has_branch = out[branch_cols].any(axis=1)
         out["branch"] = out[branch_cols].idxmax(axis=1).str.replace("branch_", "", regex=False)
+        out.loc[~has_branch, "branch"] = "Other"
     else:
-        out["branch"] = "CSE"
+        out["branch"] = "Other"
         
-    out["placement_training"] = out["placement_training_Yes"].map({True: "Yes", False: "No"})
-    out["placement_status"] = out[TARGET].map({1: "Placed", 0: "Not Placed"})
+    out["placement_training"] = out["placement_training_Yes"].map({True: "Yes", False: "No"}).fillna("No")
+    out["placement_status"] = out[TARGET].map({1: "Placed", 0: "Not Placed"}).fillna("Not Placed")
     
     out["cgpa_band"] = pd.cut(out["cgpa"], bins=[0, 6, 7, 8, 9, 10.1], labels=["<6", "6-7", "7-8", "8-9", "9+"], right=False).astype(str)
+    out["cgpa_decile"] = pd.cut(out["cgpa"], bins=[0, 6.0, 6.5, 7.0, 7.5, 8.0, 8.5, 9.0, 10.1], labels=["< 6.0", "6.0 - 6.5", "6.5 - 7.0", "7.0 - 7.5", "7.5 - 8.0", "8.0 - 8.5", "8.5 - 9.0", "9.0+"], right=False).astype(str)
+    out["age_group"] = pd.cut(out["age"], bins=[0, 20.9, 22.9, 100], labels=["< 21", "21 - 22", "> 22"], right=True).astype(str)
     out["aptitude_band"] = pd.cut(out["aptitude_score"], bins=[0, 50, 60, 70, 80, 101], labels=["<50", "50-60", "60-70", "70-80", "80+"], right=False).astype(str)
     out["attendance_band"] = pd.cut(out["attendance_percentage"], bins=[0, 60, 75, 85, 95, 101], labels=["<60", "60-75", "75-85", "85-95", "95+"], right=False).astype(str)
     out["coding_band"] = pd.cut(out["coding_skill_score"], bins=[0, 4, 6, 8, 10.1], labels=["<4", "4-6", "6-8", "8+"], right=False).astype(str)
